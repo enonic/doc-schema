@@ -5,20 +5,20 @@
       "document": "index"
     },
     {
-      "title": "Descriptors",
-      "document": "schemas/descriptors",
+      "title": "Forms",
+      "document": "schemas/forms",
       "menuItems": [
         {
-          "title": "Schema Localization",
-          "document": "schemas/i18n"
+          "title": "Form fragments",
+          "document": "schemas/fragments"
         },
         {
-          "title": "Content Indexing",
+          "title": "Indexing",
           "document": "schemas/indexing"
         },            
         {
-          "title": "Form fragments",
-          "document": "schemas/form-fragments"
+          "title": "Schema Localization",
+          "document": "schemas/i18n"
         }
       ]
     },
