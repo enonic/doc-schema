@@ -27,43 +27,43 @@
         {
           "title": "Starters",
           "document": "starters"
-        }  
+        },  
+        {
+          "title": "TypeScript",
+          "document": "typescript"
+        }
       ]
     },
     {
       "title": "Runtime",
-      "document": "runtime"
-    },
-    {
-      "title": "Basics",
-      "document": "basics",
+      "document": "runtime",
       "menuItems": [
         {
-          "title": "Code structure",
-          "document": "structure"
-        },
-        {
-          "title": "TypeScript",
-          "document": "typescript"
-        },
+          "title": "Architecture",
+          "document": "architecture"
+        },      
         {
           "title": "Events",
           "document": "events"
         },      
         {
-          "title": "Context and Config",
-          "document": "configuration"
+          "title": "Context",
+          "document": "context"
+        },      
+        {
+          "title": "Configuration",
+          "document": "config"
         }      
       ]
     },
     {
+      "title": "Custom APIs",
+      "document": "building-apis"
+    },  
+    {
       "title": "Extensions",
       "document": "building-extensions",
       "menuItems": [
-        {
-          "title": "Custom APIs",
-          "document": "apis"
-        },  
         {
           "title": "Background tasks",
           "document": "tasks"
@@ -85,7 +85,7 @@
           "document": "metrics"
         }
       ] 
-    },  
+    },
     {
       "title": "Webapps",
       "document": "building-webapps"
