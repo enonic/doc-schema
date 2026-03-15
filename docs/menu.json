@@ -83,7 +83,7 @@
         {
           "title": "Logging",
           "document": "runtime/logging"
-        }
+        },
         {
           "title": "Events",
           "document": "runtime/events"
