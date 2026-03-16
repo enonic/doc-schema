@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Webapp engine</title>
+<title>Building sites with the Enonic JS framework</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,12 +437,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Webapp engine</h1>
+<h1>Building sites with the Enonic JS framework</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#request_pipeline">Request pipeline</a></li>
-<li><a href="#webapp_js">webapp.js</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#sites_vs_webapps">Sites vs Webapps</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#multiple_apps_per_site">Multiple apps per site</a></li>
 </ul>
 </div>
 </div>
@@ -450,97 +452,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Webapp engine is responsible for processing of requests on the endpoint <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/*</code></p>
+<p>Use Enonic XP to deliver websites natively, without introducing a 3rd party front-end framework.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="request_pipeline"><a class="link" href="#request_pipeline">Request pipeline</a></h2>
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The webapp pipeline is executed as a subset of the <a href="../engines.ahtml#common_request_pipeline">common pipeline</a>:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="media/webapp-pipeline.svg" alt="Webapp rendering pipeline" width="768px">
-</div>
-</div>
-<div class="paragraph">
-<p>This section describes the full pipeline involved in processing a webapp http request.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Web app controller</dt>
-<dd>
-<p>Invokes the webapp controller of the contextual application</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="webapp_js"><a class="link" href="#webapp_js">webapp.js</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To turn your application into a webapp, simply place an HTTP controller called <code>/src/main/resources/webapp/webapp.js</code> into your project.</p>
-</div>
-<div class="paragraph">
-<p>When the application is deployed, the controller will be accessible from</p>
-</div>
-<div class="paragraph">
-<p><code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/</code> (i.e. "localhost:8080/webapp/my.webapp/").</p>
-</div>
-<div class="paragraph">
-<p><code>webapp.js</code> now acts as an <a href="../../framework/http.ahtml#http-controller">HTTP controller</a> and may expose a function for each HTTP method that should be handled: i.e.
-GET, POST, etc.</p>
-</div>
-<div class="paragraph">
-<p>Below is an example webapp controller.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var mustache = require('/lib/xp/mustache');
-
-// Handles a GET request
-exports.GET = function (req) {
-
-    var view = resolve('my-page.html');
-    var params = {
-        appId: app.name,
-        title: 'Hello world'
-    };
-
-    return {
-        body: mustache.render(view, params),
-        contentType: 'text/html'
-    };
-};
-
-// Handles a POST request
-exports.POST = function (req) {
-    var name = request.params.name;
-
-    return {
-        body: {'Hello': name},
-        contentType: 'application/json'
-    };
-};
-
-// Handles all other method requests
-exports.all = function (req) {
-    if (req.method === 'DELETE') {
-        handleDelete(req);
-
-    } else if (req.method === 'PUT') {
-        handlePut(req);
-    }
-
-    return {
-        body: {'Hello': name, 'Method': req.method},
-        contentType: 'application/json'
-    };
-};</code></pre>
-</div>
+<p>As an alternative to using 3rd party front-end frameworks like Next.js, you may use Enonic XP and Enonic Apps natively to deploy Content Schemas, and deliver advanced websites.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -549,17 +469,41 @@ exports.all = function (req) {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-To handle routing and filters in web apps, the implementer should use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a>.
+TUTORIALS HERE!
 </td>
 </tr>
 </table>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="sites_vs_webapps"><a class="link" href="#sites_vs_webapps">Sites vs Webapps</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Websites are essentially webapps where the URLs are controlled by editors, rather than the developers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Unlike XP webapps, XP sites do not have a default controller, but instead rely on resolving controllers based on the content being requested.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="multiple_apps_per_site"><a class="link" href="#multiple_apps_per_site">Multiple apps per site</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sites may be powered by multiple apps. The apps may even collaborate on processing and responding to a single request. Similar to webapps, developers can use filters and mappings to take control over URL patterns when needed.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

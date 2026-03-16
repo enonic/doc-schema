@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Admin engine</title>
+<title>Component API</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,12 +437,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Admin engine</h1>
+<h1>Component API</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#endpoint">Endpoint</a></li>
-<li><a href="#request_pipeline">Request pipeline</a></li>
+<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
 </ul>
 </div>
 </div>
@@ -450,47 +449,51 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>XP applications using the <a href="../../framework.ahtml">XP framework</a> are essentially powered by the runtime&#8217;s HTTP engine.</p>
+<p>The component API enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="endpoint"><a class="link" href="#endpoint">Endpoint</a></h2>
+<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Admin engine is responsible for processing of site requests on the endpoint <code>:8080/admin/*</code></p>
+<p>Page components may also be directly accessed.
+For instance, one may render only the first part within in a page&#8217;s main region.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="request_pipeline"><a class="link" href="#request_pipeline">Request pipeline</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The site pipeline is executed as a subset of the <a href="../engines.ahtml#common_request_pipeline">common pipeline</a>:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="media/admin-pipeline.svg" alt="Admin rendering pipeline" width="768px">
-</div>
+<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Tools handler</dt>
+<dt class="hdlist1">Component rendering</dt>
 <dd>
-<p>Tools are admin apps that extend the Launcher Menu. A tool&#8217;s endpoint is <code>:8080/admin/&lt;app-name&gt;/&lt;tool-name&gt;</code>. The respective widget controller must be located in your project at <code>src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.js</code>.</p>
-</dd>
-<dt class="hdlist1">Widget handler</dt>
-<dd>
-<p>Widgets are admin extensions used by admin tools. The respective widget controller must be located in your project at <code>src/main/resources/admin/widgets/&lt;widget-name&gt;/&lt;widget-name&gt;.js</code>.</p>
+<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
 </dd>
 </dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>By implementing <code>exports.post()</code> or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.</p>
+</div>
+<div class="paragraph">
+<p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

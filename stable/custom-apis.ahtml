@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Component service</title>
+<title>Building custom APIs with the Enonic JS framework</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,11 +437,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Component service</h1>
+<h1>Building custom APIs with the Enonic JS framework</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#endpoint">Endpoint</a></li>
+<li><a href="#built_in_apis">Built-in APIs</a>
+<ul class="sectlevel2">
+<li><a href="#media_apis">Media APIs</a></li>
+<li><a href="#widget_api">Widget API</a></li>
+</ul>
+</li>
+<li><a href="#api_discovery">API discovery</a></li>
+<li><a href="#apiurl">apiUrl()</a></li>
+<li><a href="#reserved_api_application_names">Reserved API application names</a></li>
 </ul>
 </div>
 </div>
@@ -449,27 +462,209 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The component service enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
+<p>A core feature of Enonic XP the ability to build custom APIs and re-use them across the platform - aka the Universal API.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Page components may also be directly accessed.
-For instance, one may render only the first part within in a page&#8217;s main region.</p>
+<p>The Universal API is a powerful feature of the Enonic XP platform that allows developers to create custom APIs that can be securely exposed on the <a href="#<mark>custom-api</mark>">API endpoint</a>. Additionally, the APIs can also be deployed and accessed via other endpoints such as <a href="sites.ahtml">Sites</a>, <a href="webapps.ahtml">Webapps</a> and the <a href="extensions/admin.ahtml">XP Admin</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="features"><a class="link" href="#features">Features</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Main Features of Universal API are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Secure be default</p>
+<div class="ulist">
+<ul>
+<li>
+<p>APIs are not mounted anywhere by default, so you don&#8217;t need to worry about accidental exposure of an admin API on a site.</p>
+</li>
+<li>
+<p>Nobody can access an API without explicitly specifying access rights in the descriptor.</p>
+</li>
+<li>
+<p>Cache pollution is avoided by mounting APIs to a single endpoint (per engine).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Headless friendly. APIs can be mounted on <code>/api</code> endpoint, so they can be used by any client.</p>
+</li>
+<li>
+<p>Granular. Mounting of API must be explicitly specified in engine descriptor files.</p>
+</li>
+<li>
+<p>Modular. APIs can be borrowed from other applications, so you can use existing APIs in your application.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create an API, place an http controller file in the <code>src/main/resources/apis/</code> structure of your project. Each controller needs to be placed in a folder matching its name i.e.: <code>src/main/resources/api/myapi/myapi.js</code></p>
 </div>
 <div class="paragraph">
-<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
+<p>Example controller</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Component rendering</dt>
-<dd>
-<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
-</dd>
-</dl>
+<div class="listingblock">
+<div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.js</div>
+<div class="content">
+<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">exports.GET = function(req) {
+  return {
+    body: {
+      time: new Date()
+    },
+    contentType: 'application/json; charset=utf-8'
+  };
+};</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>API descriptor is required. It provides a way to define the API&#8217;s access, availability on <code>/api</code> endpoint as well as display name, description and documentation URL.</p>
+</div>
+<div class="paragraph">
+<p>Example of Full API descriptor:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;api&gt;
+  &lt;mount&gt;true&lt;/mount&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+  &lt;display-name&gt;My API&lt;/display-name&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+  &lt;description&gt;API for My App&lt;/description&gt; <i class="conum" data-value="3"></i><b>(3)</b>
+  &lt;documentation-url&gt;https://developer.enonic.com/docs/api&lt;/documentation-url&gt; <i class="conum" data-value="4"></i><b>(4)</b>
+  &lt;allow&gt; <i class="conum" data-value="5"></i><b>(5)</b>
+    &lt;principal&gt;role:system.admin&lt;/principal&gt;
+    &lt;principal&gt;role:myapp.myrole&lt;/principal&gt;
+  &lt;/allow&gt;
+&lt;/api&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>By default, APIs are not mounted on the <a href="#endpoint">Generic API endpoint</a>.
+To enable it, <code>&lt;mount&gt;true&lt;/mount&gt;</code> should be set in the descriptor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><strong>display-name</strong> is the name of the API that will be shown in the UI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><strong>description</strong> is a short description of the API that will be shown in the UI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><strong>documentation-url</strong> is a link to the API documentation that will be shown in the UI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>APIs must list principles that have access to it. It is required to specify at least one principal. Use <code>role:system.everyone</code> to make the API public.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="endpoint"><a class="link" href="#endpoint">Endpoint</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>API mount is context-aware:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generic API endpoint <code>/api/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+</li>
+<li>
+<p>For <code>site</code> engine: <code>/site/&lt;site-path&gt;/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+</li>
+<li>
+<p>For <code>webapp</code> engine: <code>(/webapp/&lt;app-name&gt;/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+</li>
+<li>
+<p>For <code>admin</code> engine: <code>/admin/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Engine descriptors need to specify the available API names in the <code>api</code> element, while Generic API endpoint can be disabled in <a href="#descriptor">API Descriptor</a> itself.</p>
+</div>
+<div class="paragraph">
+<p>Example site descriptor with mounting of self-contained and external APIs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site xmlns="urn:enonic:xp:model:1.0"&gt;
+  &lt;apis&gt;
+        &lt;api&gt;ws&lt;/api&gt;
+        &lt;api&gt;app:graphql&lt;/api&gt;
+  &lt;/apis&gt;
+  &lt;form/&gt;
+&lt;/site&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="built_in_apis"><a class="link" href="#built_in_apis">Built-in APIs</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="media_apis"><a class="link" href="#media_apis">Media APIs</a></h3>
+<div class="paragraph">
+<p>The Media APIs is a built-in API that provides access to media files in CMS repositories.</p>
+</div>
+<div class="paragraph">
+<p><a href="media-api.ahtml#image-api">Media Image API</a> is available real-time processing and delivery of rasterized RGB/RGBa image media.</p>
+</div>
+<div class="paragraph">
+<p><a href="media-api.ahtml#attachment-api">Media Attachment API</a> gives access to Content attached binaries - like PDFs, Word documents, etc.</p>
+</div>
+<div class="paragraph">
+<p>These two APIs are always mounted on Generic Endpoint as well as on Sites. Admin Tools and Webapps can also mount them by specifying them in the <code>api</code> element of the engine descriptor.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="widget_api"><a class="link" href="#widget_api">Widget API</a></h3>
+<div class="paragraph">
+<p><a href="../../admin/widgets.ahtml">Widget API</a> provide the way to dynamically extend Admin UI.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api_discovery"><a class="link" href="#api_discovery">API discovery</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GET :8080/api</code> - returns JSON with a list of all available APIs in the system.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="apiurl"><a class="link" href="#apiurl">apiUrl()</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To safely generate an API URL, use the <code>apiUrl()</code> function that is part of the <a href="../../api/lib-portal.ahtml">Portal Library</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -478,23 +673,57 @@ For instance, one may render only the first part within in a page&#8217;s main r
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>By implementing <code>exports.post()</code> or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.</p>
-</div>
-<div class="paragraph">
-<p>Developers may also check if a component is rendered inline, or directly by using the request context.
-This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
-</div>
+When invoked, the function will generate a contextual service url based on the context of the current controller.
 </td>
 </tr>
 </table>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="reserved_api_application_names"><a class="link" href="#reserved_api_application_names">Reserved API application names</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Applications names without namespace are reserved.
+This list includes, but not limited to, the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>media</code></p>
+</li>
+<li>
+<p><code>admin</code></p>
+</li>
+<li>
+<p><code>component</code></p>
+</li>
+<li>
+<p><code>attachment</code></p>
+</li>
+<li>
+<p><code>image</code></p>
+</li>
+<li>
+<p><code>asset</code></p>
+</li>
+<li>
+<p><code>service</code></p>
+</li>
+<li>
+<p><code>error</code></p>
+</li>
+<li>
+<p><code>idprovider</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Application config</title>
+<title>Webapp engine and request pipeline</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,13 +437,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Application config</h1>
+<h1>Webapp engine and request pipeline</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#config_folder">Config folder</a></li>
-<li><a href="#config_file">Config file</a></li>
-<li><a href="#accessing_config">Accessing config</a></li>
+<li><a href="#request_pipeline">Request pipeline</a></li>
+<li><a href="#webapp_controller">webapp controller</a></li>
 </ul>
 </div>
 </div>
@@ -451,15 +450,97 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Applications may be configured via file.</p>
+<p>The Webapp engine is responsible for processing of requests on the endpoint <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/*</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="config_folder"><a class="link" href="#config_folder">Config folder</a></h2>
+<h2 id="request_pipeline"><a class="link" href="#request_pipeline">Request pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Your development environment (aka sandbox), can read application-specific configurations files and provision this to each app. By default, it will scan the folder located in <code>$XP_HOME/config/</code></p>
+<p>The webapp pipeline is executed as a subset of the <a href="../engines.ahtml#common_request_pipeline">common pipeline</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="media/webapp-pipeline.svg" alt="Webapp rendering pipeline" width="768px">
+</div>
+</div>
+<div class="paragraph">
+<p>This section describes the full pipeline involved in processing a webapp http request.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Web app controller</dt>
+<dd>
+<p>Invokes the webapp controller of the contextual application</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="webapp_controller"><a class="link" href="#webapp_controller">webapp controller</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To turn your application into a webapp, simply place an HTTP controller called <code>/src/main/resources/webapp/webapp.js</code> into your project.</p>
+</div>
+<div class="paragraph">
+<p>When the application is deployed, the controller will be accessible from</p>
+</div>
+<div class="paragraph">
+<p><code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/</code> (i.e. "localhost:8080/webapp/my.webapp/").</p>
+</div>
+<div class="paragraph">
+<p><code>webapp.js</code> now acts as an <a href="../../framework/http.ahtml#http-controller">HTTP controller</a> and may expose a function for each HTTP method that should be handled: i.e.
+GET, POST, etc.</p>
+</div>
+<div class="paragraph">
+<p>Below is an example webapp controller.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">var mustache = require('/lib/xp/mustache');
+
+// Handles a GET request
+exports.GET = function (req) {
+
+    var view = resolve('my-page.html');
+    var params = {
+        appId: app.name,
+        title: 'Hello world'
+    };
+
+    return {
+        body: mustache.render(view, params),
+        contentType: 'text/html'
+    };
+};
+
+// Handles a POST request
+exports.POST = function (req) {
+    var name = request.params.name;
+
+    return {
+        body: {'Hello': name},
+        contentType: 'application/json'
+    };
+};
+
+// Handles all other method requests
+exports.all = function (req) {
+    if (req.method === 'DELETE') {
+        handleDelete(req);
+
+    } else if (req.method === 'PUT') {
+        handlePut(req);
+    }
+
+    return {
+        body: {'Hello': name, 'Method': req.method},
+        contentType: 'application/json'
+    };
+};</code></pre>
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -468,68 +549,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The config folder also contains the <a href="../deployment/config.ahtml">standard XP configuration files</a>.
+To handle routing and filters in web apps, the implementer should use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a>.
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="config_file"><a class="link" href="#config_file">Config file</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Simply adding or updating a file called <code>&lt;appname&gt;.cfg</code> in the config folder will automatically restart your application, and provision the new configuration values.</p>
-</div>
-<div class="paragraph">
-<p>This is a hot restart, and will typically be very fast. XP itself does not need to be restarted.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you&#8217;re operating an XP cluster, the configuration file should be copied to every server node - this is because XP by default will run all applications on every node in the cluster.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="accessing_config"><a class="link" href="#accessing_config">Accessing config</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Developers can easily access the application&#8217;s config via the JavaScript controllers.</p>
-</div>
-<div class="paragraph">
-<p>Given the following configuration file:</p>
-</div>
-<div class="paragraph">
-<p>&lt;appname&gt;.cfg</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">secretkey = 123456789</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The value can be optained using a single line of code:</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample JS controller</div>
-<div class="content">
-<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">var myKey = app.config.secretkey;</code></pre>
-</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

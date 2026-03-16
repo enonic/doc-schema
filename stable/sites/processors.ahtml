@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Application API</title>
+<title>Response Processors</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,28 +437,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Application API</h1>
+<h1>Response Processors</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#functions">Functions</a>
-<ul class="sectlevel2">
-<li><a href="#get">get</a></li>
-<li><a href="#list">list</a></li>
-<li><a href="#getdescriptor">getDescriptor</a></li>
-<li><a href="#createvirtualapplication">createVirtualApplication</a></li>
-<li><a href="#deletevirtualapplication">deleteVirtualApplication</a></li>
-<li><a href="#getapplicationmode">getApplicationMode</a></li>
-</ul>
-</li>
-<li><a href="#type_definitions">Type Definitions</a>
-<ul class="sectlevel2">
-<li><a href="#application">Application</a></li>
-<li><a href="#applicationdescriptor">ApplicationDescriptor</a></li>
-<li><a href="#icon">Icon</a></li>
-</ul>
-</li>
+<li><a href="#triggering">Triggering</a></li>
+<li><a href="#execution_order">Execution order</a></li>
 </ul>
 </div>
 </div>
@@ -466,527 +452,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.11.0</span></span> API for fetching and manipulating applications.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Add the following to your <code>build.gradle</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-app:${xpVersion}"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import appLib from '/lib/xp/app';</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You are now ready to use the API.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="get"><a class="link" href="#get">get</a></h3>
-<div class="paragraph">
-<p>Returns an installed application. If a local and a virtual app are both installed with the specified key, then the local one will take precedence and will be returned in the result.</p>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>object</strong> : (<a href="#application"><code>Application</code></a>) Property object of an installed application with the specified key, or <code>null</code> if the application was not found.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">Fetches an application:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {get as getApp} from '/lib/xp/app';
-
-const application = getApp({key: 'my-app-key'});
-
-if (application) {
-  log.info('Application name = %s', application.displayName);
-} else {
-  log.info('Application not found');
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    key: 'my-app',
-    displayName: 'app display name',
-    vendorName: 'vendor name',
-    vendorUrl: 'https://vendor.url',
-    url: 'https://myapp.url',
-    version: '1.0.0',
-    systemVersion: '4.2.3-SNAPSHOT',
-    minSystemVersion: '2.0.0',
-    maxSystemVersion: '3.0.0',
-    modifiedTime: '2020-09-25T10:00:00Z',
-    started: true,
-    system: false
-};</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="list"><a class="link" href="#list">list</a></h3>
-<div class="paragraph">
-<p>Fetches all installed applications. If a local and a virtual app are both installed with the same key, then the local one will take precedence and will be returned in the result.</p>
-</div>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>object[]</strong> : (<a href="#application"><code>Application[]</code></a>) Array of applications' property objects, or an empty array if there are no installed applications.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">Fetching all applications:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {list} from '/lib/xp/app';
-const apps = list();</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [
-    {
-        key: 'app1',
-        displayName: 'app display name',
-        vendorName: 'vendor name',
-        vendorUrl: 'https://vendor.url',
-        url: 'https://myapp.url',
-        version: '1.0.0',
-        systemVersion: '1.21.3',
-        minSystemVersion: '2.0.0',
-        maxSystemVersion: '3.0.0',
-        modifiedTime: '2020-09-25T10:00:00Z',
-        started: true,
-        system: false
-    },
-    {
-        key: 'app2',
-        displayName: 'app display name 2',
-        vendorName: 'vendor name 2',
-        vendorUrl: 'https://vendor2.url',
-        url: 'https://myapp2.url',
-        version: '4.1.2',
-        systemVersion: '1.2.33-SNAPSHOT',
-        minSystemVersion: '5.3.11',
-        maxSystemVersion: '3.0.6',
-        modifiedTime: '2021-09-25T10:00:00Z',
-        started: false,
-        system: true
-    }
-];</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="getdescriptor"><a class="link" href="#getdescriptor">getDescriptor</a></h3>
-<div class="paragraph">
-<p>Returns descriptor of an installed application.</p>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>object</strong> : (<a href="#applicationDescriptor"><code>ApplicationDescriptor</code></a>) Application descriptor.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">Fetches application descriptor:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getDescriptor} from '/lib/xp/app';
-const descriptor = getDescriptor({key: 'my-app-key'});</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    key: 'my-app',
-    description: 'my app description',
-    icon: {
-        data: {},
-        mimeType: 'image/png',
-        modifiedTime: '2021-12-03T10:15:30Z'
-    }
-};</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="createvirtualapplication"><a class="link" href="#createvirtualapplication">createVirtualApplication</a></h3>
-<div class="paragraph">
-<p>Creates a virtual application (along with its schema repository nodes) with the specified key.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-This function requires the Schema Admin role. It means that user role in the current context may lack sufficient permissions, for example when executed from inside a service - in this case you must explicitly execute the function in the <a href="lib-context.ahtml#runcontext">context</a> of <code>system.schema.admin</code> role.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with params</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>object</strong> : (<a href="#application"><code>Application</code></a>) Property object of the created application.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">creates an app with <code>my-app-key</code> key:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {createVirtualApplication} from '/lib/xp/app';
-
-const app = createVirtualApplication({
-    key:'my-app-key'
-});</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="deletevirtualapplication"><a class="link" href="#deletevirtualapplication">deleteVirtualApplication</a></h3>
-<div class="paragraph">
-<p>Removes a virtual application with the specified key.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-This function requires the Schema Admin role. It means that user role in the current context may lack sufficient permissions, for example when executed from inside a service - in this case you must explicitly execute the function in the <a href="lib-context.ahtml#runcontext">context</a> of <code>system.schema.admin</code> role.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with params</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>boolean</strong> : <code>true</code> if deletion succeeded, otherwise <code>false</code>.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">removes an app with <code>my-app-key</code> key:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {deleteVirtualApplication} from '/lib/xp/app';
-
-const result = deleteVirtualApplication({
-    key:'my-app-key'
-});</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="getapplicationmode"><a class="link" href="#getapplicationmode">getApplicationMode</a></h3>
-<div class="paragraph">
-<p>Fetches mode of an application with the specified key.</p>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with params</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1.0101%;">
-<col style="width: 1.0101%;">
-<col style="width: 97.9798%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>string</strong> : Application mode. Can be one of the following types:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>bundled</code> - an installed and active application, no virtual app with the same key exists;</p>
-</li>
-<li>
-<p><code>virtual</code> - a "virtual", node-based application, no bundled app with the same key exists;</p>
-</li>
-<li>
-<p><code>augmented</code> - both bundled and virtual application co-exist with the same application key.</p>
-</li>
-</ul>
+<p>A special filter, mainly used to inject page contributions.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -995,237 +461,130 @@ const result = deleteVirtualApplication({
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Installed but disabled bundled applications are considered missing.
+Response processors are only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph lead">
-<p>Example</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Proessors get executed between the <code>component rendring</code> step, and the <code>contributions filter</code> in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> pipeline. Response processors are commonly used by apps that need to inject &lt;&lt;<a href="contributions.ahtml">page contributions</a> without placing a component on the page.</p>
+</div>
+<div class="paragraph">
+<p>Use cases are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Dynamically adding page contributions (i.e. script tags)</p>
+</li>
+<li>
+<p>General manipulation of the response markup i.e. headers or body (i.e. adding SEO tags).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Consider using regular <a href="filters.ahtml">HTTP Filters</a> for other use-cases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a response processor by placing a controller file in you project folder under <code>src/main/resources/site/processors</code> i.e. <code>src/main/resources/site/processors/myprocessor.js</code></p>
+</div>
+<div class="paragraph">
+<p>The controller must export a <code>responseProcessor</code>. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a <code>bodyEnd</code> <a href="contributions.ahtml">page contribution</a> to the response.</p>
 </div>
 <div class="listingblock">
-<div class="title">fetches mode of an application with <code>my-app-key</code> key:</div>
+<div class="title">processors/tracker.js</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getApplicationMode} from '/lib/xp/app';
-const result = getApplicationMode({
-    key:'my-app-key'
-});</code></pre>
-</div>
+<pre class="highlight"><code class="language-js" data-lang="js">exports.responseProcessor = function (req, res) {
+    var trackingScript = '&lt;script src="http://some.cdn/js/tracker.js"&gt;&lt;/script&gt;';
+
+    // Check if contribution field exists, if not create it
+    var bodyEnd = res.pageContributions.bodyEnd;
+    if (!bodyEnd) {
+        res.pageContributions.bodyEnd = [];
+    }
+
+    // Add contribution
+    res.pageContributions.bodyEnd.push(trackingScript);
+
+    return res;
+};</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="type_definitions"><a class="link" href="#type_definitions">Type Definitions</a></h2>
+<h2 id="triggering"><a class="link" href="#triggering">Triggering</a></h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="application"><a class="link" href="#application">Application</a></h3>
-<div id="application" class="paragraph lead">
-<p>Type</p>
-</div>
 <div class="paragraph">
-<p><strong>object</strong></p>
+<p>To wire a processor into the execution pipeline, it must be declared in the app&#8217;s <a href="../cms/sites.ahtml#site_xml">site descriptor</a>, and the application must be added to the respective site.</p>
 </div>
-<div class="paragraph lead">
-<p>Properties</p>
+<div class="listingblock">
+<div class="title">site.xml</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
+  &lt;processors&gt;
+    &lt;response-processor name="tracker" order="10"/&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
+  &lt;/processors&gt;
+  &lt;form/&gt;
+&lt;/site&gt;
+----</code></pre>
 </div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>@name indicates name of the controller file</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>@order indicates execution order, lower value means higher priority</td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vendorName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Vendor name</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vendorUrl</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Vendor url</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Url</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">version</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Version</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">systemVersion</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>System version</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">minSystemVersion</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Min system version</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">maxSystemVersion</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Max system version</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Modified time</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">started</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>true</code> if the application is started. Virtual applications are always started</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">system</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>true</code> for a system application</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="applicationdescriptor"><a class="link" href="#applicationdescriptor">ApplicationDescriptor</a></h3>
-<div id="applicationDescriptor" class="paragraph lead">
-<p>Type</p>
+<div class="paragraph">
+<p>Response processors may change any of the values of the response object, including: HTTP status code, response body, HTTP headers, cookies and page contributions.
+It is also possible to return the response object received without any changes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An application may contain multiple processors.
+Multiple applications can be added to a Site.
+When a page is rendered, all processors are ordered and executed accordingly.</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong></p>
-</div>
-<div class="paragraph lead">
-<p>Properties</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application key</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">`string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">icon</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#icon">Icon</a></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application icon</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="icon"><a class="link" href="#icon">Icon</a></h3>
-<div id="icon" class="paragraph lead">
-<p>Type</p>
+<p>The order of execution is determined by the <code>order</code> value (as defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>) combined with the order of the application list within the site.</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong></p>
+<p>Processors with a <strong>lower</strong> order will be executed first (across all apps within the site).</p>
 </div>
-<div class="paragraph lead">
-<p>Properties</p>
+<div class="paragraph">
+<p>In case there are several filters with the same <code>order</code> number, the position of the applications (as configured on the site) determines the order of execution.</p>
 </div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
+<div class="admonitionblock note">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If <code>applyFilters</code> is set to <code>false</code> in the <a href="http.ahtml#http-response">response object</a>, any further response processing or filters will be ignored. Default value is <code>true</code>.
+</td>
 </tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon stream data</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mimeType</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon mime type</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon modified time</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
 </div>
 </div>

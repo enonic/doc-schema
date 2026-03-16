@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>ID provider service</title>
+<title>Building and delivering Webapps with the Enonic framework</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,13 +437,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>ID provider service</h1>
+<h1>Building and delivering Webapps with the Enonic framework</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#endpoint">Endpoint</a></li>
-<li><a href="#request_pipeline">Request pipeline</a></li>
-<li><a href="#implementation">Implementation</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#static_webapps">Static webapps</a></li>
 </ul>
 </div>
 </div>
@@ -451,63 +451,111 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The ID provider service offers a contextual endpoint for communicating directly with any ID provider.</p>
+<p>The Webapp engine is responsible for processing of requests on the endpoint <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/*</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="endpoint"><a class="link" href="#endpoint">Endpoint</a></h2>
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The endpoint is located at the root of an application or site&#8217;s url space as <code>/_/idprovider/&lt;idprovider-name&gt;</code>.
-A live contextual idprovider URL pattern may for instance be: <code>company.com/_/idprovider/myidprovider</code></p>
+<p>Enonic is capable of delivering web applications natively, without the need for a 3rd party front-end framework. The webapp engine provides a powerful and flexible platform for building and delivering web applications of all kinds, from simple static sites to complex, dynamic applications with advanced features like server-side rendering, real-time updates, and much more.</p>
 </div>
 <div class="paragraph">
-<p>The ID provider itself is added to the context of your site or service via <a href="../../deployment/vhosts.ahtml">Vhost configuration</a>.</p>
+<p>TODO: Tutorials here!</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="request_pipeline"><a class="link" href="#request_pipeline">Request pipeline</a></h2>
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The site pipeline is executed as a subset of the <a href="../engines.ahtml#common_request_pipeline">common pipeline</a>:</p>
+<p>To turn your application into a webapp, simply place an HTTP controller called <code>/src/main/resources/webapp/webapp.js</code> into your project.</p>
 </div>
-<div class="imageblock">
+<div class="paragraph">
+<p>When the application is deployed, the controller will be accessible from</p>
+</div>
+<div class="paragraph">
+<p><code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/</code> (i.e. "localhost:8080/webapp/my.webapp/").</p>
+</div>
+<div class="paragraph">
+<p><code>webapp.js</code> now acts as an <a href="../../framework/http.ahtml#http-controller">HTTP controller</a> and may expose a function for each HTTP method that should be handled: i.e.
+GET, POST, etc.</p>
+</div>
+<div class="paragraph">
+<p>Below is an example webapp controller.</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<img src="media/idprovider-pipeline.svg" alt="ID provider rendering pipeline" width="768px">
+<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">var mustache = require('/lib/xp/mustache');
+
+// Handles a GET request
+exports.GET = function (req) {
+
+    var view = resolve('my-page.html');
+    var params = {
+        appId: app.name,
+        title: 'Hello world'
+    };
+
+    return {
+        body: mustache.render(view, params),
+        contentType: 'text/html'
+    };
+};
+
+// Handles a POST request
+exports.POST = function (req) {
+    var name = request.params.name;
+
+    return {
+        body: {'Hello': name},
+        contentType: 'application/json'
+    };
+};
+
+// Handles all other method requests
+exports.all = function (req) {
+    if (req.method === 'DELETE') {
+        handleDelete(req);
+
+    } else if (req.method === 'PUT') {
+        handlePut(req);
+    }
+
+    return {
+        body: {'Hello': name, 'Method': req.method},
+        contentType: 'application/json'
+    };
+};</code></pre>
 </div>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Login</dt>
-<dd>
-<p>Fixed endpoint for logging in: <code>/_/idprovider/&lt;idprovider-name&gt;/login</code>.</p>
-</dd>
-<dt class="hdlist1">Logout</dt>
-<dd>
-<p>Fixed endpoint for logging out: <code>/_/idprovider/&lt;idprovider-name&gt;/logout</code>.</p>
-</dd>
-<dt class="hdlist1">Controller</dt>
-<dd>
-<p>All other request paths are routed to the ID providers, acting as a regular controller</p>
-</dd>
-</dl>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To handle routing and filters in web apps, the implementer should use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="link" href="#implementation">Implementation</a></h2>
+<h2 id="static_webapps"><a class="link" href="#static_webapps">Static webapps</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For details on how to implement an ID provider, visit the <a href="../../framework/idprovider.ahtml">framework documentation</a></p>
+<p>Static webapps are pre-compiled web applications that serve static content, such as HTML, CSS, and JavaScript files. These web applications do not require any server-side processing.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

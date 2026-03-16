@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Page Contributions</title>
+<meta name="author" content="toc: right">
+<title>Site engine and request pipeline</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,13 +438,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Page Contributions</h1>
+<h1>Site engine and request pipeline</h1>
+<div class="details">
+<span id="author" class="author">toc: right</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#contribution_merging">Contribution merging</a></li>
+<li><a href="#site_request_pipeline">Site request pipeline</a></li>
+<li><a href="#standard_apis">Standard APIs</a></li>
 </ul>
 </div>
 </div>
@@ -451,43 +454,60 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lets components, macros, and processors contribute content to the response HTML header and/or footer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
+<p>The site engine is responsible for processing of requests on the endpoint <code>:8080/site/&lt;project&gt;/&lt;branch&gt;/*</code>.  &lt;project&gt; and &lt;branch&gt; refer to CMS specific projects and branches, for instance <code>:8080/site/default/draft</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="site_request_pipeline"><a class="link" href="#site_request_pipeline">Site request pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some pages and applications require specific scripts to be available within the HTML response of a page, typically placed within a specific location of the markup such as in the &lt;head&gt; section, or close to the body end tag.</p>
+<p>The site pipeline is executed as a subset of the <a href="runtime.ahtml#common_request_pipeline">common pipeline</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="media/site-pipeline.svg" alt="Site rendering pipeline" width="768px">
+</div>
 </div>
 <div class="paragraph">
-<p>Example use cases are:</p>
+<p>This section describes the standard pipeline involved in processing a page request i.e. <code>:8080/site/&lt;project&gt;/&lt;branch&gt;/&lt;path-to-page&gt;</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Mappings</dt>
+<dd>
+<p>Uses path or content based mappings from site descriptor to trigger filters and controllers</p>
+</dd>
+<dt class="hdlist1">Page resolver</dt>
+<dd>
+<p>Looks up content in path, and resolves its controller + config (optionally via page template).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For two content types Page resolver does not resolve any controller.
+- For <code>base:shortcut</code> the referenced content path is returned with status code <code>307 Temporary Redirect</code>.
+- For <code>portal:fragment</code> controller is not applicable. A fragment is rendered directly.</p>
+</div>
+<div class="paragraph">
+<p>For the rest of content types controllers are considered in the following order:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Let a part contribute JavaScript to the page&#8217;s <code>&lt;head&gt;</code> section.</p>
+<p>Controller that is set directly on content.</p>
 </li>
 <li>
-<p>Let a part contribute custom CSS to the <code>&lt;head&gt;</code> of that page.</p>
+<p>Controller that is set on a page template for content.
+If set page template is unavailable (i.e. deleted), Page resolver considers it as if page template was not set.</p>
 </li>
 <li>
-<p>A layout might add a JavaScript tracker to the end of the <code>&lt;body&gt;</code> of the page.</p>
+<p>Controller that is set on the first found page template (in <code>{site}/_templates</code> folder) that supports content&#8217;s content type.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>If no controller is found, response status code is set to <code>404 Not Found</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -496,119 +516,65 @@ Only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Page contributions will only be triggered if the response type is <code>text/html</code> (which is the default)
+In <code>inline</code> rendering mode response status code is set to <code>418</code> instead of <code>404</code>, so Content Studio can switch to alternative rendering.
+In <code>edit</code> rendering mode status code is <code>200</code> instead of <code>404</code> to allow Content Studio to render in-place Controller selector.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>There are four positions in the result HTML where contributed content can be inserted:</p>
-</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">headBegin</dt>
+<dt class="hdlist1">Page renderer</dt>
 <dd>
-<p>After the <code>&lt;head&gt;</code> opening tag.</p>
+<p>Resolves controller and optional configuration (could also come from page template).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If controller is missing, returns 404 (Not found)</p>
+</li>
+<li>
+<p>If controller exists, executes it and returns 200 (OK) by default. Output may potentially include component placeholders</p>
+</li>
+</ul>
+</div>
 </dd>
-<dt class="hdlist1">headEnd</dt>
+<dt class="hdlist1">Response processors</dt>
 <dd>
-<p>Before the <code>&lt;/head&gt;</code> closing tag.</p>
+<p>For text/html responses, any response processors defined in the site descriptor will be executed. Processors may manipulate the result, for instance by adding pageContributions</p>
 </dd>
-<dt class="hdlist1">bodyBegin</dt>
+<dt class="hdlist1">Contributions filter</dt>
 <dd>
-<p>After the <code>&lt;body&gt;</code> opening tag.</p>
+<p>For text/html responses, any pageContributions in the response object will now be merged into the response body.</p>
 </dd>
-<dt class="hdlist1">bodyEnd</dt>
+<dt class="hdlist1">Response filters</dt>
 <dd>
-<p>Before the <code>&lt;/body&gt;</code> closing tag.</p>
+<p>Any filters registered through a mapping may now execute their final processing before the response is returned from the pipeline.</p>
 </dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<h2 id="standard_apis"><a class="link" href="#standard_apis">Standard APIs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The component or controller must add a <code>pageContributions</code> property in the <a href="http.ahtml#http-response">HTTP response object</a>.</p>
+<p>The following Universal API&#8217;s are always available on the site endpoint.</p>
 </div>
 <div class="paragraph">
-<p>Sample controller return adding a script element to <code>headEnd</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">return {
-  body: '&lt;p&gt;Some markup&lt;/p&gt;',
-  pageContributions: {
-    headEnd: [
-      "&lt;script&gt;My script&lt;/script&gt;"
-    ]
-  }
-};</code></pre>
-</div>
+<p>TODO:</p>
 </div>
 <div class="paragraph">
-<p>Changing the <code>headEnd</code> to one of the other possible positions will affect where the code you contributed is merged in the response markup.</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample with multiple contributions</div>
-<div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">return {
-  "body": "&lt;div&gt;...&lt;/div&gt;",
-  "pageContributions": {
-    "headEnd": "value",
-    "bodyEnd": [
-      "value1", "value2"
-    ]
-  }
-};</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Page Contributions are optional.</p>
-</li>
-<li>
-<p>Contribution values are treated as plain text.</p>
-</li>
-<li>
-<p>Values must be unique within each injection point, duplicates will be truncated.</p>
-</li>
-<li>
-<p>If the target tag does not exist in the response body, the contribution will be ignored. I.e. if there is no <code>&lt;head&gt;</code> tag, the contributions to <code>headBegin</code> and  <code>headEnd</code> will be ignored.</p>
-</li>
-<li>
-<p>For consistency, all positions are automatically treated arrays in the aggregated response object, even if there is only a single value.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="contribution_merging"><a class="link" href="#contribution_merging">Contribution merging</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Page contributions are merged into the response markup during a specific step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a>, called <code>Contributions filter</code>. It occurs after <a href="processors.ahtml">page processors</a> and before <a href="mappings.ahtml">the site filters</a>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Duplicate page contributions will automatically be removed, so developers do not have to worry about this.
-</td>
-</tr>
-</table>
+<p>ASSET
+COMPONENT
+IMAGE
+ATTACHMENT</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

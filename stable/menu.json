@@ -6,91 +6,57 @@
     },  
     {
       "title": "Development kit",
-      "document": "dev-kit",
+      "document": "edk",
       "menuItems": [
         {
+          "title": "CLI",
+          "document": "edk/cli"
+        },
+        {
           "title": "Sandboxes",
-          "document": "sandboxes"
-        },  
+          "document": "edk/sandboxes"
+        },
         {
           "title": "Starters",
-          "document": "starters"
+          "document": "edk/starters"
         },          
         {
           "title": "Build system",
-          "document": "builds"
+          "document": "edk/builds"
         },
         {
-          "title": "CI/CD",
-          "document": "ci-cd"
-        },
-        {
-          "title": "Starters",
-          "document": "starters"
-        },  
+          "title": "Libraries",
+          "document": "edk/libraries"
+        },          
         {
           "title": "TypeScript",
-          "document": "typescript"
+          "document": "edk/typescript"
         }
       ]
     },
     {
-      "title": "Custom APIs",
-      "document": "building-apis"
-    },  
-    {
-      "title": "Extensions",
-      "document": "building-extensions",
-      "menuItems": [
-        {
-          "title": "Background tasks",
-          "document": "tasks"
-        },
-        {
-          "title": "Admin tools",
-          "document": "admin-tools"
-        },
-        {
-          "title": "Admin Widgets",
-          "document": "admin-widgets"
-        },
-        {
-          "title": "ID providers",
-          "document": "id-providers"
-        },
-        {
-          "title": "Metrics",
-          "document": "metrics"
-        }
-      ] 
+      "title": "CI/CD",
+      "document": "ci-cd"
     },
-    {
-      "title": "Webapps",
-      "document": "building-webapps"
-    },
-    {
-      "title": "Sites and schemas",
-      "document": "building-sites"
-    },  
     {
       "title": "Runtime",
       "document": "runtime",
       "menuItems": [
         {
-          "title": "Architecture",
-          "document": "architecture"
-        },      
+          "title": "Overview",
+          "document": "runtime/overview"
+        },
         {
-          "title": "Events",
-          "document": "events"
-        },      
+          "title": "Web engine",
+          "document": "runtime/web-engine"
+        },
         {
           "title": "Context",
-          "document": "context"
+          "document": "runtime/context"
         },      
         {
           "title": "Configuration",
-          "document": "config"
+          "document": "runtime/config"
         }      
       ]
     },
@@ -165,6 +131,62 @@
         {
           "title": "Java bridge",
           "document": "framework/java-bridge"
+        }
+      ]
+    },
+    {
+      "title": "Deploying schemas",
+      "document": "schemas"
+    },
+    {
+      "title": "Serving static assets",
+      "document": "static-assets"
+    },
+    {
+      "title": "Building APIs",
+      "document": "custom-apis"
+    },  
+    {
+      "title": "Building Extensions",
+      "document": "extensions",
+      "menuItems": [
+        {
+          "title": "Background tasks",
+          "document": "extensions/tasks"
+        },
+        {
+          "title": "Admin tools",
+          "document": "extensions/admin-tools"
+        },
+        {
+          "title": "Admin Widgets",
+          "document": "extensions/admin-widgets"
+        },
+        {
+          "title": "ID providers",
+          "document": "extensions/id-providers"
+        },
+        {
+          "title": "Metrics",
+          "document": "extensions/metrics"
+        }
+      ] 
+    },
+    {
+      "title": "Building Webapps",
+      "document": "webapps"
+    },
+    {
+      "title": "Building Sites",
+      "document": "sites",
+      "menuItems": [
+        {
+          "title": "Content Schemas",
+          "document": "sites/schemas"
+        },
+        {
+          "title": "Site engine",
+          "document": "sites/site-engine"
         }
       ]
     },

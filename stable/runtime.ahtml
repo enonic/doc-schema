@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>XP Runtime</title>
+<title>The Enonic XP runtime</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,22 +437,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>XP Runtime</h1>
+<h1>The Enonic XP runtime</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#architecture">Architecture</a>
+<li><a href="#web_engines">Web Engines</a>
 <ul class="sectlevel2">
-<li><a href="#osgi_module_system">OSGi module system</a></li>
-<li><a href="#multi_threaded">Multi-threaded</a></li>
-<li><a href="#multi_app">Multi-app</a></li>
-<li><a href="#optimised">Optimised</a></li>
+<li><a href="#common_request_pipeline">Common request pipeline</a></li>
 </ul>
 </li>
-<li><a href="#stateful_and_stateless">Stateful and stateless</a></li>
-<li><a href="#scalable">Scalable</a></li>
-<li><a href="#management_and_metrics_api">Management and metrics API</a></li>
+<li><a href="#underscore_endpoint">Underscore endpoint</a></li>
 </ul>
 </div>
 </div>
@@ -460,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Enonic XP runtime powers all applications running on the platform.</p>
+<p>Applications built with the <a href="framework.ahtml">Enonic framework</a> are powered by the XP&#8217;s runtime.</p>
 </div>
 </div>
 </div>
@@ -468,88 +463,113 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To simplify development, upgrades and maintenance, Enonic XP was built like an operating system where developers can rely on the version of the platform when building Enonic apps.</p>
-</div>
-<div class="paragraph">
-<p><a href="framework.ahtml">Enonic&#8217;s JavaScript framework</a> execute on top of the runtime, which means they have access to XP&#8217;s platform services, such as the <a href="storage.ahtml">NoSQL Storage</a>, clustering and CMS features.</p>
-</div>
-<div class="paragraph">
-<p>The runtime also provides a <a href="runtime/engines.ahtml">execution pipeline</a> for processing requests, and a <a href="runtime/task-engine.ahtml">task engine</a> for running scheduled and on-demand tasks.</p>
+<p>The runtime is responsible for executing code deployed to the XP platform, and serves as the foundation for all Enonic apps and the Enonic JavaScript/TypeScript framework. It provides developers with direct access to all of the XP platforms features, including NoSQL storage, clustering, and much more. The primary triggers for executing code are HTTP requests, scheduled jobs, and events.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="architecture"><a class="link" href="#architecture">Architecture</a></h2>
+<h2 id="web_engines"><a class="link" href="#web_engines">Web Engines</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The XP runtime is built on top of GraalVM, and a series of open source components. Still, XP apps are primarily developed using JavaScript - thanks to the embedded JavaScript engine and framework. However, due to running on the JVM, XP apps may also run other JVM compatible code and libraries.</p>
+<p>By default, the XP runtime serves HTTP requests from <code>port 8080</code> (customizable) via four endpoints, each serving a specific purpose and powered by a specific engine:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="apis.ahtml">API</a> <code>/api</code></p>
+</li>
+<li>
+<p><a href="admin.ahtml">Admin</a> <code>/admin</code></p>
+</li>
+<li>
+<p><a href="webapps.ahtml">Webapps</a> <code>/webapp</code></p>
+</li>
+<li>
+<p><a href="sites.ahtml">Sites</a> <code>/site</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each engine serves a specific purpose and has its own request processing and execution pipeline. However, they all share a common request pipeline:</p>
 </div>
 <div class="sect2">
-<h3 id="osgi_module_system"><a class="link" href="#osgi_module_system">OSGi module system</a></h3>
+<h3 id="common_request_pipeline"><a class="link" href="#common_request_pipeline">Common request pipeline</a></h3>
 <div class="paragraph">
-<p>The runtime uses the OSGi module system to isolate code (bundles) - and controls the ability to communicate between them. <a href="apps.ahtml">XP Applications</a> and XP&#8217;s system bundles essentially work in the same way - with their own life cycle and ability to install, start, stop and uninstall.</p>
+<p>All web engines share a common request pipeline as specified below:</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="runtime/media/runtime-architecture.svg" alt="Simplified view of the XP runtime internals" width="900">
+<img src="engines/media/common-pipeline.svg" alt="Common HTTP request pipeline" width="768px">
 </div>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Vhost filters</dt>
+<dd>
+<p>Request routing based on <a href="../deployment/vhosts.ahtml">virtual hosts</a></p>
+</dd>
+<dt class="hdlist1">Java request filters</dt>
+<dd>
+<p>Optional Java request filters</p>
+</dd>
+<dt class="hdlist1">Autologin filter</dt>
+<dd>
+<p>The <a href="../deployment/vhosts.ahtml">virtual host contextual ID provider</a> will be invoked, unless a user already exists in the context</p>
+</dd>
+<dt class="hdlist1">Engine specific pipeline</dt>
+<dd>
+<p>Pipeline of the matching web engine will be executed</p>
+</dd>
+<dt class="hdlist1">Auth handler</dt>
+<dd>
+<p>Triggered if the pipeline returns a "401: Unauthorized" error code, the contextual ID Provider will be invoked, optionally handling the request</p>
+</dd>
+<dt class="hdlist1">Error handler</dt>
+<dd>
+<p>If the pipeline returns an unhandled error (everything but "200: OK") that was not handled by an ID Provider, the contextual error handler will kick in.</p>
+</dd>
+<dt class="hdlist1">Java response filters</dt>
+<dd>
+<p>Optional Java response filters</p>
+</dd>
+<dt class="hdlist1">Standard error handler</dt>
+<dd>
+<p>Finally, if the request fails with an error that is still unhandled, XP&#8217;s standard error handler will kick in</p>
+</dd>
+</dl>
 </div>
-<div class="sect2">
-<h3 id="multi_threaded"><a class="link" href="#multi_threaded">Multi-threaded</a></h3>
-<div class="paragraph">
-<p>Unlike popular JavaScript runtimes such as NodeJS, the XP runtime is multi-threaded. This allows for utilisation of multi-core CPUs, true parallell execution, and handling of large loads within a single instance.</p>
-</div>
-<div class="paragraph">
-<p>This is also important from a development perspective. Since the XP runtime is multi-threaded, developers also benefit from a simplified development model, debugging, and the ability to run threaded operations when needed. XP&#8217;s <a href="runtime/task-engine.ahtml">task engine</a> for instance runs all tasks as separate threads.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="multi_app"><a class="link" href="#multi_app">Multi-app</a></h3>
-<div class="paragraph">
-<p>The architecture also allow you to run multiple applications in a single runtime. Each application may be built, installed, started and stopped independently - and even cooperate on progressing a single request. This can for instance be seen in the <a href="runtime/engines.ahtml">HTTP engines</a> and the execution pipeline. This basically means that most XP apps consume very little resources beyond the actual processing, and that a single runtime may potentially contain many applications which are mostly idle when not executing - similar to a serverless architecture, but without the limitations.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="optimised"><a class="link" href="#optimised">Optimised</a></h3>
-<div class="paragraph">
-<p>XP apps can benefit from the highly optimised JVM, but also optimisations in XP&#8217;s JavaScript framework. Also, the highly performance NoSQL storage enable access to large datasets with minimal latency.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="stateful_and_stateless"><a class="link" href="#stateful_and_stateless">Stateful and stateless</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The XP runtime is capable of running in both stateful (using the embedded NoSQL storage) and stateless mode. A single instance deployment will do both, but a clustered deployment may for instance be split into back-end and front-end nodes.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="scalable"><a class="link" href="#scalable">Scalable</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>XP can easily be scaled by setting up a <a href="deployment/strategies.ahtml">cluster of runtime nodes</a>.
-It can run in virtually any infrastructure, and also be managed by Kubernetes or similar container orchestration engines for automatic scaling and more.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="management_and_metrics_api"><a class="link" href="#management_and_metrics_api">Management and metrics API</a></h2>
+<h2 id="underscore_endpoint"><a class="link" href="#underscore_endpoint">Underscore endpoint</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The runtime provides a <a href="runtime/management.ahtml">management API</a>, that amongst others support as installation of apps, dumping and loading data. This is commonly accessed using the Enonic CLI.</p>
+<p>All engines reserve the use of the underscore character <code>\_</code> (by itself) to provide contextual access to the <a href="api.ahtml">Universal API</a>.</p>
 </div>
 <div class="paragraph">
-<p>Additionally, the runtime also exposes a <a href="runtime/statistics.ahtml">metrics API</a>, providing access to runtime statistics. Like many other parts of XP, the metrics API may easily be extended with XP apps, and provide additional data as needed.</p>
+<p>TODO:
+This applies to at any location within the URL path hierarchy.
+For instance, the following request <code>:8080/webapp/&lt;webapp&gt;/_/*</code> or <code>:8080/site/&lt;project&gt;/&lt;branch&gt;/some/content/_/*</code> are reserved.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Contextual APIs</dt>
+<dd>
+<p>Provide access to <a href="#">Http service controllers</a> through the <code>/_/service/*</code> request pattern</p>
+</dd>
+<dt class="hdlist1">IDprovider Service</dt>
+<dd>
+<p>For direct interaction with the contextual <a href="engines/idprovider-service.ahtml">IDprovider</a> based on the <code>/_/idprovider/*</code> request patterns</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>

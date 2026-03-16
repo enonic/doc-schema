@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>TypeScript definitions</title>
+<title>Page Contributions</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,291 +437,178 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>TypeScript definitions</h1>
+<h1>Page Contributions</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#intro">Intro</a></li>
-<li><a href="#install_types">Install types</a></li>
-<li><a href="#enonic_libraries">Enonic Libraries</a>
-<ul class="sectlevel2">
-<li><a href="#global">Global</a></li>
-<li><a href="#core">Core</a></li>
-<li><a href="#content">Content</a></li>
-<li><a href="#additional_types">Additional types</a></li>
-</ul>
-</li>
-<li><a href="#usage">Usage</a>
-<ul class="sectlevel2">
-<li><a href="#require">require</a></li>
-<li><a href="#es6_style_import">ES6-style import</a></li>
-</ul>
-</li>
-<li><a href="#configuration">Configuration</a>
-<ul class="sectlevel2">
-<li><a href="#require_2">Require</a></li>
-<li><a href="#other_imports">Other imports</a></li>
-</ul>
-</li>
-<li><a href="#beans">Beans</a>
-<ul class="sectlevel2">
-<li><a href="#option_1">Option 1</a></li>
-<li><a href="#option_2">Option 2</a></li>
-</ul>
-</li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#contribution_merging">Contribution merging</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="intro"><a class="link" href="#intro">Intro</a></h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>We default to TypeScript in our code examples and starters. This section describes how to configure and use our official TypeScript types - all aligned with our standard <a href="../api.ahtml">JS APIs</a>.</p>
+<p>Lets components, macros, and processors contribute content to the response HTML header and/or footer.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="install_types"><a class="link" href="#install_types">Install types</a></h2>
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To add types for corresponding library use NPM (or similar package manager) and install them as any other dependency. All types can be found under <a href="https://www.npmjs.com/org/enonic-types">@enonic-types</a> organisation on NPM.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="enonic_libraries"><a class="link" href="#enonic_libraries">Enonic Libraries</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example, you have a <code>lib-auth</code> gradle dependency:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-gradle" data-lang="gradle">dependencies {
-  include "com.enonic.xp:lib-auth:${xpVersion}"
-}</code></pre>
-</div>
+<p>Some pages and applications require specific scripts to be available within the HTML response of a page, typically placed within a specific location of the markup such as in the &lt;head&gt; section, or close to the body end tag.</p>
 </div>
 <div class="paragraph">
-<p>To add type definitions for the library, install dependency from NPM:</p>
+<p>Example use cases are:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">npm i --save-dev @enonic-types/lib-auth</code></pre>
+<div class="ulist">
+<ul>
+<li>
+<p>Let a part contribute JavaScript to the page&#8217;s <code>&lt;head&gt;</code> section.</p>
+</li>
+<li>
+<p>Let a part contribute custom CSS to the <code>&lt;head&gt;</code> of that page.</p>
+</li>
+<li>
+<p>A layout might add a JavaScript tracker to the end of the <code>&lt;body&gt;</code> of the page.</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="global"><a class="link" href="#global">Global</a></h3>
-<div class="paragraph">
-<p>Along with library types it is <strong>higlhy recommended</strong> to install definitions for global objects (<code>app</code>, <code>__</code>, <code>log</code>) and functions (<code>resolve</code>, <code>require</code>):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">npm i --save-dev @enonic-types/global</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Since <code>global</code> types are not placed under the <code>node_modules/@types</code>, it is neccessary to include them manually:</p>
-</div>
-<div class="paragraph">
-<p><code>tsconfig.json</code></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "compilerOptions": {
-    "types": [
-      "@enonic-types/global"
-    ]
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="core"><a class="link" href="#core">Core</a></h3>
-<div class="paragraph">
-<p>There are types that are shared between other libraries (like <code>Content</code> or <code>Principal</code>). Such types reside in the <code>core</code> package. It is not necessary to include this dependency into your project, as all libraries export related core types, e.g. Content library exports <code>Content`</code> type. But if you want to use these type directly, you&#8217;ll need to install them:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">npm i --save-dev @enonic-types/core</code></pre>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Page contributions will only be triggered if the response type is <code>text/html</code> (which is the default)
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>and then import them in your TypeScript code:</p>
+<p>There are four positions in the result HTML where contributed content can be inserted:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">import type {Content} from '@enonic-types/core';</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="content"><a class="link" href="#content">Content</a></h3>
-<div class="paragraph">
-<p><code>Content</code> contains the <code>x</code> property that has a very special <code>XpXData</code> type.</p>
-</div>
-<div class="paragraph">
-<p><code>XpXData</code> is an interface that is added to the global scope, so it can be modified using the <a href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces">declaration merging</a>. This allows you to set the shape of the XData in your project, simply by declaring the <code>XpXData</code> like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">declare global {
-    interface XpXData {
-        'com-mysite-app': {
-            metadata: {
-                metaTagTitle: string;
-                metaTagImageId: string;
-            }
-        }
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="additional_types"><a class="link" href="#additional_types">Additional types</a></h3>
-<div class="paragraph">
-<p><code>Content</code> is a complex type that contains unions and maps that are not exported but may be needed during the development. Actually, these types can easily be retrieved from the <code>Content</code> itself:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">import type {Content} from '@enonic-types/core';
-
-type Attachments = Content['attachments'];
-
-type ContentInheritType = Content['inherit'];
-
-type Workflow = Content['workflow'];</code></pre>
-</div>
-</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">headBegin</dt>
+<dd>
+<p>After the <code>&lt;head&gt;</code> opening tag.</p>
+</dd>
+<dt class="hdlist1">headEnd</dt>
+<dd>
+<p>Before the <code>&lt;/head&gt;</code> closing tag.</p>
+</dd>
+<dt class="hdlist1">bodyBegin</dt>
+<dd>
+<p>After the <code>&lt;body&gt;</code> opening tag.</p>
+</dd>
+<dt class="hdlist1">bodyEnd</dt>
+<dd>
+<p>Before the <code>&lt;/body&gt;</code> closing tag.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="require"><a class="link" href="#require">require</a></h3>
 <div class="paragraph">
-<p>After <code>global</code> and library types are installed and configured in <code>tsconfig.json</code>, libraries can be imported just like they would be in JS code:</p>
+<p>The component or controller must add a <code>pageContributions</code> property in the <a href="http.ahtml#http-response">HTTP response object</a>.</p>
+</div>
+<div class="paragraph">
+<p>Sample controller return adding a script element to <code>headEnd</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">const libAuth = require('/lib/xp/auth');</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="es6_style_import"><a class="link" href="#es6_style_import">ES6-style import</a></h3>
-<div class="paragraph">
-<p>If you are planning to use <code>import</code> in your code and transpile it with the default <code>tsc</code> TypeScript compiler, you&#8217;ll need to add proper types mapping to your configuration via <code>baseUrl</code> and <code>paths</code> properties in <code>tsconfig.json</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "/lib/xp/auth": ["node_modules/@enonic-types/lib-auth"],
-    }
+<pre class="highlight"><code class="language-js" data-lang="js">return {
+  body: '&lt;p&gt;Some markup&lt;/p&gt;',
+  pageContributions: {
+    headEnd: [
+      "&lt;script&gt;My script&lt;/script&gt;"
+    ]
   }
-}</code></pre>
+};</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then in your code:</p>
+<p>Changing the <code>headEnd</code> to one of the other possible positions will affect where the code you contributed is merged in the response markup.</p>
 </div>
 <div class="listingblock">
+<div class="title">Sample with multiple contributions</div>
 <div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">import {login, logout, getUser, generatePassword} from '/lib/xp/auth';</code></pre>
+<pre class="highlight"><code class="language-js" data-lang="js">return {
+  "body": "&lt;div&gt;...&lt;/div&gt;",
+  "pageContributions": {
+    "headEnd": "value",
+    "bodyEnd": [
+      "value1", "value2"
+    ]
+  }
+};</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Configuring <code>baseUrl</code> and <code>paths</code> will allow the TypeScript compiler to keep the valid paths in the resulting JavaScript files.</p>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Page Contributions are optional.</p>
+</li>
+<li>
+<p>Contribution values are treated as plain text.</p>
+</li>
+<li>
+<p>Values must be unique within each injection point, duplicates will be truncated.</p>
+</li>
+<li>
+<p>If the target tag does not exist in the response body, the contribution will be ignored. I.e. if there is no <code>&lt;head&gt;</code> tag, the contributions to <code>headBegin</code> and  <code>headEnd</code> will be ignored.</p>
+</li>
+<li>
+<p>For consistency, all positions are automatically treated arrays in the aggregated response object, even if there is only a single value.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="require_2"><a class="link" href="#require_2">Require</a></h3>
-<div class="paragraph">
-<p>To add support for type resolution for custom libraries via <code>require</code>, you can redeclare the <code>XpLibraries</code> interface in global scope, which will lead to declaration merging:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">declare global {
-    interface XpLibraries {
-        '/lib/custom/mylib': typeof import('./mylib');
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="other_imports"><a class="link" href="#other_imports">Other imports</a></h3>
-<div class="paragraph">
-<p>If you want to use custom import functions, like <code><em>non_webpack_require</em></code> with Webpack, just use <code>XpRequire</code> from <code>global</code> types for this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">declare const __non_webpack_require__: XpRequire;</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="beans"><a class="link" href="#beans">Beans</a></h2>
+<h2 id="contribution_merging"><a class="link" href="#contribution_merging">Contribution merging</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To create a new Java bean, the <code>__.newBean()</code> function must be used. Making it return a proper type can be done in two ways. Let&#8217;s say, you have created an interface for that bean somewhere in your project:</p>
+<p>Page contributions are merged into the response markup during a specific step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a>, called <code>Contributions filter</code>. It occurs after <a href="processors.ahtml">page processors</a> and before <a href="mappings.ahtml">the site filters</a>.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">interface SomeHelper {
-  help(text: string): void;
-}</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="option_1"><a class="link" href="#option_1">Option 1</a></h3>
-<div class="paragraph">
-<p>You can pass the type argument explicitly. This option is a bit cleaner.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">const helper = __.newBean&lt;SomeHelper&gt;('com.me.project.SomeHelper');</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="option_2"><a class="link" href="#option_2">Option 2</a></h3>
-<div class="paragraph">
-<p>Or you can map the bean name to bean interface. It may be a preferable way to do it, if the bean is used across multiple files:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-ts" data-lang="ts">declare global {
-    interface XpBeans {
-        'com.me.project.SomeHelper': SomeHelper;
-    }
-}
-
-const helper = __.newBean('com.me.project.SomeHelper');</code></pre>
-</div>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Duplicate page contributions will automatically be removed, so developers do not have to worry about this.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-15 16:24:50 UTC
+Last updated 2026-03-16 14:03:29 UTC
 </div>
 </div>
 </body>
