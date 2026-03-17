@@ -1,4 +1,4 @@
-# Agent Instructions for Enonic CMS Documentation
+# Agent Instructions for Enonic Development documentation
 
 This repository contains the reference documentation for Enonic XP application development, written in AsciiDoc.
 
@@ -15,7 +15,7 @@ This project relies on GitHub Actions for building and publishing. There are no 
 - **Source Directory:** All documentation source files are located in `docs/`.
 - **Format:** Content is written in [AsciiDoc](https://asciidoc.org/) (`.adoc`).
 - **Publishing:** The build chrunches and imports the result into Enonic XP, where it will be only one of many aggregated documentation packages. 
-- **Location:** This documentation will be published in a specific location on developer.enonic.com, but controlled from the CMS.
+- **Location:** This documentation will be published in a specific location on developer.enonic.com controlled from the CMS.
 - **Structure:** The structure of the adoc files are mapped to a corresponding relative URL. For example `/docs/framework.adoc` and `/docs/framework/yikes.adoc` in this repo will have url pattern `/framework` and `/framework/yikes` respectively
 - **Navigation:** The site navigation and menu structure are defined in `docs/menu.json`.
 - **Versioning:** Documentation versions are configured in `docs/versions.json`.

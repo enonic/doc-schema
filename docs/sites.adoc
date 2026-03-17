@@ -11,15 +11,13 @@ As an alternative to using 3rd party front-end frameworks like Next.js, you may 
 
 NOTE: TUTORIALS HERE!
 
-
-== Sites vs Webapps
-
-Websites are essentially webapps where the URLs are controlled by editors, rather than the developers. 
-
-
 == Usage
 
-Unlike XP webapps, XP sites do not have a default controller, but instead rely on resolving controllers based on the content being requested.
+Unlike <<webapps#, XP webapps>>, XP sites do not have a default controller, but instead rely on resolving controllers based on the content being requested.
+
+To implement a site, start by placing a site descriptor file in `src/main/resources/site/site.xml` of your project.
+
+Implement at least TODO: Add descriptor example and explain the main elements of it.
 
 
 == Multiple apps per site

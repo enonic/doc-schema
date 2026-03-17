@@ -1,56 +1,25 @@
 = The Enonic XP runtime
 :toc: right
-:imagesdir: engines/media
+:imagesdir: runtime/media
 
 Applications built with the <<framework#,Enonic framework>> are powered by the XP's runtime.
 
 == Introduction
-The runtime is responsible for executing code deployed to the XP platform, and serves as the foundation for all Enonic apps and the Enonic JavaScript/TypeScript framework. It provides developers with direct access to all of the XP platforms features, including NoSQL storage, clustering, and much more. The primary triggers for executing code are HTTP requests, scheduled jobs, and events.
+The runtime is responsible for executing code deployed to the XP platform, and serves as the foundation for the Enonic apps and <<framework#,Enonic's JavaScript framework>>. Developers get direct access to all of XP's platform features, including NoSQL storage, clustering, and much more. 
 
-== Web Engines
+== Execution context
+Code is executed in the context of a request, a task, or an event. Each of these has its own execution pipeline, but they all share a common core. This means that for instance, a request may trigger a task, which in turn triggers an event. This allows for a powerful and flexible architecture, where applications can be built using a combination of these execution contexts, and take advantage of the strengths of each.
 
-By default, the XP runtime serves HTTP requests from `port 8080` (customizable) via four endpoints, each serving a specific purpose and powered by a specific engine:
+== The XP stack
+The XP runtime stands on the shoulders of GraalVM, and a series of open source components. It uses the an embedded JavaScript engine to execute JavaScript code, and provides a powerful and flexible platform for building and delivering digital experiences of all kinds.
 
-* <<apis#,API>> `/api`
-* <<admin#,Admin>> `/admin`
-* <<webapps#,Webapps>> `/webapp`
-* <<sites#,Sites>> `/site`
+image::runtime-architecture.svg[Simplified view of the XP runtime internals, 900]
 
-Each engine serves a specific purpose and has its own request processing and execution pipeline. However, they all share a common request pipeline:
+== Modular and multi-threaded
+The XP runtime allows for running multiple applications in a single instance. Executing code in parallel, or working together across multiple threads. This means that most XP apps consume very little resources beyond the actual processing, and that a single runtime may potentially contain many applications which are mostly idle when not executing.
 
-[[common_request_pipeline]]
-=== Common request pipeline
+== Stateless and Stateful
 
-All web engines share a common request pipeline as specified below:
+Code executing on the runtime is stateless, which means that it does not maintain any state between requests. However, applications may take advantage of the the platform's underlying stateful capabilities, and maintain state in memory or in the NoSQL storage as needed. 
 
-image::common-pipeline.svg[Common HTTP request pipeline, 768px]
-
-Vhost filters:: Request routing based on <<../deployment/vhosts#,virtual hosts>>
-
-Java request filters:: Optional Java request filters
-
-Autologin filter::  The <<../deployment/vhosts#,virtual host contextual ID provider>> will be invoked, unless a user already exists in the context
-
-Engine specific pipeline:: Pipeline of the matching web engine will be executed
-
-Auth handler::  Triggered if the pipeline returns a "401: Unauthorized" error code, the contextual ID Provider will be invoked, optionally handling the request
-
-Error handler:: If the pipeline returns an unhandled error (everything but "200: OK") that was not handled by an ID Provider, the contextual error handler will kick in.
-
-Java response filters:: Optional Java response filters
-
-Standard error handler:: Finally, if the request fails with an error that is still unhandled, XP's standard error handler will kick in
-
-
-== Underscore endpoint
-
-All engines reserve the use of the underscore character `\_` (by itself) to provide contextual access to the <<api#, Universal API>>.
-
-TODO:
-This applies to at any location within the URL path hierarchy.
-For instance, the following request `+:8080/webapp/<webapp>/_/*+` or `+:8080/site/<project>/<branch>/some/content/_/*+` are reserved.
-
-Contextual APIs:: Provide access to <<#,Http service controllers>> through the `/_/service/*` request pattern
-
-IDprovider Service:: For direct interaction with the contextual <<engines/idprovider-service#,IDprovider>> based on the `/_/idprovider/*` request patterns
-
+TODO: Session, NoSQL, lib-grid, lib-cache

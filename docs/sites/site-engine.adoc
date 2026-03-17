@@ -1,12 +1,12 @@
 = Site engine and request pipeline
 toc: right
-:imagesdir: media
+:imagesdir: images
 
 The site engine is responsible for processing of requests on the endpoint `:8080/site/<project>/<branch>/*`.  <project> and <branch> refer to CMS specific projects and branches, for instance `:8080/site/default/draft`
 
 == Site request pipeline
 
-The site pipeline is executed as a subset of the <<runtime#common_request_pipeline,common pipeline>>:
+The site pipeline is executed as a subset of the <<../runtime/web-engine#common_request_pipeline,common pipeline>>:
 
 image::site-pipeline.svg[Site rendering pipeline, 768px]
 
@@ -44,9 +44,9 @@ Contributions filter::  For text/html responses, any pageContributions in the re
 Response filters:: Any filters registered through a mapping may now execute their final processing before the response is returned from the pipeline.
 
 
-== Standard APIs
+== Contextual APIs
 
-The following Universal API's are always available on the site endpoint.
+The following Universal API's are always mounted on the site's underscore endpoint.
 
 TODO:
 

@@ -1,22 +1,31 @@
-= Request pipleline and the web engines
+= Web engine request pipleline
 :toc: right
-:imagesdir: engines/media
+:imagesdir: media
 
 The runtime serves HTTP requests on `port 8080` (customizable) via four purpose-specific endpoints (aka engines)
 
-== Enpoints
+== Engines
 
 A core feature of the XP runtimes is http request handling. `port 8080` (customizable) provides four purpose-specific endpoints (aka engines):
 
 * <<apis#,API>> `/api` - for APIs, microservices and similar
-* <<admin#,Admin>> `/admin` - for administrative tasks and management
-* <<webapps#,Webapps>> `/webapp` - for web applications
-* <<sites#,Sites>> `/site` - for CMS driven websites
+* <<admin#,Admin>> `/admin` - for platform administration
+* <<webapps#,Webapp>> `/webapp` - for web applications
+* <<sites#,Site>> `/site` - for CMS driven websites
 
 Each engine serves a specific purpose and has its own request processing and execution pipeline. However, they all share a common request pipeline:
 
+== Contextual API mounts
+
+<<api#, Universal APIs>> can be mounted contextually in any of the above HTTP endpoints. The underscore character `\_` is reserved to facilitate this without conflicting with other URL patterns.
+
+The special <<../extending/idprovider#,ID provider API>>, is always available on `/_/idprovider/*` across all engines, and facilities pluggable authentication and authorization across the board.
+
+TODO reserved URL patterns:
+TODO: mount in API as well?
+
 [[common_request_pipeline]]
-=== Common request pipeline
+== Common request pipeline
 
 All web engines share a common request pipeline:
 
@@ -24,7 +33,7 @@ image::common-pipeline.svg[Common HTTP request pipeline, 768px]
 
 Vhost filters:: Request routing based on <<../deployment/vhosts#,virtual hosts>>
 
-Java request filters:: Optional Java request filters
+Java request filters:: Optional system level request filters
 
 Autologin filter::  The <<../deployment/vhosts#,virtual host contextual ID provider>> will be invoked, unless a user already exists in the context
 
@@ -34,20 +43,9 @@ Auth handler::  Triggered if the pipeline returns a "401: Unauthorized" error co
 
 Error handler:: If the pipeline returns an unhandled error (everything but "200: OK") that was not handled by an ID Provider, the contextual error handler will kick in.
 
-Java response filters:: Optional Java response filters
+Java response filters:: Optional system level response filters
 
 Standard error handler:: Finally, if the request fails with an error that is still unhandled, XP's standard error handler will kick in
 
 
-== Underscore endpoint
-
-All engines reserve the use of the underscore character `\_` (by itself) to provide contextual access to the <<api#, Universal API>>.
-
-TODO:
-This applies to at any location within the URL path hierarchy.
-For instance, the following request `+:8080/webapp/<webapp>/_/*+` or `+:8080/site/<project>/<branch>/some/content/_/*+` are reserved.
-
-Contextual APIs:: Provide access to <<#,Http service controllers>> through the `/_/service/*` request pattern
-
-IDprovider Service:: For direct interaction with the contextual <<engines/idprovider-service#,IDprovider>> based on the `/_/idprovider/*` request patterns
 

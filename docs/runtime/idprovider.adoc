@@ -1,15 +1,16 @@
-= ID provider service
+= ID provider endpoint
 :toc: right
 :imagesdir: media
 
-The ID provider service offers a contextual endpoint for communicating directly with any ID provider.
+ID provider is implemented as a Universal API, and offers a contextual endpoint for communicating directly with any ID provider.
 
-== Endpoint
+== Mount point
 
-The endpoint is located at the root of an application or site's url space as `+/_/idprovider/<idprovider-name>+`.
-A live contextual idprovider URL pattern may for instance be: `+company.com/_/idprovider/myidprovider+`
+The IDprovider API is implicitly mounted across all web engines as `+/_/idprovider/<idprovider-name>+`. 
 
-The ID provider itself is added to the context of your site or service via <<../../deployment/vhosts#, Vhost configuration>>.
+For a live deployment, it may be reached in a URL-pattern like this: `+company.com/_/idprovider/myidprovider+`
+
+NOTE: The IDprovider instances available in a certain context is controlled by your vhost configuration.
 
 == Request pipeline
 
