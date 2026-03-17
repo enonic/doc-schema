@@ -39,6 +39,10 @@
       "document": "framework",
       "menuItems": [
         {
+          "title": "Request pipeline",
+          "document": "framework/pipeline"
+        },
+        {
           "title": "Controllers",
           "document": "framework/controllers"
         },
@@ -199,39 +203,13 @@
       ]
     },
     {
-      "title": "Runtime",
-      "document": "runtime",
-      "menuItems": [
-        {
-          "title": "Web engines",
-          "document": "runtime/web-engines"
-        },     
-        {
-          "title": "ID provider",
-          "document": "runtime/idprovider"
-        },  
-        {
-          "title": "Configuration",
-          "document": "runtime/config"
-        },      
-        {
-          "title": "HTTP Service",
-          "document": "runtime/http-service"
-        },
-        {
-          "title": "Asset Service",
-          "document": "runtime/asset-service"
-        }
-      ]
+      "title": "Building APIs",
+      "document": "universal-api"
     },
     {
       "title": "Building for the web",
       "document": "web",
       "menuItems": [
-        {
-          "title": "Universal APIs",
-          "document": "web/apis"
-        },
         {
           "title": "Static assets",
           "document": "web/static-assets"

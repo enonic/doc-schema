@@ -1,4 +1,4 @@
-= Building custom APIs with the Enonic JS framework
+= Building Universal APIs
 
 A core feature of Enonic XP the ability to build custom APIs and re-use them across the platform - aka the Universal API.
 
