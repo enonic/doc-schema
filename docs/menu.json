@@ -3,7 +3,7 @@
     {
       "title": "Intro",
       "document": "index"
-    },  
+    },
     {
       "title": "Development kit",
       "document": "edk",
@@ -19,7 +19,7 @@
         {
           "title": "Starters",
           "document": "edk/starters"
-        },          
+        },
         {
           "title": "Build system",
           "document": "edk/builds"
@@ -203,47 +203,47 @@
       ]
     },
     {
-      "title": "Building APIs",
-      "document": "universal-api"
-    },
-    {
-      "title": "Serving Static Assets",
-      "document": "static-assets"
-    },
-    {
       "title": "Deploying CMS schemas",
       "document": "schemas"
     },
     {
-      "title": "Building Sites",
-      "document": "sites",
+      "title": "Examples",
+      "document": "examples",
       "menuItems": [
         {
-          "title": "Mappings",
-          "document": "sites/mappings"
+          "title": "Custom APIs",
+          "document": "universal-api"
         },
         {
-          "title": "Processors",
-          "document": "sites/processors"
+          "title": "Serving Assets",
+          "document": "static-assets"
         },
         {
-          "title": "Contributions",
-          "document": "sites/contributions"
+          "title": "Sites",
+          "document": "sites",
+          "menuItems": [
+            {
+              "title": "Mappings",
+              "document": "sites/mappings"
+            },
+            {
+              "title": "Processors",
+              "document": "sites/processors"
+            },
+            {
+              "title": "Contributions",
+              "document": "sites/contributions"
+            },
+            {
+              "title": "Components",
+              "document": "sites/components"
+            }
+          ]
         },
         {
-          "title": "Components",
-          "document": "sites/components"
-        }
-      ]
-    },
-    {
-      "title": "Building Webapps",
-      "document": "webapps"
-    },
-    {
-      "title": "Extending the platform",
-      "document": "extending",
-      "menuItems": [
+          "title": "Webapps",
+          "document": "webapps"
+        },
         {
           "title": "Admin tools",
           "document": "extending/admin-tools"
@@ -260,7 +260,7 @@
           "title": "Metrics",
           "document": "extending/metrics"
         }
-      ] 
+      ]
     }
   ]
 }

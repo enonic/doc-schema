@@ -1,4 +1,4 @@
-= Building sites with the Enonic JS framework
+= Building Sites
 :toc: right
 :imagesdir: media
 

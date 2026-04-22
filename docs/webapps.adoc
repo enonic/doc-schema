@@ -1,4 +1,4 @@
-= Building and delivering Webapps with the Enonic framework
+= Building Webapps
 :toc: right
 :imagesdir: webapps/images
 
