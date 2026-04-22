@@ -1,4 +1,4 @@
-= Building APIs
+= Building Custom APIs
 
 A core feature of Enonic XP the ability to build custom APIs and re-use them across the platform - aka the Universal API.
 
@@ -116,7 +116,7 @@ These two APIs are always mounted on Generic Endpoint as well as on Sites. Admin
 
 == apiUrl()
 
-To safely generate an API URL, use the `apiUrl()` function that is part of the <<../../api/lib-portal#,Portal Library>>.
+To safely generate an API URL, use the `apiUrl()` function that is part of the <<libraries/lib-portal#, Portal library>>.
 
 NOTE: When invoked, the function will generate a contextual service url based on the context of the current controller.
 

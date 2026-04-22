@@ -109,4 +109,4 @@ Tasks are capable of producing status reports during execution. This is in parti
 
 Additionally, tasks produce a range of pre-defined events throughout their life cycle.
 
-For more details on tasks, visit the <<../api/lib-task#, task API documentation>>.
+For more details on tasks, visit the <<../libraries/lib-task#, Task library>>.

@@ -17,7 +17,7 @@ This error handled will also handle errors that are not site related (admin tool
 
 When an error occurs in the request processing pipeline, the XP framework will look for an error handler to execute.
 For sites specifically, it will (iteratively, in order) go through all applications added to the site,
-and attempt to execute the handler functions until an <<http#http-response, HTTP response>> object is returned.
+and attempt to execute the handler functions until an <<http#response, HTTP response>> object is returned.
 This essentially means that developers may choose not to handle particular errors explicitly.
 If the error is not properly handled, it will fallback to the default XP error handler.
 
@@ -44,7 +44,7 @@ You can choose different handling based on the type of error. A 404 might for in
 == The Error object
 
 The input parameter for handler functions is an error JSON object.
-The object contains the status code, error message, Exception object, and the original <<http#http-request, HTTP request>> object:
+The object contains the status code, error message, Exception object, and the original <<http#request, HTTP request>> object:
 
 .Sample error object
 [source,javascript]

@@ -8,7 +8,7 @@ NOTE: Mappings are only available when using the <<../runtime/engines/site-engin
 
 == Introduction
 
-Mappings are the first processing step in the <<../runtime/engines/site-engine#, site engine>> - and happens before page rendering starts. You may define mappings for both <<controllers#, controllers>> and <<filters#,filters>>. The use cases are vast.
+Mappings are the first processing step in the <<../runtime/engines/site-engine#, site engine>> - and happens before page rendering starts. You may define mappings for both <<../framework/http#, HTTP functions>> and <<../framework/filters#, filters>>. The use cases are vast.
 
 == Usage
 
@@ -40,7 +40,7 @@ Mappings are defined in the <<../cms/sites#site_xml, site descriptor>>. Examples
 </site>
 ----
 
-<1> *@controller* defines the path to a standard <<../framework/controllers#, HTTP controller>>
+<1> *@controller* defines the path to a standard <<../framework/http#, HTTP function>>
 <2> *@order* defines the <<Execution order>> across apps. Default is `50`. A lower number means higher priority.
 <3> *<pattern>* specifies a regular expression based site contextual URL <<Patterns>>. Default is `/.*`
 <4> *<match>* a property condition to evaluate <<Matches>> for the contextual content.

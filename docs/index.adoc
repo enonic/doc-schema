@@ -5,9 +5,9 @@
 Customize and extend Enonic XP with your own code and features
 
 == Introduction
-Enonic XP is a highly modular and customizable platform. Build and deploy <<cms#,content schemas>>, custom APIs, functions, admin extensions, id providers, webapps, and even sites.
+Enonic XP is a highly modular and customizable platform. Build and deploy <<schemas#,content schemas>>, custom APIs, functions, admin extensions, id providers, webapps, and even full blown websites.
 
-The <<edk#, Enonic Development Kit>> (EDK) allow developers to quickly start building.
+The <<tooling#, Tooling>> section covers the CLI, sandboxes, starters, build system, and CI/CD setup that get you building quickly.
 
 == Tutorials
 
@@ -15,32 +15,32 @@ IMPORTANT: For hands on introduction to development and the SDK, visit the https
 
 == Concept
 
-Some call it plugins, other call it modules - all we know is that Enonic apps sounds better. Enonic apps are standalone software packages that can be deployed to Enonic XP to extend its functionality. Content Studio and the Headless API are examples of such applications. They are built using the Enonic Development Kit (EDK).
+Some call it plugins, other call it modules - all we know is that Enonic apps sounds much cooler. Enonic apps are standalone software packages that can be deployed to Enonic XP to extend its functionality and capabilities. Content Studio and the Headless API are examples of such applications, built using the Enonic Development Kit (EDK).
 
-The apps are powered by the <<runtime#, runtime>>, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services: TODO link to system apis.
+Enonic XP is the runtime of these apps, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services via the <<libraries#, standard libraries>>.
 
 == Installation
 
-There are four ways to get your code running on Enonic XP:
+You may install applications to your Enonic XP instance in three different ways:
 
 
-Via API:: Use Enonic CLI to push your application to the Management API. The applications will be available for all nodes in an XP cluster. This approach is commonly used in a CI/CD setup.
+Via CLI:: Use Enonic CLI to push your application via the management API.
 
-Via Admin Console:: Applications can be manually installed through the "Applications" admin app. Once installed, the application will be available for all nodes in an XP cluster.
+Via Admin Console:: Applications can be manually installed through the "Applications" admin app.
 
 Via File system:: File system deployment is most commonly used during development, but it can also be applied for specialized deployment scenarios. Applications deployed on file will only be available on the local node, and overrides applications installed via other alternatives.
 
-Consider a microservice style highly controlled setup where you bundle your app(s) together with the XP runtime and launch it as a separate instance.
+There are endless ways of configuring, isolating and scaling XP apps. For more details, visit the https://developer.enonic.com/docs/xp[XP platform documentation].
 
 == Life Cycle
 
 In addition to installing and uninstalling, XP applications may be started and stopped.
-This is referred to as the life cycle of the application. During the stop and start phases, applications themselves may execute custom code.
+This is referred to as the life cycle of the application. During the stop and start phases, applications may execute customized life cycle scripts.
 
-Starting:: Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application's main.js script will be executed.
+Starting:: Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application's <<framework/main#, main function>> will be executed.
 
 Stopping:: Before uninstalling, applications are automatically stopped on all nodes.
-During the stopping, if it exists, the disposer of the application's main.js script will be executed.
+During the stopping, if it exists, the disposer function of the application's main.js file will be executed.
 
 == Configuration
 

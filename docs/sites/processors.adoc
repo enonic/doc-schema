@@ -74,4 +74,4 @@ Processors with a *lower* order will be executed first (across all apps within t
 
 In case there are several filters with the same ``order`` number, the position of the applications (as configured on the site) determines the order of execution.
 
-NOTE: If `applyFilters` is set to `false` in the <<http#http-response, response object>>, any further response processing or filters will be ignored. Default value is `true`.
+NOTE: If `applyFilters` is set to `false` in the <<../framework/http#response, response object>>, any further response processing or filters will be ignored. Default value is `true`.

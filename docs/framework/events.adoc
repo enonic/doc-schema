@@ -21,4 +21,4 @@ The use cases for events are limitless, but the most common are:
 
 == Implementation
 
-For implementation details, please visit the <<../api/lib-event#,event library>> documentation.
+For implementation details, please visit the <<../libraries/lib-event#,event library>> documentation.

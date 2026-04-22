@@ -1,0 +1,58 @@
+= Functions
+:toc: right
+:imagesdir: ../images
+
+Every `.ts` or `.js` file in an Enonic app is a *module* whose exported functions are callable from anywhere else in the bundle. On top of this module system, the framework defines *contracts* that bind specific files — or specific exports within them — to triggers such as an HTTP request, an event, a scheduled time, or the app's own lifecycle.
+
+TIP: Code examples throughout the documentation use TypeScript. Strip the type annotations for plain JavaScript.
+
+== Modules and the bundle
+
+Each source file is a CommonJS module. Declare the functions and values the module exposes on `exports`:
+
+[source,typescript]
+----
+// /lib/greet.ts
+exports.hello = (name: string): string => `Hello, ${name}`;
+----
+
+Require the module from any other file in the app by its absolute path within the bundle:
+
+[source,typescript]
+----
+// /webapp/webapp.ts
+const greet = require('/lib/greet');
+
+exports.GET = () => ({
+  body: greet.hello('World')
+});
+----
+
+Paths are rooted at the app bundle — not the filesystem and not the running server. Platform libraries are required by name (for example, `require('/lib/xp/content')`). See <<globals#require, the `require` global>> for the full resolution rules.
+
+The bundle is also the boundary: modules in one app cannot require modules in another app directly. Cross-app integration goes through XP's explicit mechanisms — events, services, or shared content.
+
+== Framework contracts
+
+Most of what you write is regular module code your own files require and orchestrate. A smaller subset of files follow a *contract* the framework enforces: the file sits at a conventional location (or is pointed to by a descriptor), and the framework looks for specific named exports and invokes them when its trigger fires.
+
+The pattern is the same across every contract:
+
+. The file is placed at a conventional location, or registered via a descriptor.
+. The file exports one or more named functions whose names match the contract.
+. The framework resolves the file, calls the appropriate export when its trigger fires, passes the arguments defined by the contract, and handles the return value.
+
+The <<globals#, framework globals>> (`app`, `log`, `require`, etc.) are available inside every function — contract-bound or not. Context propagation, error handling, and the module system work identically across all function types.
+
+== Types of contracts
+
+<<http#, HTTP functions>>:: Respond to HTTP requests. Exports match HTTP methods (`GET`, `POST`, `DELETE`, `PATCH`, …) plus an `all` fallback. Receive a Request, return a Response.
+<<filters#, Filters>>:: Wrap downstream HTTP functions with pre- and post-processing in the site or webapp pipeline.
+<<error#, Error handlers>>:: Invoked when an exception bubbles out of an HTTP function. Receive the error plus the original request, return a Response.
+<<events#, Event listeners>>:: Subscribe to the cluster-wide event bus. Receive the event payload; return value is ignored.
+<<tasks#, Tasks>>:: Fire-and-forget background jobs. Receive a `params` object, report progress.
+<<scheduler#, Scheduled jobs>>:: Run on a cron or interval schedule. Same shape as tasks.
+<<websocket#, Websocket handlers>>:: React to websocket lifecycle events (open, message, close, error).
+<<main#, Main lifecycle>>:: `main.js` hooks that run when your app starts and stops.
+
+Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <<../sites/components#, components>>.
