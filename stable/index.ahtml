@@ -5,8 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="Customize and extend Enonic XP to your needs by building your own apps">
-<title>Enonic Application development</title>
+<title>Enonic Development Kit (EDK) - WIP</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,16 +437,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Enonic Application development</h1>
-<div class="details">
-<span id="author" class="author">Customize and extend Enonic XP to your needs by building your own apps</span><br>
-</div>
+<h1>Enonic Development Kit (EDK) - WIP</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#tutorials">Tutorials</a></li>
-<li><a href="#enonic_apps">Enonic apps</a></li>
+<li><a href="#concept">Concept</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#life_cycle">Life Cycle</a></li>
 <li><a href="#configuration">Configuration</a></li>
@@ -455,11 +451,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Customize and extend Enonic XP with your own code and features</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic XP is a highly modular and customizable platform. Enonic apps may contain anything from <a href="cms.ahtml">content schemas</a>, APIs, tasks, admin extensions, id providers, and webapps to modern websites.</p>
+<p>Enonic XP is a highly modular and customizable platform. Build and deploy <a href="cms.ahtml">content schemas</a>, custom APIs, functions, admin extensions, id providers, webapps, and even sites.</p>
 </div>
 <div class="paragraph">
 <p>The <a href="edk.ahtml">Enonic Development Kit</a> (EDK) allow developers to quickly start building.</p>
@@ -484,13 +487,13 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 </div>
 </div>
 <div class="sect1">
-<h2 id="enonic_apps"><a class="link" href="#enonic_apps">Enonic apps</a></h2>
+<h2 id="concept"><a class="link" href="#concept">Concept</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic apps are standalone software packages that can be installed and started within Enonic XP. Content Studio and the Headless API are examples of Enonic apps.</p>
+<p>Some call it plugins, other call it modules - all we know is that Enonic apps sounds better. Enonic apps are standalone software packages that can be deployed to Enonic XP to extend its functionality. Content Studio and the Headless API are examples of such applications. They are built using the Enonic Development Kit (EDK).</p>
 </div>
 <div class="paragraph">
-<p>Applications are powered by XP&#8217;s <a href="runtime.ahtml">runtime</a>, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services: TODO link to system apis.</p>
+<p>The apps are powered by the <a href="runtime.ahtml">runtime</a>, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services: TODO link to system apis.</p>
 </div>
 </div>
 </div>
@@ -498,17 +501,17 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 <h2 id="installation"><a class="link" href="#installation">Installation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are four ways to get your applications running on Enonic XP:</p>
+<p>There are four ways to get your code running on Enonic XP:</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">Via API</dt>
+<dd>
+<p>Use Enonic CLI to push your application to the Management API. The applications will be available for all nodes in an XP cluster. This approach is commonly used in a CI/CD setup.</p>
+</dd>
 <dt class="hdlist1">Via Admin Console</dt>
 <dd>
 <p>Applications can be manually installed through the "Applications" admin app. Once installed, the application will be available for all nodes in an XP cluster.</p>
-</dd>
-<dt class="hdlist1">Via API</dt>
-<dd>
-<p>Applications may be installed through the Management API. The applications will be available for all nodes in an XP cluster. This approach is commonly used in a CI/CD setup.</p>
 </dd>
 <dt class="hdlist1">Via File system</dt>
 <dd>
@@ -554,7 +557,7 @@ During the stopping, if it exists, the disposer of the application&#8217;s main.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-18 07:01:36 UTC
+Last updated 2026-04-22 11:07:44 UTC
 </div>
 </div>
 </body>
