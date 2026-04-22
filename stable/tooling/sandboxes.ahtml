@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>Sandboxes</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Sandboxes</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
-<ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
-</ul>
-</li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#download_distro">Download distro</a></li>
+<li><a href="#starting_sandbox">Starting sandbox</a></li>
+<li><a href="#multiple_sandboxes">Multiple sandboxes</a></li>
 </ul>
 </div>
 </div>
@@ -457,7 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
+<p>Sandboxes are independent Enonic XP development environments</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -466,7 +460,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+Using CLI, and sandbox may be created and started with the following commands: <code>enonic sandbox create</code>, <code>enonic sandbox start</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Below, we dive into details of manually setting up and starting sandboxes:</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="download_distro"><a class="link" href="#download_distro">Download distro</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start by downloading an <a href="../deployment/distro.ahtml">Enonic XP distribution file</a>. This is essentially the software version of the Enonic XP platform.</p>
+</div>
+<div class="paragraph">
+<p>Distros for your architecture can be downloaded from <a href="https://repo.enonic.com/service/rest/repository/browse/public/com/enonic/xp/">the Enonic repo</a>. Look for folders named <code>enonic-xp-&lt;architecture&gt;-sdk</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Only distros ending with <code>sdk</code> are suitable for development purposes
 </td>
 </tr>
 </table>
@@ -474,292 +494,57 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="starting_sandbox"><a class="link" href="#starting_sandbox">Starting sandbox</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>After downloading and unzipping the distro, Enonic XP can be started on your local machine with the following command:</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">site.xml mapping examples</div>
+<div class="literalblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre>enonic-xp-&lt;architecture&gt;-sdk-&lt;version&gt;/bin/server.sh</pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
-<div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
 </div>
 <div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
-</div>
-<div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
-</div>
+<p>Where &lt;architecture&gt; and &lt;version&gt; match the distro you downloaded.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
+<h2 id="multiple_sandboxes"><a class="link" href="#multiple_sandboxes">Multiple sandboxes</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<p>If you wish to run multiple Sandboxes, this can be done by copying the <code>home</code> folder (located within your distro) to a new location. Then, use the <code>XP_HOME</code> environment variable to let XP know where to find it.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">XP_HOME</dt>
+<dd>
+<p>Defaults to the <code>$DISTRO_FOLDER/home/</code> folder</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
+<p>To set these variables use one of the following approaches:</p>
 </div>
-<div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Linux/MacOS</dt>
+</dl>
 </div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
-</div>
-<div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
-</td>
-</tr>
-</table>
+<div class="literalblock">
+<div class="content">
+<pre>export XP_HOME=/path/to/home</pre>
 </div>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Windows</dt>
+</dl>
 </div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
+<div class="literalblock">
+<div class="content">
+<pre>set XP_HOME=c:\path\to\home</pre>
 </div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
-</div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
-</div>
-<div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
-</div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
 </div>
 </div>
 </div>

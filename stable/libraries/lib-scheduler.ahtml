@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>Scheduler library</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Scheduler library</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#functions">Functions</a>
 <ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
+<li><a href="#get">get</a></li>
+<li><a href="#list">list</a></li>
+<li><a href="#create">create</a></li>
+<li><a href="#modify">modify</a></li>
+<li><a href="#delete">delete</a></li>
 </ul>
 </li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#type_definitions">Type Definitions</a>
+<ul class="sectlevel2">
+<li><a href="#scheduledjob">ScheduledJob</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -457,27 +463,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
+<p><span class="image"><span class="alt">XP 7.7.0</span></span></p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>Functions for creating and managing scheduled jobs.</p>
 </div>
 </div>
 </div>
@@ -485,129 +474,218 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
+<p>Add the following to your <code>build.gradle</code> file:</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+  include "com.enonic.xp:lib-scheduler:${xpVersion}"
+}</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
+<div class="paragraph">
+<p>Add the <code>import</code> statement to your controller:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import schedulerLib from '/lib/xp/scheduler';</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You are now ready to use the API.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="get"><a class="link" href="#get">get</a></h3>
+<div class="paragraph">
+<p>Returns a scheduled job with the specified name.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
 <tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
+</thead>
+<tbody>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
-</tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
+</thead>
+<tbody>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>name of the job.</p>
+</div></div></td>
 </tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
+</tbody>
+</table></div></td>
 </tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
-</tr>
+</tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the job.
+Or null if the job could not be found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Obtains details of a scheduled job:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {get as getJob} from '/lib/xp/scheduler';
+
+const job = getJob({ name: 'myjob' });
+
+if (job) {
+  log.info('Job is found: %s', JSON.stringify(job, null, 4));
+} else {
+  log.info('Job not found');
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Return value:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    name: 'myjob',
+    descriptor: 'com.enonic.app.myapp:mytask',
+    description: 'cron job description',
+    enabled: true,
+    config: {
+        a: 1,
+        b: 'value',
+        c: {
+            d: {
+                e: 3.6,
+                f: true
+            }
+        }
+    },
+    user: 'user:system:user',
+    creator: 'user:system:creator',
+    modifier: 'user:system:creator',
+    createdTime: '2016-11-02T10:36:00Z',
+    modifiedTime: '2016-11-02T10:36:00Z',
+    lastRun: '2021-02-25T10:44:33.170079900Z',
+    lastTaskId: 'task-id',
+    schedule: {
+        value: '* * * * *',
+        type: 'CRON',
+        timeZone: 'GMT+2:00'
+    }
+};</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
+<h3 id="list"><a class="link" href="#list">list</a></h3>
 <div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
+<p>Returns the list of scheduled jobs.</p>
 </div>
-<div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
-</div>
-<div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
+<p><strong>Array</strong> : (<a href="#scheduled_job"><code>ScheduledJob[]</code></a>) List of all scheduled jobs.</p>
 </div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Obtains list of existing jobs:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {list} from '/lib/xp/scheduler';
+
+const jobs = list();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Return value:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [
+  {
+        name: 'job1',
+        descriptor: 'appKey:task',
+        description: 'job description',
+        enabled: true,
+        config: {
+            a: 1
+        },
+        user: 'user:system:user',
+        creator: 'user:system:creator',
+        modifier: 'user:system:creator',
+        createdTime: '2016-11-02T10:36:00Z',
+        modifiedTime: '2016-11-02T10:36:00Z',
+        lastRun: '2021-02-25T10:44:00.170079900Z',
+        lastTaskId: 'task-id',
+        schedule: {
+            value: '* * * * *',
+            timeZone: 'GMT+05:30',
+            type: 'CRON'
+        }
+    },
+    {
+        name: 'job2',
+        descriptor: 'appKey:task',
+        description: 'job description',
+        enabled: false,
+        config: { },
+        user: 'user:system:user',
+        creator: 'user:system:creator',
+        modifier: 'user:system:creator',
+        createdTime: '2021-02-02T10:36:00Z',
+        modifiedTime: '2021-02-02T10:36:00Z',
+        schedule: {
+            value: '2012-01-01T00:00:00Z',
+            type: 'ONE_TIME'
+        }
+    }
+];</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create"><a class="link" href="#create">create</a></h3>
 <div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
-</div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
+<p>Creates a scheduled job.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -616,42 +694,232 @@ The query parameters will be normalized, so they are always in alphabetical orde
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
-</div>
+This function returns immediately.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>unique job name.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>job description.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">descriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>descriptor of the task to be scheduled.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>config of the task to be scheduled.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>task time run config.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>schedule value according to its type.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>schedule type (CRON or ONE_TIME).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.timeZone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required for schedule.type = CRON</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>time zone of cron scheduling. It isn&#8217;t applicable to a onetime job.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>principal key of the user that submitted the task.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>job is active or not.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
 <div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
+<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the created job.</p>
 </div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {create} from '/lib/xp/scheduler';
+
+const simpleOneTimeJob = create({
+    name: 'my-project',
+    descriptor: 'appKey:task',
+    enabled: true,
+    schedule: {type: 'ONE_TIME', value: '2021-01-01T00:00:00.00Z'}
+});
+
+const extendedCronJob = create({
+    name: 'myjob',
+    descriptor: 'appKey:task',
+    description: 'job description',
+    user: 'user:system:user',
+    enabled: true,
+    config: {
+        a: 1,
+        b: 2,
+        c: ['1', '2'],
+        d: {
+            e: {
+                f: 3.6,
+                g: true
+            }
+        }
+    },
+    schedule: {type: 'CRON', value: '* * * * 5', timeZone: 'GMT-2:00'}
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Return value:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expectedSimpleOneTimeJob = {
+    name: 'my-project',
+    descriptor: 'appKey:task',
+    enabled: true,
+    config: {},
+    creator: 'user:system:creator',
+    modifier: 'user:system:creator',
+    createdTime: '2016-11-02T10:36:00Z',
+    modifiedTime: '2016-11-02T10:36:00Z',
+    schedule: {
+        value: '2012-01-01T00:00:00Z',
+        type: 'ONE_TIME'
+    }
+}
+
+const expectedExtendedCronJob = {
+    name: 'myjob',
+    descriptor: 'appKey:task',
+    description: 'job description',
+    enabled: true,
+    config: {
+        a: 1,
+        b: 2,
+        c: {
+            0: '1',
+            1: '2'
+        },
+        d: {
+            e: {
+                f: 3.6,
+                g: true
+            }
+        }
+    },
+    user: 'user:system:user',
+    creator: 'user:system:creator',
+    modifier: 'user:system:creator',
+    createdTime: '2021-01-01T10:36:00Z',
+    modifiedTime: '2016-01-01T10:36:00Z',
+    schedule: {
+        value: '* * * * 5',
+        timeZone: 'GMT-02:00',
+        type: 'CRON'
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="modify"><a class="link" href="#modify">modify</a></h3>
 <div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
+<p>Modifies a job.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -660,106 +928,371 @@ Another alternative to XML-escape is to wrap the string in a CDATA block, as in 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+The previous task will be rescheduled, <code>lastRun</code> and <code>lastTaskId</code> properties will be cleaned.
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph lead">
+<p>Parameters</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
-</div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
-<table>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
-</td>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>unique job name.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>editor callback function has an editable existing job as a param.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the modified job.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modify} from '/lib/xp/scheduler';
+
+const result = modify({
+    name: 'myjob',
+    editor: (edit) =&gt; {
+        edit.descriptor = 'appKey:new-task';
+        edit.description = 'new job description';
+        edit.user = 'user:system:new-user';
+        edit.enabled = false;
+        edit.config = {
+            a1: 3
+        };
+        edit.schedule = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
+
+        return edit;
+    }
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Return value:</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const resultExpected = {
+    name: 'myjob',
+    descriptor: 'appKey:new-task',
+    description: 'new job description',
+    enabled: false,
+    config: {
+        a1: 3
+    },
+    user: 'user:system:new-user',
+    creator: 'user:system:creator',
+    modifier: 'user:system:modifier',
+    createdTime: '2016-11-02T10:36:00Z',
+    modifiedTime: '2021-02-25T10:44:33.170079900Z',
+    schedule: {
+        value: '* * * * *',
+        timeZone: 'GMT+05:30',
+        type: 'CRON'
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="delete"><a class="link" href="#delete">delete</a></h3>
+<div class="paragraph">
+<p>Deletes a scheduled job.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>name of the job to be deleted.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>boolean</strong> : <code>true</code> if deleted, <code>false</code> otherwise</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {deleteJob} from '/lib/xp/scheduler';
+
+const result = deleteJob({
+    name: 'myjob'
+});
+
+if (result) {
+    log.info('Job deleted');
+} else {
+    log.info('Job was not found');
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
+<h2 id="type_definitions"><a class="link" href="#type_definitions">Type Definitions</a></h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
+<div class="sect2">
+<h3 id="scheduledjob"><a class="link" href="#scheduledjob">ScheduledJob</a></h3>
+<div id="scheduled_job" class="paragraph lead">
+<p>Type</p>
 </div>
 <div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
+<p><strong>object</strong></p>
 </div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
+<div class="paragraph lead">
+<p>Properties</p>
 </div>
-<div class="paragraph">
-<p>Examples:</p>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Job name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Job description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">descriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>descriptor of the task to be scheduled</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>config of the task to be scheduled</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>task time run config</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>schedule value</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>schedule type.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.timeZone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>time zone of cron scheduling. It isn&#8217;t applicable to a onetime job</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>principal key of the user that submitted the task</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>job is active or not</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">creator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>principal key of user that created the task</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">modifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>principal key of the last user that modified the task</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">createdTime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>time of the task creation</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>time of the last task modification</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lastRun</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>time of the last job run</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lastTaskId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>task id of the last job run</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

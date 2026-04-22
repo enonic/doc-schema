@@ -487,7 +487,7 @@ This error handled will also handle errors that are not site related (admin tool
 <div class="paragraph">
 <p>When an error occurs in the request processing pipeline, the XP framework will look for an error handler to execute.
 For sites specifically, it will (iteratively, in order) go through all applications added to the site,
-and attempt to execute the handler functions until an <a href="http.ahtml#http-response">HTTP response</a> object is returned.
+and attempt to execute the handler functions until an <a href="http.ahtml#response">HTTP response</a> object is returned.
 This essentially means that developers may choose not to handle particular errors explicitly.
 If the error is not properly handled, it will fallback to the default XP error handler.</p>
 </div>
@@ -563,7 +563,7 @@ You can choose different handling based on the type of error. A 404 might for in
 <div class="sectionbody">
 <div class="paragraph">
 <p>The input parameter for handler functions is an error JSON object.
-The object contains the status code, error message, Exception object, and the original <a href="http.ahtml#http-request">HTTP request</a> object:</p>
+The object contains the status code, error message, Exception object, and the original <a href="http.ahtml#request">HTTP request</a> object:</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample error object</div>
@@ -581,7 +581,7 @@ The object contains the status code, error message, Exception object, and the or
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-22 11:38:18 UTC
+Last updated 2026-04-22 21:33:42 UTC
 </div>
 </div>
 </body>

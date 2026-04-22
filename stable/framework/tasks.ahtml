@@ -623,14 +623,14 @@ For fine-grained control which nodes should be capable to execute distributable 
 <p>Additionally, tasks produce a range of pre-defined events throughout their life cycle.</p>
 </div>
 <div class="paragraph">
-<p>For more details on tasks, visit the <a href="../api/lib-task.ahtml">task API documentation</a>.</p>
+<p>For more details on tasks, visit the <a href="../libraries/lib-task.ahtml">Task library</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-22 11:38:18 UTC
+Last updated 2026-04-22 21:33:42 UTC
 </div>
 </div>
 </body>

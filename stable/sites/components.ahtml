@@ -497,7 +497,7 @@ For a hands on introduction to rendering pages with the Enonic framework, visit 
 <p>Component controllers are 1:1 aligned with their respective <a href="../cms/pages.ahtml">page component definitions</a> and must also be placed in specific locations within the code structure.</p>
 </div>
 <div class="paragraph">
-<p>They have the same capabilities as regular <a href="controllers.ahtml">controller</a>, you may take advantage of <a href="contributions.ahtml">page contributions</a>, and the fact that they are always executed in the context of a content item.</p>
+<p>They have the same capabilities as regular <a href="../framework/http.ahtml">HTTP functions</a>, you may take advantage of <a href="contributions.ahtml">page contributions</a>, and the fact that they are always executed in the context of a content item.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -526,7 +526,7 @@ Markup response from a component must have a single root element.
 <p>This means you will always have a specific content item in your context.</p>
 </div>
 <div class="paragraph">
-<p>API functions such as <a href="../api/lib-portal.ahtml#getContent">portalLib.getContent()</a>, and <a href="../api/lib-portal.ahtml#getComponent">portalLib.getComponent()</a> will automatically return values based on the context.</p>
+<p>API functions such as <a href="../libraries/lib-portal.ahtml#getContent">portalLib.getContent()</a>, and <a href="../libraries/lib-portal.ahtml#getComponent">portalLib.getComponent()</a> will automatically return values based on the context.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -811,7 +811,7 @@ Optionally bypass the built-in controller by running your own code rather than c
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-22 11:38:18 UTC
+Last updated 2026-04-22 21:33:42 UTC
 </div>
 </div>
 </body>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>Building apps</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Building apps</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
+<li><a href="#main_builder">Main builder</a>
 <ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
+<li><a href="#gradle_properties">gradle.properties</a></li>
+<li><a href="#build_gradle">build.gradle</a></li>
 </ul>
 </li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#compiler">Compiler</a></li>
+<li><a href="#building">Building</a></li>
+<li><a href="#deploying">Deploying</a></li>
+<li><a href="#dev_mode">Dev Mode</a></li>
 </ul>
 </div>
 </div>
@@ -457,157 +459,287 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
+<p>This section explains the details of the Enonic XP build system</p>
 </div>
-<div class="admonitionblock note">
+</div>
+</div>
+<div class="sect1">
+<h2 id="main_builder"><a class="link" href="#main_builder">Main builder</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As explained in the <a href="code.ahtml">code section</a>, Enonic development projects use <a href="https://gradle.org/">Gradle</a> as the main build tool.</p>
+</div>
+<div class="paragraph">
+<p>Gradle is built around the popular Maven ecosystem. Gradle is used because Enonic apps are packaged and deployed as .jar (Java) files in the end.</p>
+</div>
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+Enonic supports popular TypeScript/JavaScript tooling such as TSUP, NPM and webpack to run on top of Gradle. <a href="https://market.enonic.com/starters">Try one or our Starters</a> to see it in action.
 </td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>The Gradle build files are described below</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="gradle_properties"><a class="link" href="#gradle_properties">gradle.properties</a></h3>
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
+<p>This file specifies common properties for any Enonic project:</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
+<div class="title">Sample gradle.properties file</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-files" data-lang="files"># Gradle Project settings
+projectName = vanilla <i class="conum" data-value="1"></i><b>(1)</b>
+version = 1.0.0-SNAPSHOT <i class="conum" data-value="2"></i><b>(2)</b>
+
+# XP App values
+appDisplayName = Vanilla Example <i class="conum" data-value="3"></i><b>(3)</b>
+appName = com.acme.example.vanilla <i class="conum" data-value="4"></i><b>(4)</b>
+vendorName = Acme Inc
+vendorUrl = https://example.com
+xpVersion = 7.13.3 <i class="conum" data-value="5"></i><b>(5)</b>
+
+# Settings for publishing to a Maven repo
+group = com.acme.example <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
+<td>Project name is used for the output file i.e. this will produce an app file called vanilla-&lt;version&gt;.jar</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
+<td>Version is important metadata, used to identify different releases of an app.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
+<td>appDisplayName is used when listing the applications in UI</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
+<td>appName must be unique across all apps, this is also stored in CMS content is created, used as a namespace</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
+<td>Minimum version of XP required for the app. This property is typically also used to determine which xp core libraries to use by <code>build.gradle</code></td>
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
-</td>
-</tr>
-</table>
 </div>
 <div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
+<h3 id="build_gradle"><a class="link" href="#build_gradle">build.gradle</a></h3>
 <div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
+<p>This is the main build file. It controls available build settings, dependencies and more.</p>
 </div>
-<div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
+<div class="listingblock">
+<div class="title">Sample gradle.properties file</div>
+<div class="content">
+<pre class="highlight"><code class="language-files" data-lang="files">plugins { <i class="conum" data-value="1"></i><b>(1)</b>
+    id 'com.enonic.xp.app' version '3.4.0'
+}
+
+app { <i class="conum" data-value="2"></i><b>(2)</b>
+    name = "${appName}"
+    displayName = "${appDisplayName}"
+    vendorName = "${vendorName}"
+    vendorUrl = "${vendorUrl}"
+    systemVersion = "${xpVersion}"
+}
+
+dependencies { <i class="conum" data-value="3"></i><b>(3)</b>
+    implementation "com.enonic.xp:core-api:${xpVersion}"
+    implementation "com.enonic.xp:portal-api:${xpVersion}"
+    include "com.enonic.xp:lib-content:${xpVersion}"
+    include "com.enonic.xp:lib-portal:${xpVersion}"
+}
+
+tasks.register('dev', Exec) { <i class="conum" data-value="4"></i><b>(4)</b>
+    commandLine './gradlew', 'deploy', '-t'
+}
+
+repositories { <i class="conum" data-value="5"></i><b>(5)</b>
+    mavenLocal()
+    mavenCentral()
+    xp.enonicRepo()
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enonic provides a <a href="https://developer.enonic.com/docs/enonic-gradle-plugins">Gradle plugin</a> to simplify the build setup.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Applies values from gradle.properties.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define dependencies to libraries, notice the {xpVersion} which uses the value from gradle.properties.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enables <code>dev</code> mode for the project</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Defines Maven repos where Gradle will look for dependencies.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
+<h2 id="dependencies"><a class="link" href="#dependencies">Dependencies</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<p>Easily include standard Enonic libraries or 3rd party dependencies in your app via the dependencies section.</p>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
+<p>Each dependency must be prefixed with a scope for specific building instructions. The available scopes are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Include</dt>
+<dd>
+<p>Standard scope when adding Enonic libraries to your project. Resource files in the library are merged into your app. Files in your app overwrites files with the same name in the library. Dependencies of the library are transitively included.</p>
+</dd>
+<dt class="hdlist1">Implementation</dt>
+<dd>
+<p>Typically used for Java dependencies. Does not automatically include transitive dependencies, meaning you must explicitly declare transitive dependencies.</p>
+</dd>
+<dt class="hdlist1">Webjar</dt>
+<dd>
+<p>Custom Enonic scope that extracts the content of the specified Webjar - <a href="https://www.webjars.org/" class="bare">https://www.webjars.org/</a> - placing it into the assets folder, using the version number as root folder</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="compiler"><a class="link" href="#compiler">Compiler</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Enonic XP SDK includes the compiler needed to build Enonic apps.</p>
 </div>
 <div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
+<p>When building applications without using Enonic CLI, you must tell Gradle which compiler (Enonic XP distro) to use. This is done by setting the <code>JAVA_HOME</code> environment variable.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">JAVA_HOME</dt>
+<dd>
+<p>Defines the location of the JDK.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
+<p>To set the environment variable, use one of the following approaches:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Linux/MacOS</dt>
+</dl>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>export JAVA_HOME=/path/to/xp-distro/jdk</pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Windows</dt>
+</dl>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>set JAVA_HOME=c:\path\to\xp-distro\jdk</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="building"><a class="link" href="#building">Building</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Builds are initialized via the Gradle Wrapper. This is a file located in your projects root: <code>gradlew</code> for Linux/MacOS and <code>gradle.bat</code> for Windows.</p>
 </div>
 <div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
+<p>The wrapper will download all necessary files to execute your build.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Using Enonic CLI, simply run the following command from your project folder:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enonic CLI</dt>
+<dd>
+<p>enonic project build</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To manually trigger Gradle builds, make sure <code>JAVA_HOME</code> is defined, and run the following command:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">OSX/Linux</dt>
+<dd>
+<p><code>./gradlew build</code></p>
+</dd>
+<dt class="hdlist1">Windows</dt>
+<dd>
+<p><code>gradlew.bat build</code></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The build will place any output artifacts (app or library files) into your project&#8217;s <code>build/libs/</code> folder.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploying"><a class="link" href="#deploying">Deploying</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To deploy an app to your sandbox:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enonic CLI</dt>
+<dd>
+<p><code>enonic project deploy</code></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To do this manually, make sure XP_HOME is defined and execute the following command</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Linux/MacOS</dt>
+<dd>
+<p><code>./gradlew deploy</code></p>
+</dd>
+<dt class="hdlist1">Windows</dt>
+<dd>
+<p><code>gradlew.bat deploy</code></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>This command copies the artifact (application file) into your sandbox' <code>$XP_HOME/deploy</code> folder. XP will then automatically install and start it.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -616,42 +748,92 @@ The query parameters will be normalized, so they are always in alphabetical orde
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
+XP apps deployed via file are presented with a small blue icon in the <code>Applications</code> admin tool.
+</td>
+</tr>
+</table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dev_mode"><a class="link" href="#dev_mode">Dev Mode</a></h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Using dev mode is generally recommended, as it saves time by providing real-time updates of your app
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
+<p>By running your sandbox in <code>dev</code> mode, it will automatically detect and load changes to your application source files, including JavaScript controllers and schemas. It does this by reading the files directly from the application project folder instead of using the compiled application file.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enonic CLI</dt>
+<dd>
+<p><code>enonic sandbox start --dev</code></p>
+</dd>
+<dt class="hdlist1">Linux/MacOS</dt>
+<dd>
+<p><code>$XP_INSTALL/bin/server.sh dev</code></p>
+</dd>
+<dt class="hdlist1">Windows</dt>
+<dd>
+<p><code>$XP_INSTALL/bin/server.sh dev</code></p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Dev mode should never be used in production. Doing so may cause both security and performance issues.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
+<p>In addition to running XP in dev mode, your application may contain files that require compilation (including transpilation). This means that must build the files for every change. For instance, if you use TypeScript, these files won&#8217;t be picked up by default.</p>
 </div>
 <div class="paragraph">
-<p>Examples:</p>
+<p>Modern XP projects support this out of the box, simply replace the build and deploy command with this:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enonic CLI</dt>
+<dd>
+<p><code>enonic project dev</code></p>
+</dd>
+<dt class="hdlist1">Linux/MacOS</dt>
+<dd>
+<p><code>./gradlew dev</code></p>
+</dd>
+<dt class="hdlist1">Windows</dt>
+<dd>
+<p><code>gradlew.bat dev</code></p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Development mode also disables some of XP&#8217;s caching mechanisms. To make the development workflow as smooth as possible, XP tries to invalidate caches for your static assets. This is to prevent you from getting stale resources so that what you see in the browser is always as up to date as possible.
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -660,106 +842,10 @@ Another alternative to XML-escape is to wrap the string in a CDATA block, as in 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+XP 7.x defaults to the Nashorn JavaScript engine for executing JavaScript. For an overview over what JavaScript features Nashorn supports, see <a href="https://kangax.github.io/compat-table/es6/#nashorn1_8">this feature table</a>.
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
-</div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
-</div>
-<div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
-</div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
 </div>
 </div>
 </div>

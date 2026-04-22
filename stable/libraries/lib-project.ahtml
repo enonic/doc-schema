@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Scheduler</title>
+<title>Content Project library</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,15 +437,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Scheduler</h1>
+<h1>Content Project library</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#scheduled_job">Scheduled Job</a></li>
-<li><a href="#calendar">Calendar</a></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#system_jobs">System jobs</a></li>
-<li><a href="#distributable">Distributable</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#functions">Functions</a>
+<ul class="sectlevel2">
+<li><a href="#addpermissions">addPermissions</a></li>
+<li><a href="#create">create</a></li>
+<li><a href="#delete">delete</a></li>
+<li><a href="#get">get</a></li>
+<li><a href="#list">list</a></li>
+<li><a href="#modify">modify</a></li>
+<li><a href="#modifyreadaccess">modifyReadAccess</a></li>
+<li><a href="#removepermissions">removePermissions</a></li>
+<li><a href="#getavailableapplications">getAvailableApplications</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -453,18 +462,455 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Named <a href="tasks.ahtml">tasks</a> can be scheduled to asynchronously run in the background in a cluster or a one-node environment.</p>
+<p><span class="image"><span class="alt">XP 7.3.0</span></span></p>
+</div>
+<div class="paragraph">
+<p>This API provides functions for management of Content Projects.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="scheduled_job"><a class="link" href="#scheduled_job">Scheduled Job</a></h2>
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A scheduled job is an object which describes how a named task must be run. It contains information about the type of scheduling, time of execution, description, etc. All job nodes are stored in a separate <code>system.scheduler</code> repository.  See how to manipulate it with <a href="../libraries/lib-scheduler.ahtml">lib-scheduler</a> API.</p>
+<p>Add the following dependency to your <code>build.gradle</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+  include "com.enonic.xp:lib-project:${xpVersion}"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the <code>import</code> statement to your controller:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import projectLib from '/lib/xp/project';</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You are now ready to use the API.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="addpermissions"><a class="link" href="#addpermissions">addPermissions</a></h3>
+<div class="paragraph">
+<p>Adds permissions to an existing Content Project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To modify permissions, user must have <code>Owner</code> permissions for the project, or either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You can read about project permissions in the dedicated <a href="https://developer.enonic.com/docs/content-studio/stable/projects#roles">Content Projects</a> section
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph lead">
-<p>Properties</p>
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 44%;">
+<col style="width: 55%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id to identify the project.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">permissions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, string[]&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project permissions to add. 1 to 5 properties where key is role id and value is an array of principals.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>Object</strong> : All current project permissions.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Add permissions to a project with id 'my-project'</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addPermissions} from '/lib/xp/project';
+
+const currentPermissions = addPermissions({
+    id: 'my-project',
+    permissions: {
+        owner: ['user:mystore:user1', 'user:mystore:user2'],
+        editor: ['user:mystore:user3']
+    }
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+  id: 'my-project',
+  permissions: {
+        owner: [
+            'user:mystore:user1',
+            'user:mystore:user2'
+        ],
+        editor: [
+            'user:mystore:user3'
+        ]
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create"><a class="link" href="#create">create</a></h3>
+<div class="paragraph">
+<p>Creates a new Content Project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Only <code>system.admin</code> and <code>cms.admin</code> roles have permissions to create new projects.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 45%;">
+<col style="width: 1%;">
+<col style="width: 53%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Attributes</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id (alphanumeric characters and hyphens allowed).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project display name.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><span class="image"><span class="alt">XP 7.6.0</span></span> Parent project id. If provided, the new project will be a Content Layer that automatically inherits changes from the parent project.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project description.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">language</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default project language.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">siteConfig</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, Object&gt;[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Applications (with optional configurations) to be assigned to the project</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 49%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">applicationKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application key</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application config json</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">permissions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, string[]&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project permissions. 1 to 5 properties where key is role id and value is an array of principals.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 49%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">role</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Role id (one of <code>owner</code>, <code>editor</code>, <code>author</code>, <code>contributor</code>, <code>viewer</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principals</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of principals.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">readAccess</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, boolean&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Read access settings.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public read access (READ permissions for <code>system.everyone</code>).</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>Object</strong> : Project object.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Create a Content Project with minimal properties</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {create} from '/lib/xp/project';
+
+try {
+    const project = create({
+        id: 'my-project',
+        displayName: 'My Content Project',
+        readAccess: {
+            public: true
+        }
+    });
+} catch (e) {
+    log.error('Failed to create a project: %s', e.message);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+  id: 'my-project',
+  displayName: 'My Content Project',
+  permissions: [],
+  readAccess: {
+    public: true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Create a Content Project with extended properties</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {create} from '/lib/xp/project';
+
+const project = create({
+    id: 'my-project',
+    displayName: 'My Content Project',
+    description: 'Some exciting content is stored here',
+    language: 'no',
+    permissions: {
+        owner: ['user:mystore:user1'],
+        editor: ['user:mystore:user2'],
+        author: ['user:mystore:user3'],
+        contributor: ['user:mystore:user4'],
+        viewer: ['user:mystore:user5']
+    },
+    siteConfig: [{
+            applicationKey: 'app1',
+            config: {
+                a: 'b'
+            }
+        } ,{
+            applicationKey: 'app2',
+            config: {
+                a: true,
+                b: 3.4
+            }
+        }],
+    readAccess: {
+        public: false
+    }
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+  id: 'my-project',
+  displayName: 'My Content Project',
+  description: 'Some exciting content is stored here',
+  language: 'no',
+  siteConfig: [
+        {
+            applicationKey: 'app1',
+            config: {
+                a: 'b'
+            }
+        },
+        {
+            applicationKey: 'app2',
+            config: {
+                a: true,
+                b: 3.4
+            }
+        }
+    ],
+  permissions: {
+    owner: [
+        'user:mystore:user1'
+    ],
+    editor: [
+        'user:mystore:user2'
+    ],
+    author: [
+        'user:mystore:user3'
+    ],
+    contributor: [
+        'user:mystore:user4'
+    ],
+    viewer: [
+        'user:mystore:user5'
+    ]
+  },
+  readAccess: {
+    public: false
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="delete"><a class="link" href="#delete">delete</a></h3>
+<div class="paragraph">
+<p>Deletes an existing Content Project and the project repository along with all the data inside.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To delete a project, user must have either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
 </div>
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -475,51 +921,374 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id to identify the project.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>boolean</strong> : <code>true</code> if the project is successfully deleted.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Delete an existing content project</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {deleteProject} from '/lib/xp/project';
+
+const result = deleteProject({
+    id: 'my-project'
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = true;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="get"><a class="link" href="#get">get</a></h3>
+<div class="paragraph">
+<p>Returns an existing Content Project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To access a project, user must have sufficient permissions for this project, or either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id to identify the project.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>Object</strong> : Content Project object or <code>null</code> if not found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Fetch an existing content project</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {get as getProject} from '/lib/xp/project';
+
+const project = getProject({
+    id: 'my-project'
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    id: 'my-project',
+    displayName: 'My Content Project',
+    permissions: {
+        owner: [
+            'user:mystore:user1'
+        ],
+        editor: [
+            'user:mystore:user2'
+        ]
+    },
+    readAccess: {
+        public: true
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="list"><a class="link" href="#list">list</a></h3>
+<div class="paragraph">
+<p>Returns all Content Projects that user in the current context has permissions for.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Users with <code>system.admin</code> or <code>cms.admin</code> roles will get the list of all projects.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>Object[]</strong> : Array of Content Project objects.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Fetch the list of existing content projects</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {list} from '/lib/xp/project';
+
+const projects = list();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [{
+    id: 'default',
+    displayName: 'Default',
+    description: 'Default project'
+},
+{
+    id: 'my-project',
+    displayName: 'My Content Project',
+    permissions: [],
+    readAccess: {
+        public: true
+    }
+}]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="modify"><a class="link" href="#modify">modify</a></h3>
+<div class="paragraph">
+<p>Modifies an existing Content Project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To modify a project, user must have <code>Owner</code> permissions for this project, or either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
 <th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
 <th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name of a job, unique for the entire environment</p>
+<p>Unique project id (alpha-numeric characters and hyphens allowed).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project display name.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>String-format description of scheduled job</p>
+<p>Project description.</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">descriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">language</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Descriptor of the task to be scheduled. Format: <code>&lt;applicationKey&gt;:&lt;taskName&gt;</code></p>
+<p>Default project language.</p>
 </div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">siteConfig</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, Object&gt;[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Applications (with optional configurations) to be assigned to the project.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 49%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">applicationKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application key</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON object contains described task parameters</p>
-</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application config json</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">calendar</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Describes when the task should run</p>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
+<div class="paragraph">
+<p><strong>Object</strong> : Modified project object.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Modify an existing content project</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modify} from '/lib/xp/project';
+
+const project = modify({
+    id: 'my-project',
+    displayName: 'New project name',
+    description: 'New project description',
+    language: 'en',
+    siteConfig: [{
+            applicationKey: 'app1',
+            config: {
+                a: 'b'
+            }
+        } ,{
+            applicationKey: 'app2',
+            config: {
+                a: true,
+                b: 3.4
+            }
+        }],
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    id: 'my-project',
+    displayName: 'New project name',
+    description: 'New project description',
+    language: 'en',
+    siteConfig: [
+        {
+            applicationKey: 'app1',
+            config: {
+                a: 'b'
+            }
+        },
+        {
+            applicationKey: 'app2',
+            config: {
+                a: true,
+                b: 3.4
+            }
+        }
+    ],
+    permissions: {},
+    readAccess: {
+        public: true
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="modifyreadaccess"><a class="link" href="#modifyreadaccess">modifyReadAccess</a></h3>
+<div class="paragraph">
+<p>Toggles public/private READ access for an existing Content Project. This will modify permissions on ALL the content items inside the project repository by adding or removing READ access for <code>system.everyone</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To modify READ access, user must have <code>Owner</code> permissions for the project, or either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
 <colgroup>
 <col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
+<col style="width: 35%;">
+<col style="width: 64%;">
 </colgroup>
 <thead>
 <tr>
@@ -530,209 +1299,78 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule value according to its type</p>
+<p>Unique project id (alpha-numeric characters and hyphens allowed).</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">readAccess</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, boolean&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule type (<a href="#cron">CRON</a> to be executed repeatedly or <a href="#one-time">ONE_TIME</a> to be executed once)</p>
-</div></div></td>
+<p>Read access settings.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">timezone</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time zone of cron scheduling. It doesn&#8217;t apply to a onetime calendar.</p>
-</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public read access (READ permissions for <code>system.everyone</code>).</p></td>
 </tr>
 </tbody>
 </table></div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key of the task submitter. Format: <code>&lt;idProvider&gt;:&lt;user&gt;</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>If <code>true</code> - the job is active and can be run according to it&#8217;s cron value and timezone.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">creator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key of user that created the task</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifier</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key of the last user that modified the task</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">createdTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Time of the task creation</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Time of the last task modification</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">lastRun</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Time of the last job run</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">lastTaskId</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Task id of the last job run</p>
-</div></div></td>
-</tr>
 </tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="calendar"><a class="link" href="#calendar">Calendar</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Calendar object describes when and how the task should be run. There are two possible types: one-time and cron.</p>
+<p><strong>Object</strong> : Current state of public READ access.</p>
 </div>
-<div id="one-time" class="paragraph">
-<div class="title">one-time</div>
-<p>The task will be run only once. If the time value is passed at the moment of scheduling, then the task will be run immediately. Value format is <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_INSTANT">ZULU</a> time, documented in ISO 8601.</p>
+<div class="paragraph lead">
+<p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a one-time calendar</div>
+<div class="title">Set content project as not available for public READ access</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">{type: 'ONE_TIME', value: '2021-01-01T10:30:00.00Z'}</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addPermissions} from '/lib/xp/project';
+
+const currentPermissions = addPermissions({
+    id: 'my-project',
+    readAccess: {
+        public: false
+    }
+});</code></pre>
 </div>
-</div>
-<div id="cron" class="paragraph">
-<div class="title">cron</div>
-<p>Should be used for repeatable tasks. <a href="https://www.unix.com/man-page/linux/5/crontab">UNIX</a> cron lib format is expected. Also, a timezone must be specified to run the job at a particular time of the day.</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a cron calendar</div>
+<div class="title">Sample response</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">{type: 'CRON', value: '* * * * *' // every minute
-,timeZone: 'GMT+5:30'}</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    id: 'my-project',
+    readAccess: {
+        public: false
+    }
+}</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="removepermissions"><a class="link" href="#removepermissions">removePermissions</a></h3>
 <div class="paragraph">
-<p>There are two ways to configure custom scheduled jobs: <a href="../libraries/lib-scheduler.ahtml">lib</a> API provides methods to manipulate jobs and <a href="../deployment/config.ahtml#scheduler">config</a> file is used to configure default permanent cron jobs.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="system_jobs"><a class="link" href="#system_jobs">System jobs</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>XP platform provides predefined system jobs, which can be enabled and overridden by user in <a href="../deployment/config.ahtml#scheduler">config</a> file. Config modification doesn&#8217;t update job nodes automatically, so make sure you&#8217;ve removed or changed old job nodes manually before any config change.</p>
-</div>
-<div class="paragraph">
-<div class="title">Vacuum</div>
-<p>Deletes unused blobs and binaries from a blobstore.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Make sure you have a backup of the installation available before doing a vacuum.
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">Predifined vacuum job properties</div>
-<div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">init-job.vacuum.enabled=false
-init-job.vacuum.cron=0 5 * * *
-init-job.vacuum.descriptor=com.enonic.xp.app.system:vacuum
-init-job.vacuum.description=Job to run vacuum
-init-job.vacuum.user=system:su</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Common vacuum process config can be found in <a href="../deployment/config.ahtml#vacuum">Vacuum config file</a>.</p>
-</div>
-<div class="paragraph">
-<div class="title">Audit log cleanUp</div>
-<p>Deletes records from audit log repository.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Make sure you have a backup of the installation available before running a cleanUp.
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">Predefined cleanUp job properties</div>
-<div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">init-job.audit-log-cleanup.enabled=false
-init-job.audit-log-cleanup.cron=0 5 * * *
-init-job.audit-log-cleanup.descriptor=com.enonic.xp.app.system:audit-log-cleanup
-init-job.audit-log-cleanup.description=Job to clean up old audit log history
-init-job.audit-log-cleanup.user=system:su</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Common cleanup process config can be found in <a href="../deployment/config.ahtml#audit">Audit config file</a>.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<code>ageThreshold</code> property must be set to appropriate value, otherwise nothing will be removed.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="distributable"><a class="link" href="#distributable">Distributable</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>XP platform guarantees that a scheduled job won&#8217;t be executed by multiple threads concurrently for the cluster environment.</p>
+<p>Removes permissions from an existing Content Project.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -741,13 +1379,171 @@ init-job.audit-log-cleanup.user=system:su</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Several jobs can describe the same task descriptor, so the same code can be run by different threads simultaneously. Also, if the execution time of the task is longer than the cron period (especially important for long-term jobs) then a new task can be started before the previous is finished.
+To remove permissions, user must have <code>Owner</code> permissions for the project, or either <code>system.admin</code> or <code>cms.admin</code> role.
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 40%;">
+<col style="width: 59%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id (alpha-numeric characters and hyphens allowed).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">permissions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object.&lt;string, string[]&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project permissions to delete. 1 to 5 properties where key is role id and value is an array of principals.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 49%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">role</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Role id (one of <code>owner</code>, <code>editor</code>, <code>author</code>, <code>contributor</code>, <code>viewer</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principals</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of principals to delete from this project role.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
 <div class="paragraph">
-<p>A scheduled job can be executed by any cluster node supporting an application, which contains the described task. See <a href="tasks.ahtml#distributable">task</a> for further explanation.</p>
+<p><strong>Object</strong> : All current project permissions.</p>
+</div>
+<div class="listingblock">
+<div class="title">Adds and then removes permissions from an existing content project</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addPermissions,removePermissions} from '/lib/xp/project';
+
+addPermissions({
+    id: 'my-project',
+    permissions: {
+        owner: ['user:mystore:user1', 'user:mystore:user2'],
+        editor: ['user:mystore:user3']
+    }
+});
+
+const currentPermissions = removePermissions({
+    id: 'my-project',
+    permissions: {
+        owner: ['user:mystore:user2']
+    }
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    id: 'my-project',
+    permissions: {
+        owner: [
+            'user:mystore:user1'
+        ],
+        editor: [
+            'user:mystore:user3'
+        ]
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getavailableapplications"><a class="link" href="#getavailableapplications">getAvailableApplications</a></h3>
+<div class="paragraph">
+<p><span class="image"><span class="alt">XP 7.11.0</span></span></p>
+</div>
+<div class="paragraph">
+<p>Returns available applications of a specified project. The result contains active apps assigned to the project and all of its parents, if any.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unique project id to identify the project.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>string[]</strong> : Application keys.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Fetch available applications.</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getAvailableApplications} from '/lib/xp/project';
+
+const project = getAvailableApplications({
+    id: 'my-project'
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = ['app1', 'app2']</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

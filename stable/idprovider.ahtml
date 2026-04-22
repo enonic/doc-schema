@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>Building ID Providers</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Building ID Providers</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
+<li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#idprovider_js">idprovider.js</a>
 <ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
+<li><a href="#handle401">handle401</a></li>
+<li><a href="#login">login</a></li>
+<li><a href="#logout">logout</a></li>
+<li><a href="#autologin">autoLogin</a></li>
+<li><a href="#getpost_etc">GET/POST etc</a></li>
 </ul>
 </li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#sample">Sample</a></li>
 </ul>
 </div>
 </div>
@@ -457,19 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
+<p>The XP framework offers a solution for pluggable authentication called ID providers</p>
 </div>
 </div>
 </div>
@@ -477,79 +468,63 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>As part of the XP <a href="../iam.ahtml">IAM</a> (Identity and Access management), apps and sites may be loosely associated with an ID provider.
+The ID provider is responsible for providing  user authentication, independent of the source identity system.</p>
+</div>
+<div class="paragraph">
+<p>ID providers are wired tightly into the <a href="../runtime/engines.ahtml#_common_request_pipeline">common HTTP execution pipeline</a>.
+They participate both in pipeline execution steps, and through the <a href="../runtime/engines/idprovider-service.ahtml">ID provider service endpoint</a></p>
+</div>
+<div class="paragraph">
+<p>This section describes how to implement an ID provider application.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
+<p>An IDprovider application requires a descriptor file.
+The descriptor should be placed in your project as <code>src/main/resources/idprovider/idprovider.xml</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
+<div class="title">Sample idprovider.xml</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;id-provider&gt;
+  &lt;mode&gt;LOCAL&lt;/mode&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
+  &lt;form&gt;  <i class="conum" data-value="2"></i><b>(2)</b>
+    &lt;input name="title" type="TextLine"&gt;
+      &lt;label&gt;Title&lt;/label&gt;
+      &lt;occurrences minimum="0" maximum="1"/&gt;
+      &lt;default&gt;User Login&lt;/default&gt;
+    &lt;/input&gt;
+  &lt;/form&gt;
+&lt;/id-provider&gt;</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
+<td><strong>mode</strong> specifies how users and groups are process and stored in XP. Allowed values are:
+<div class="ulist">
+<ul>
+<li>
+<p><strong>LOCAL</strong> - Users and groups are fully managed by the IDprovider (i.e. no integrations or external ID systems).</p>
+</li>
+<li>
+<p><strong>EXTERNAL</strong> - Users and groups exist in a remote system. The IDprovider acts as a "broker" between XP and the remote Identity system.</p>
+</li>
+<li>
+<p><strong>MIXED</strong> - Users exist in a remote system, but the groups are created and managed locally in XP.</p>
+</li>
+</ul>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
-</tr>
-</table>
-</div>
+<td><strong>form</strong> defines config options that can be defined from the UI when setting up ID providers.
+Forms are based on the <a href="../cms/schemas.ahtml">schema system</a>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -557,57 +532,43 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
+This forms does not support CMS-specific input types, such as contentSelector and htmlArea.
 </td>
 </tr>
 </table>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="idprovider_js"><a class="link" href="#idprovider_js">idprovider.js</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You must add a specific idprovier JavaScript controller <code>src/main/resources/idprovider/idprovider.js</code> to the application.
+An application may only implement a single ID provider.</p>
+</div>
+<div class="paragraph">
+<p>To implement your ID provider, export one or more of the following functions:</p>
 </div>
 <div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
+<h3 id="handle401"><a class="link" href="#handle401">handle401</a></h3>
 <div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
+<p>Perhaps the most common use of ID providers is handling 401 errors (Unauthorized).
+When a user attempts to access a resource or service that requires authentication, the pipeline will produce an HTTP 401 response.
+The IDprovider may intercept the response before this is sent to the client (browser) and perform an action that enables the user to authenticate,
+hopefully giving access to the resource.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="login"><a class="link" href="#login">login</a></h3>
 <div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
-</div>
-<div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<p>Clients may request a login directly through a pre-defined endpoint, available for all ID providers.
+This provides a deterministic endpoint for accessing the login page of any ID provider.</p>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
-</div>
-<div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
-</div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
+<p>The URL to the endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_loginurl">loginUrl() function in the portal library</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -617,41 +578,22 @@ The query parameters will be normalized, so they are always in alphabetical orde
 </td>
 <td class="content">
 <div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
+<p>If the "login" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
+The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="logout"><a class="link" href="#logout">logout</a></h3>
 <div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
+<p>Clients may request a logout directly through a pre-defined endpoint, available for all ID providers.
+This provides a deterministic endpoint for logging out of any ID provider.</p>
 </div>
 <div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
+<p>The URL for this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_logouturl">logoutUrl() function in the portal library</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -660,56 +602,24 @@ Another alternative to XML-escape is to wrap the string in a CDATA block, as in 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+<div class="paragraph">
+<p>If the "logout" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
+The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="autologin"><a class="link" href="#autologin">autoLogin</a></h3>
 <div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
+<p>An ID provider may optionally include an AutoLogin filter.
+The purpose of this filter is to automatically sign in users, before they may access other parts of the execution pipeline.
+This effectively blocks all unauthorised access attempts for the protected service.</p>
 </div>
 <div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
+<p>If no user already exists in the context, the autoLogin filter is executed early in the HTTP engine&#8217;s pipeline.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -718,48 +628,85 @@ An example use case is automatic handling of the content type <code>portal:fragm
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
+<div class="paragraph">
+<p><code>autoLogin</code> works only for identity providers that are configured as <code>default</code> in the virtual host mapping. Visit the <a href="../deployment/config.ahtml#vhost">vhost configuration</a> section for more details.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="getpost_etc"><a class="link" href="#getpost_etc">GET/POST etc</a></h3>
+<div class="paragraph">
+<p>Additinoally, an ID provider may aso act as a regular <a href="../framework/http.ahtml">HTTP function</a> - supporting any interaction as desired.
+Communication with the controller is handled via the <a href="../runtime/engines/idprovider-service.ahtml">ID provider endpoint</a>.</p>
+</div>
+<div class="paragraph">
+<p>The URL to this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_idproviderurl">idProviderUrl() function in the portal library</a></p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
+<h2 id="sample"><a class="link" href="#sample">Sample</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
+<p>The code below demonstrates how an ID provider may be implemented</p>
 </div>
-<div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
+<div class="listingblock">
+<div class="title">Sample idprovider.js</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">var authLib = require('/lib/xp/auth');
+
+// Filter every reqeust
+exports.autoLogin = function (req) {
+    log.info('Invoked only unless user is already authenticated');
+};
+
+// Override error handler when authentication is required
+exports.handle401 = function (req) {
+    var body = generateLoginPage();
+    return {
+        status: 401,
+        contentType: 'text/html',
+        body: body
+    };
+};
+
+// Triggered when user visits the ID providers login endpoint
+exports.login = function (req) {
+
+    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
+
+    var body = generateLoginPage(redirectUrl);
+    return {
+        contentType: 'text/html',
+        body: body
+    };
+};
+
+// Triggered when user visits the ID providers logout endpoint
+exports.logout = function (req) {
+
+    // Sign user out of XP
+    authLib.logout();
+
+    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
+
+    if (redirectUrl) {
+        return {
+            redirect: redirectUrl
+        };
+    } else {
+        var body = generateLoginPage();
+        return {
+            contentType: 'text/html',
+            body: body
+        };
+    }
+};</code></pre>
 </div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
 </div>
 </div>
 </div>

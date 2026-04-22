@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>HTTP</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>HTTP</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
-<ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
-</ul>
-</li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#http_functions">HTTP functions</a></li>
+<li><a href="#request">Request</a></li>
+<li><a href="#response">Response</a></li>
+<li><a href="#cookies">Cookies</a></li>
 </ul>
 </div>
 </div>
@@ -457,98 +452,156 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
+<p>HTTP functions, the request and response objects they receive and return, and the cookie model.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="http_functions"><a class="link" href="#http_functions">HTTP functions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>An HTTP function is a <a href="functions.ahtml">function</a> that responds to an HTTP request. The file where it lives is invoked by one of XP&#8217;s engines (webapp, site, API) based on URL routing defined in descriptors or path conventions.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
+<p>Declare one export per HTTP method the function handles: <code>GET</code>, <code>POST</code>, <code>DELETE</code>, <code>PATCH</code>, <code>PUT</code>, <code>HEAD</code>, <code>OPTIONS</code>. A special <code>all</code> export catches any method that doesn&#8217;t have a specific handler.</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
+<div class="title">Exports</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">// Handles a GET request
+exports.GET = function(req) {}
+
+// Handles a POST request
+exports.POST = function(req) {}
+
+// Handles all requests, other than GET or POST which are handled by the functions above
+exports.all = function(req) {}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Every handler receives a <a href="#request">Request</a> object and returns a <a href="#response">Response</a> object.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example handler</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.GET = function(request) {
+
+  if (request.mode === 'edit') {
+    // do something...
+  }
+
+  var name = request.params.name;
+  log.info('Name = %s', name);
+
+  return {
+    body: 'Hello ' + name,
+    contentType: 'text/plain'
+  };
+
+};</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="request"><a class="link" href="#request">Request</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>request</code> object is passed to every HTTP function. It carries the request method, URL parts, headers, cookies, and body — plus two XP-specific properties, <code>mode</code> and <code>branch</code>, which the site engine sets to indicate the current rendering mode and repository branch.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "method": "GET",  <i class="conum" data-value="1"></i><b>(1)</b>
+  "scheme": "http",  <i class="conum" data-value="2"></i><b>(2)</b>
+  "host": "enonic.com",  <i class="conum" data-value="3"></i><b>(3)</b>
+  "port": "80",  <i class="conum" data-value="4"></i><b>(4)</b>
+  "path": "/my/page",  <i class="conum" data-value="5"></i><b>(5)</b>
+  "url": "https://enonic.com/my/page?debug=true",  <i class="conum" data-value="6"></i><b>(6)</b>
+  "remoteAddress": "10.0.0.1",  <i class="conum" data-value="7"></i><b>(7)</b>
+  "mode": "edit",  <i class="conum" data-value="8"></i><b>(8)</b>
+  "branch": "master",  <i class="conum" data-value="9"></i><b>(9)</b>
+  "body": null,  <i class="conum" data-value="10"></i><b>(10)</b>
+  "params": {  <i class="conum" data-value="11"></i><b>(11)</b>
+    "debug": "true"
+  },
+  "headers": {  <i class="conum" data-value="12"></i><b>(12)</b>
+    "Language": "en",
+    "Cookies": "mycookie=123; other=abc;"
+  },
+  "cookies": {  <i class="conum" data-value="13"></i><b>(13)</b>
+    "mycookie": "123",
+    "other": "abc"
+  },
+  "locales": [  <i class="conum" data-value="14"></i><b>(14)</b>
+    "en",
+    "no"
+  ]
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
+<td>HTTP method of the request.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
+<td>Scheme — <code>http</code> or <code>https</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
+<td>Host name of the server to which the request was sent.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
+<td>Port of the server to which the request was sent.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
+<td>Path of the request.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
+<td>Full URL of the request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Client IP address. If the <code>X-Forwarded-For</code> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> header is set, its value overrides the client IP.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Site-engine rendering mode: <code>inline</code>, <code>edit</code>, <code>preview</code>, or <code>live</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Site-engine repository branch: <code>draft</code> or <code>master</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Request body, as a string, or <code>null</code> when absent.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Query and form parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>HTTP request headers.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Parsed HTTP request cookies.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><span class="image"><span class="alt">XP 8.0.0</span></span> Locale strings in decreasing order of preference, derived from the <code>Accept-Language</code> header. When the client sends no <code>Accept-Language</code> header, the array contains a single element with the server&#8217;s default locale.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p><span class="image"><span class="alt">XP 7.12.0</span></span> Use <code>request.getHeader(name)</code> to read a header case-insensitively. Prefer it over direct access to the <code>headers</code> object.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -557,110 +610,7 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
-<div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
-</div>
-<div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
-</div>
-<div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
-</div>
-<div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
-</div>
-<div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
-</div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
-</div>
-<div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+Modifications to the <code>headers</code> object do not affect the result of <code>getHeader(name)</code>.
 </td>
 </tr>
 </table>
@@ -668,100 +618,148 @@ Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not p
 </div>
 </div>
 <div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
+<h2 id="response"><a class="link" href="#response">Response</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
+<p>The HTTP function returns a <code>response</code> object that XP converts to the outgoing HTTP response.</p>
 </div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "status": 200,  <i class="conum" data-value="1"></i><b>(1)</b>
+  "body": "Hello World",  <i class="conum" data-value="2"></i><b>(2)</b>
+  "contentType": "text/plain",  <i class="conum" data-value="3"></i><b>(3)</b>
+  "headers": {  <i class="conum" data-value="4"></i><b>(4)</b>
+      "key": "value"
+  },
+  "cookies": {},  <i class="conum" data-value="5"></i><b>(5)</b>
+  "redirect": "/another/page",  <i class="conum" data-value="6"></i><b>(6)</b>
+  "postProcess": true,  <i class="conum" data-value="7"></i><b>(7)</b>
+  "pageContributions": {},  <i class="conum" data-value="8"></i><b>(8)</b>
+  "applyFilters": true  <i class="conum" data-value="9"></i><b>(9)</b>
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
 </div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>HTTP status code (default <code>200</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Response body — a string or a JavaScript object.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>MIME type (default <code>text/plain; charset=utf-8</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Response headers. <span class="image"><span class="alt">XP 7.15.0</span></span> A value of <code>null</code> or <code>undefined</code> removes a header set by an upstream function or filter.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Cookies to set on the response. See <a href="#cookies">Cookies</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>URI to redirect to. If set, XP places it in the <code>Location</code> header and sets the status to <code>303</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Site engine only. If <code>true</code>, the rendered page is post-processed for component tags (default <code>true</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Site engine only. HTML fragments contributed to the rendered markup — see <a href="../sites/contributions.ahtml">page contributions</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Site engine only. If <code>false</code>, no further <a href="../sites/processors.ahtml">response processors</a> or filters run (default <code>true</code>).</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
+<h2 id="cookies"><a class="link" href="#cookies">Cookies</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
+<p>Cookie values in the response object can be set as plain strings or as objects carrying full cookie configuration.</p>
 </div>
-<div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
-</div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">return {
+    status: 200,
+    body: "Hello World",
+    cookies: {
+        "plain": "value",  <i class="conum" data-value="1"></i><b>(1)</b>
+        "complex": {  <i class="conum" data-value="2"></i><b>(2)</b>
+            value: "value",  <i class="conum" data-value="3"></i><b>(3)</b>
+            path: "/valid/path",  <i class="conum" data-value="4"></i><b>(4)</b>
+            domain: "enonic.com",  <i class="conum" data-value="5"></i><b>(5)</b>
+            comment: "Some cookie comments",  <i class="conum" data-value="6"></i><b>(6)</b>
+            maxAge: 2000,  <i class="conum" data-value="7"></i><b>(7)</b>
+            secure: false,  <i class="conum" data-value="8"></i><b>(8)</b>
+            httpOnly: false,  <i class="conum" data-value="9"></i><b>(9)</b>
+            sameSite: "Lax"  <i class="conum" data-value="10"></i><b>(10)</b>
+        }
+    }
+};</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>String value — cookie created with defaults.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Object value — the settings below are applied.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><strong>Value</strong> (required). The value stored in the cookie.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Paths on the site where the cookie is available (and all contained paths). Default empty.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Additional sites allowed to read the cookie. Default empty — only the origin server can read it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Cookie comment. Deprecated; will be removed in a future XP version.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Lifetime in <strong>seconds</strong>. Default <code>-1</code> — the cookie lives until the browser is closed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>If <code>true</code>, the cookie is only sent over HTTPS. Default <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>If <code>true</code>, the cookie is inaccessible to client-side JavaScript. Default <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><code>SameSite</code> flag. One of <code>lax</code>, <code>strict</code>, <code>none</code>, or empty for "not set" (browser default).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. <a href="https://en.wikipedia.org/wiki/X-Forwarded-For" class="bare">https://en.wikipedia.org/wiki/X-Forwarded-For</a>
 </div>
 </div>
 <div id="footer">

@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<meta name="author" content="This section describes the file structure of an Enonic application project">
+<title>Project and code structure</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,27 +438,38 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Project and code structure</h1>
+<div class="details">
+<span id="author" class="author">This section describes the file structure of an Enonic application project</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
+<li><a href="#project_structure">Project structure</a>
 <ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
+<li><a href="#build_files">Build files</a></li>
+<li><a href="#general_resources">General resources</a></li>
+<li><a href="#java">Java</a></li>
 </ul>
 </li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#apps_vs_libraries">Apps vs Libraries</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Get started running. Use one of our <a href="https://market.enonic.com/starters">starters</a> to bootstrap your development project.
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -466,7 +478,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. However, thanks to the <a href="../runtime.ahtml">XP runtime</a> being a polyglot, applications may contain Java, Kotlin, Scala, or any other language that compiles to Java bytecode.
 </td>
 </tr>
 </table>
@@ -474,292 +486,220 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="project_structure"><a class="link" href="#project_structure">Project structure</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Mappings are defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>. Examples of use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Map a controller to a specific URL pattern i.e. /mypath</p>
-</li>
-<li>
-<p>Map a controller to a specifc set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
-</li>
-<li>
-<p>Map a filter to parts of or the entire site structure</p>
-</li>
-</ul>
+<p>The example structure below includes the standard files and folders in an Enonic application (or library).</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-files" data-lang="files">sample-project/
+  build.gradle
+  gradle.properties
+  gradlew
+  gradlew.bat
+  settings.gradle
+  src/
+    main/
+      resources/
+        application.svg
+        application.yml
+        admin/
+          tools/
+          widgets/
+        api/
+        assets/
+        error/
+        i18n/
+        idprovider/
+        main.js
+        cms/
+          cms.yml
+          site.yml
+          content-types/
+          layouts/
+          macros/
+          mixins/
+          pages/
+          parts/
+          processors/
+          x-data/
+        webapp/
+        tasks/
+      java/
+    test/
+      java/</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Every file and folder has a specific function and purpose as described below:</p>
 </div>
 <div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
+<h3 id="build_files"><a class="link" href="#build_files">Build files</a></h3>
 <div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
+<p>Enonic supports JS/TS based build tools, but relies on <a href="https://gradle.org/">Gradle</a> as the main builder.  The  <a href="https://market.enonic.com/starters/typescript-starter">TypeScript Starter</a> is a good place to set up a project.</p>
 </div>
 <div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
+<p>Visit the <a href="build.ahtml">build system section</a> for more details.</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">build.gradle</dt>
+<dd>
+<p>Main build file</p>
+</dd>
+<dt class="hdlist1">gradle.properties</dt>
+<dd>
+<p>Build properties</p>
+</dd>
+<dt class="hdlist1">gradlew | /gradlew.bat</dt>
+<dd>
+<p>Gradle wrapper file. Downloads and runs Gradle without having to install it manually.</p>
+</dd>
+<dt class="hdlist1">settings.gradle</dt>
+<dd>
+<p>Mandatory file to boostrap the build process</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="general_resources"><a class="link" href="#general_resources">General resources</a></h3>
 <div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
+<p>The majority of Enonic specific code is placed within <code>src/main/resources/</code>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">admin/tools/</dt>
+<dd>
+<p>Admin tools are defined here. Tools are administrative apps listed in the admin console menu.</p>
+</dd>
+<dt class="hdlist1">admin/widgets/</dt>
+<dd>
+<p>Admin widgets are essentially user interface components that can be embedded within other admin tools.</p>
+</dd>
+<dt class="hdlist1">application.svg</dt>
+<dd>
+<p>Application icon in SVG format. Should be in a square format.</p>
+</dd>
+<dt class="hdlist1">application.xml</dt>
+<dd>
+<p>Application information in XML format.</p>
+</dd>
+<dt class="hdlist1">assets/</dt>
+<dd>
+<p>Standard folder for serving of static assets, such as css and javascript. Assets are served by the <a href="../runtime/engines/asset-service.ahtml">asset service</a>.</p>
+</dd>
+<dt class="hdlist1">error/error.js</dt>
+<dd>
+<p>The <a href="../framework/error.ahtml">HTTP error handler</a></p>
+</dd>
+<dt class="hdlist1">main.js</dt>
+<dd>
+<p>The application&#8217;s <a href="../framework/main.ahtml">main controller</a>. Executed when an application starts and stops.</p>
+</dd>
+<dt class="hdlist1">services/</dt>
+<dd>
+<p>Contains <a href="../runtime/engines/http-service.ahtml">Http service controllers</a></p>
+</dd>
+<dt class="hdlist1">i18n/</dt>
+<dd>
+<p>Short for internationalization, this folder contains <a href="../libraries/lib-i18n.ahtml">app localization files</a></p>
+</dd>
+<dt class="hdlist1">idprovider/</dt>
+<dd>
+<p>The application may implement an <a href="../framework/idprovider.ahtml#part">ID Provider</a> here.</p>
+</dd>
+<dt class="hdlist1">tasks/</dt>
+<dd>
+<p>May contain <a href="../libraries/lib-task.ahtml">task controllers</a> for running asynchronous and background processing.</p>
+</dd>
+<dt class="hdlist1">site/site.xml</dt>
+<dd>
+<p>Contains <a href="../cms/sites.ahtml#site_xml">site configuration schema</a>, and declaring that the app can be added to projects and sites</p>
+</dd>
+<dt class="hdlist1">site/content-types/</dt>
+<dd>
+<p>Contains <a href="../cms/content-types.ahtml">Content type</a> definitions.</p>
+</dd>
+<dt class="hdlist1">site/processors/</dt>
+<dd>
+<p>For post processing of HTML response from pages built with the <a href="../framework.ahtml">Enonic JS framework</a>.</p>
+</dd>
+<dt class="hdlist1">site/layouts/</dt>
+<dd>
+<p><a href="../cms/pages/layouts.ahtml">Layout components</a> are placed here.</p>
+</dd>
+<dt class="hdlist1">site/mixins/</dt>
+<dd>
+<p><a href="../cms/schemas/mixins.ahtml">Reusable schemas</a> are placed here.</p>
+</dd>
+<dt class="hdlist1">site/macros/</dt>
+<dd>
+<p><a href="../cms/macros.ahtml">Rich text Macro components</a> are placed here.</p>
+</dd>
+<dt class="hdlist1">site/pages/</dt>
+<dd>
+<p><a href="../cms/pages.ahtml">Page components</a> are placed here.</p>
+</dd>
+<dt class="hdlist1">site/parts/</dt>
+<dd>
+<p><a href="../cms/pages/parts.ahtml">Part components</a> are placed here.</p>
+</dd>
+<dt class="hdlist1">site/x-data/</dt>
+<dd>
+<p><a href="../cms/x-data.ahtml">X-data schemas</a> are defined here</p>
+</dd>
+<dt class="hdlist1">webapp/webapp.js</dt>
+<dd>
+<p><a href="../runtime.ahtml#webapp_js">Webapp</a> based on the Enonic JS framework are placed here.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="java"><a class="link" href="#java">Java</a></h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">/src/main/java/</dt>
+<dd>
+<p>Optionally place Java code here.</p>
+</dd>
+<dt class="hdlist1">/src/test/java/</dt>
+<dd>
+<p>Optionally place Java tests here.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
+<h2 id="apps_vs_libraries"><a class="link" href="#apps_vs_libraries">Apps vs Libraries</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<p>Enonic libraries are similar to applications, the main difference being that a library cannot be installed and started by itself.</p>
 </div>
-<div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
-</div>
-<div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
-The protocol, host and port are not involved in the pattern matching.</p>
-</div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
-</div>
+Check out <a href="https://market.enonic.com/starters/library-starter">the library starter</a> if you are planning to build your own library.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
+<p>A library may consist of the same files and functionality you would find in an application - such as Assets, Content Types and JS controllers.</p>
 </div>
 <div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
+<p>Enonic libraries are added to your application by declaring a dependency in the <a href="build.ahtml#build.gradle">build file</a>.</p>
 </div>
 <div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
-</div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
-</li>
-<li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
-</div>
-<div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
-</div>
-<div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
+<p>The core functionality of XP is exposed via standard libraries. Check out the <a href="../libraries.ahtml">Standard Libraries documentation</a>. You will also find additional libraries on <a href="https://market.enonic.com/libraries">Enonic Market</a></p>
 </div>
 </div>
 </div>

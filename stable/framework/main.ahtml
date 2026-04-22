@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Main controller</title>
+<title>Main</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,7 +437,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Main controller</h1>
+<h1>Main</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -449,7 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Handle application lifecycle events via the main controller.</p>
+<p>Handle application lifecycle events via main.js.</p>
 </div>
 </div>
 </div>
@@ -457,13 +457,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="main_js"><a class="link" href="#main_js">main.js</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic apps may contain a special controller known as the Application controller, or just "main.js". Simply place the file <code>src/main/resources/main.js</code> into your project.</p>
+<p>Enonic apps may contain a special "main.js" file. Place the file in <code>src/main/resources/main.js</code>.</p>
 </div>
 <div class="paragraph">
-<p><code>main.js</code> gets invoked when an application lifecycle event occurs. A common use of this controller is initialization like creating repositories, and registration of event listeners when the application starts.</p>
+<p><code>main.js</code> is invoked when an application lifecycle event occurs. A common use of is initialization like creating repositories, and registration of event listeners when the application starts, as well as cleaning up resources when the application stops.</p>
 </div>
 <div class="paragraph">
-<p>The <code>main.js</code> execution should complete as quickly as possible to prevent application stalling. Never call remote endpoints or wait in loops for events inside <code>main.js</code> global scope.</p>
+<p>The code should complete as quickly as possible to prevent application stalling. Never call remote endpoints or wait in loops for events inside the <code>main.js</code> global scope.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -504,7 +504,7 @@ __.disposer(function() {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-22 11:38:18 UTC
+Last updated 2026-04-22 21:33:42 UTC
 </div>
 </div>
 </body>

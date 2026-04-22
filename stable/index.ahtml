@@ -462,10 +462,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic XP is a highly modular and customizable platform. Build and deploy <a href="cms.ahtml">content schemas</a>, custom APIs, functions, admin extensions, id providers, webapps, and even sites.</p>
+<p>Enonic XP is a highly modular and customizable platform. Build and deploy <a href="schemas.ahtml">content schemas</a>, custom APIs, functions, admin extensions, id providers, webapps, and even full blown websites.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="edk.ahtml">Enonic Development Kit</a> (EDK) allow developers to quickly start building.</p>
+<p>The <a href="tooling.ahtml">Tooling</a> section covers the CLI, sandboxes, starters, build system, and CI/CD setup that get you building quickly.</p>
 </div>
 </div>
 </div>
@@ -490,10 +490,10 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 <h2 id="concept"><a class="link" href="#concept">Concept</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some call it plugins, other call it modules - all we know is that Enonic apps sounds better. Enonic apps are standalone software packages that can be deployed to Enonic XP to extend its functionality. Content Studio and the Headless API are examples of such applications. They are built using the Enonic Development Kit (EDK).</p>
+<p>Some call it plugins, other call it modules - all we know is that Enonic apps sounds much cooler. Enonic apps are standalone software packages that can be deployed to Enonic XP to extend its functionality and capabilities. Content Studio and the Headless API are examples of such applications, built using the Enonic Development Kit (EDK).</p>
 </div>
 <div class="paragraph">
-<p>The apps are powered by the <a href="runtime.ahtml">runtime</a>, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services: TODO link to system apis.</p>
+<p>Enonic XP is the runtime of these apps, which means multiple applications can run within a single instance. Once an application has started, it has access to all platform services via the <a href="libraries.ahtml">standard libraries</a>.</p>
 </div>
 </div>
 </div>
@@ -501,17 +501,17 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 <h2 id="installation"><a class="link" href="#installation">Installation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are four ways to get your code running on Enonic XP:</p>
+<p>You may install applications to your Enonic XP instance in three different ways:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Via API</dt>
+<dt class="hdlist1">Via CLI</dt>
 <dd>
-<p>Use Enonic CLI to push your application to the Management API. The applications will be available for all nodes in an XP cluster. This approach is commonly used in a CI/CD setup.</p>
+<p>Use Enonic CLI to push your application via the management API.</p>
 </dd>
 <dt class="hdlist1">Via Admin Console</dt>
 <dd>
-<p>Applications can be manually installed through the "Applications" admin app. Once installed, the application will be available for all nodes in an XP cluster.</p>
+<p>Applications can be manually installed through the "Applications" admin app.</p>
 </dd>
 <dt class="hdlist1">Via File system</dt>
 <dd>
@@ -520,7 +520,7 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 </dl>
 </div>
 <div class="paragraph">
-<p>Consider a microservice style highly controlled setup where you bundle your app(s) together with the XP runtime and launch it as a separate instance.</p>
+<p>There are endless ways of configuring, isolating and scaling XP apps. For more details, visit the <a href="https://developer.enonic.com/docs/xp">XP platform documentation</a>.</p>
 </div>
 </div>
 </div>
@@ -529,18 +529,18 @@ For hands on introduction to development and the SDK, visit the <a href="https:/
 <div class="sectionbody">
 <div class="paragraph">
 <p>In addition to installing and uninstalling, XP applications may be started and stopped.
-This is referred to as the life cycle of the application. During the stop and start phases, applications themselves may execute custom code.</p>
+This is referred to as the life cycle of the application. During the stop and start phases, applications may execute customized life cycle scripts.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Starting</dt>
 <dd>
-<p>Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application&#8217;s main.js script will be executed.</p>
+<p>Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application&#8217;s <a href="framework/main.ahtml">main function</a> will be executed.</p>
 </dd>
 <dt class="hdlist1">Stopping</dt>
 <dd>
 <p>Before uninstalling, applications are automatically stopped on all nodes.
-During the stopping, if it exists, the disposer of the application&#8217;s main.js script will be executed.</p>
+During the stopping, if it exists, the disposer function of the application&#8217;s main.js file will be executed.</p>
 </dd>
 </dl>
 </div>
@@ -557,7 +557,7 @@ During the stopping, if it exists, the disposer of the application&#8217;s main.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-22 11:38:18 UTC
+Last updated 2026-04-22 21:33:42 UTC
 </div>
 </div>
 </body>

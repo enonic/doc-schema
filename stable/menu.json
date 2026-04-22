@@ -5,32 +5,28 @@
       "document": "index"
     },
     {
-      "title": "Development kit",
-      "document": "edk",
+      "title": "Tooling",
+      "document": "tooling",
       "menuItems": [
         {
           "title": "CLI",
-          "document": "edk/cli"
+          "document": "tooling/cli"
         },
         {
           "title": "Sandboxes",
-          "document": "edk/sandboxes"
+          "document": "tooling/sandboxes"
         },
         {
           "title": "Starters",
-          "document": "edk/starters"
+          "document": "tooling/starters"
         },
         {
           "title": "Build system",
-          "document": "edk/builds"
-        },
-        {
-          "title": "TS Types",
-          "document": "edk/typescript"
+          "document": "tooling/build"
         },
         {
           "title": "CI/CD",
-          "document": "ci-cd"
+          "document": "tooling/ci-cd"
         }
       ]
     },
@@ -39,36 +35,32 @@
       "document": "framework",
       "menuItems": [
         {
-          "title": "Request pipeline",
-          "document": "framework/pipeline"
-        },
-        {
-          "title": "Controllers",
-          "document": "framework/controllers"
+          "title": "Functions",
+          "document": "framework/functions"
         },
         {
           "title": "Globals",
           "document": "framework/globals"
         },
         {
-          "title": "Request",
-          "document": "framework/request"
+          "title": "Main controller",
+          "document": "framework/main"
         },
         {
-          "title": "Response",
-          "document": "framework/response"
+          "title": "Request pipeline",
+          "document": "framework/pipeline"
         },
         {
-          "title": "Events",
-          "document": "framework/events"
-        },
-        {
-          "title": "Error handler",
-          "document": "framework/error"
+          "title": "HTTP",
+          "document": "framework/http"
         },
         {
           "title": "Filters",
           "document": "framework/filters"
+        },
+        {
+          "title": "Error handler",
+          "document": "framework/error"
         },
         {
           "title": "Templating",
@@ -79,6 +71,10 @@
           "document": "framework/websocket"
         },
         {
+          "title": "Events",
+          "document": "framework/events"
+        },
+        {
           "title": "Tasks",
           "document": "framework/tasks"
         },
@@ -87,118 +83,118 @@
           "document": "framework/scheduler"
         },
         {
-          "title": "Main controller",
-          "document": "framework/main"
-        },
-        {
           "title": "Localization",
           "document": "framework/i18n"
         },
         {
           "title": "Java bridge",
           "document": "framework/java-bridge"
+        },
+        {
+          "title": "TypeScript",
+          "document": "framework/typescript"
         }
       ]
     },
     {
       "title": "Platform Libraries",
-      "document": "api",
+      "document": "libraries",
       "menuItems": [
         {
-          "title": "Admin API",
-          "document": "api/lib-admin"
+          "title": "Admin",
+          "document": "libraries/lib-admin"
         },
         {
-          "title": "Application API",
-          "document": "api/lib-app"
+          "title": "Application",
+          "document": "libraries/lib-app"
         },
         {
-          "title": "Audit API",
-          "document": "api/lib-auditlog"
+          "title": "Audit",
+          "document": "libraries/lib-auditlog"
         },
         {
-          "title": "Identity API",
-          "document": "api/lib-auth"
+          "title": "Identity",
+          "document": "libraries/lib-auth"
         },
         {
-          "title": "Cluster API",
-          "document": "api/lib-cluster"
+          "title": "Cluster",
+          "document": "libraries/lib-cluster"
         },
         {
-          "title": "Common API",
-          "document": "api/lib-common"
+          "title": "Common",
+          "document": "libraries/lib-common"
         },
         {
-          "title": "Content API",
-          "document": "api/lib-content"
+          "title": "Content",
+          "document": "libraries/lib-content"
         },
         {
-          "title": "Context API",
-          "document": "api/lib-context"
+          "title": "Context",
+          "document": "libraries/lib-context"
         },
         {
-          "title": "Event API",
-          "document": "api/lib-event"
+          "title": "Event",
+          "document": "libraries/lib-event"
         },
         {
-          "title": "Export API",
-          "document": "api/lib-export"
+          "title": "Export",
+          "document": "libraries/lib-export"
         },
         {
-          "title": "Grid API",
-          "document": "api/lib-grid"
+          "title": "Grid",
+          "document": "libraries/lib-grid"
         },
         {
-          "title": "I18N API",
-          "document": "api/lib-i18n"
+          "title": "I18N",
+          "document": "libraries/lib-i18n"
         },
         {
-          "title": "IO API",
-          "document": "api/lib-io"
+          "title": "IO",
+          "document": "libraries/lib-io"
         },
         {
-          "title": "Mail API",
-          "document": "api/lib-mail"
+          "title": "Mail",
+          "document": "libraries/lib-mail"
         },
         {
-          "title": "Node API",
-          "document": "api/lib-node"
+          "title": "Node",
+          "document": "libraries/lib-node"
         },
         {
-          "title": "Portal API",
-          "document": "api/lib-portal"
+          "title": "Portal",
+          "document": "libraries/lib-portal"
         },
         {
-          "title": "Project API",
-          "document": "api/lib-project"
+          "title": "Project",
+          "document": "libraries/lib-project"
         },
         {
-          "title": "Repo API",
-          "document": "api/lib-repo"
+          "title": "Repo",
+          "document": "libraries/lib-repo"
         },
         {
-          "title": "Scheduler API",
-          "document": "api/lib-scheduler"
+          "title": "Scheduler",
+          "document": "libraries/lib-scheduler"
         },
         {
-          "title": "Schema API",
-          "document": "api/lib-schema"
+          "title": "Schema",
+          "document": "libraries/lib-schema"
         },
         {
-          "title": "Tasks API",
-          "document": "api/lib-task"
+          "title": "Tasks",
+          "document": "libraries/lib-task"
         },
         {
-          "title": "Value API",
-          "document": "api/lib-value"
+          "title": "Value",
+          "document": "libraries/lib-value"
         },
         {
-          "title": "VHost API",
-          "document": "api/lib-vhost"
+          "title": "VHost",
+          "document": "libraries/lib-vhost"
         },
         {
-          "title": "Websocket API",
-          "document": "api/lib-websocket"
+          "title": "Websocket",
+          "document": "libraries/lib-websocket"
         }
       ]
     },
@@ -215,7 +211,7 @@
           "document": "universal-api"
         },
         {
-          "title": "Serving Assets",
+          "title": "Asset serving",
           "document": "static-assets"
         },
         {
@@ -246,19 +242,19 @@
         },
         {
           "title": "Admin tools",
-          "document": "extending/admin-tools"
+          "document": "admin-tools"
         },
         {
           "title": "Admin extensions",
-          "document": "extending/extensions"
+          "document": "admin-extensions"
         },
         {
           "title": "ID providers",
-          "document": "extending/id-providers"
+          "document": "id-providers"
         },
         {
           "title": "Metrics",
-          "document": "extending/metrics"
+          "document": "metrics"
         }
       ]
     }
