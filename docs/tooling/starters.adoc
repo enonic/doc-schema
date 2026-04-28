@@ -23,27 +23,27 @@ sample-project/
     main/
       resources/
         application.svg
-        application.yml
+        application.yaml
         admin/
           tools/
-          widgets/
-        api/
+          extensions/
+        apis/
         assets/
         error/
         i18n/
         idprovider/
         main.js
         cms/
-          cms.yml
-          site.yml
+          cms.yaml
+          site.yaml
           content-types/
+          form-fragments/
           layouts/
           macros/
           mixins/
           pages/
           parts/
           processors/
-          x-data/
         webapp/
         tasks/
       java/
@@ -76,45 +76,47 @@ The majority of Enonic specific code is placed within `src/main/resources/`:
 
 admin/tools/:: Admin tools are defined here. Tools are administrative apps listed in the admin console menu.
 
-admin/widgets/:: Admin widgets are essentially user interface components that can be embedded within other admin tools.
+admin/extensions/:: Admin extensions are user interface components that can be embedded within admin tools (formerly known as widgets).
+
+apis/:: <<../universal-api#, Universal API>> controllers and descriptors.
 
 application.svg:: Application icon in SVG format. Should be in a square format.
 
-application.xml:: Application information in XML format.
+application.yaml:: Application descriptor (`kind: "Application"`).
 
-assets/:: Standard folder for serving of static assets, such as css and javascript. Assets are served by the <<../runtime/engines/asset-service#, asset service>>.
+assets/:: Standard folder for serving static assets such as CSS and JavaScript. Assets are served by the <<../runtime/engines/asset-service#, asset service>>.
 
-error/error.js:: The <<../framework/error#, HTTP error handler>>
+error/error.js:: The <<../framework/error#, HTTP error handler>>.
 
 main.js:: The application's <<../framework/main#, main controller>>. Executed when an application starts and stops.
 
-services/:: Contains <<../runtime/engines/http-service#, Http service controllers>>
-
-i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>
+i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>.
 
 idprovider/:: The application may implement an <<../framework/idprovider#part,ID Provider>> here.
 
-tasks/:: May contain <<../libraries/lib-task#, task controllers>> for running asynchronous and background processing.
+tasks/:: May contain <<../libraries/lib-task#, task controllers>> for asynchronous and background processing.
 
-site/site.xml:: Contains <<../cms/sites#site_xml, site configuration schema>>, and declaring that the app can be added to projects and sites
+webapp/:: Optional <<../webapps#, webapp>> entry point. Contains `webapp.js` (controller) and `webapp.yaml` (descriptor).
 
-site/content-types/::  Contains <<../cms/content-types#,Content type>> definitions.
+cms/site.yaml:: Site configuration — API mounts, processors, and mappings.
 
-site/processors/:: For post processing of HTML response from pages built with the <<../framework#, Enonic JS framework>>.
+cms/cms.yaml:: Site form and mixin references.
 
-site/layouts/:: <<../cms/pages/layouts#,Layout components>> are placed here.
+cms/content-types/:: <<../cms/content-types#, Content type>> definitions.
 
-site/mixins/:: <<../cms/schemas/mixins#, Reusable schemas>> are placed here.
+cms/processors/:: <<../sites/processors#, Response processors>> for post-processing the HTML response from sites.
 
-site/macros/:: <<../cms/macros#, Rich text Macro components>> are placed here.
+cms/layouts/:: <<../cms/pages/layouts#, Layout components>>.
 
-site/pages/:: <<../cms/pages#, Page components>> are placed here.
+cms/form-fragments/:: Reusable form pieces (formerly known as `mixins`).
 
-site/parts/:: <<../cms/pages/parts#,Part components>> are placed here.
+cms/macros/:: <<../cms/macros#, Rich-text macro components>>.
 
-site/x-data/:: <<../cms/x-data#, X-data schemas>> are defined here
+cms/pages/:: <<../cms/pages#, Page components>>.
 
-webapp/webapp.js:: <<../runtime#webapp_js, Webapp>> based on the Enonic JS framework are placed here.
+cms/parts/:: <<../cms/pages/parts#, Part components>>.
+
+cms/mixins/:: Extra metadata attached to content (formerly known as `x-data`).
 
 
 === Java

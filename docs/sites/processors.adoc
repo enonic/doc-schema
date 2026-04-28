@@ -19,7 +19,7 @@ Consider using regular <<filters#, HTTP Filters>> for other use-cases.
 
 == Usage
 
-Create a response processor by placing a controller file in you project folder under `src/main/resources/site/processors` i.e. `src/main/resources/site/processors/myprocessor.js`
+Create a response processor by placing a controller file in your project folder under `src/main/resources/cms/processors/` i.e. `src/main/resources/cms/processors/myprocessor.js`.
 
 The controller must export a `responseProcessor`. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a `bodyEnd` <<contributions#, page contribution>> to the response.
 
@@ -46,18 +46,18 @@ exports.responseProcessor = function (req, res) {
 
 To wire a processor into the execution pipeline, it must be declared in the app's <<../cms/sites#site_xml, site descriptor>>, and the application must be added to the respective site.
 
-.site.xml
-[source,xml]
-<site>
-  <processors>
-    <response-processor name="tracker" order="10"/> // <1> <2>
-  </processors>
-  <form/>
-</site>
+.cms/site.yaml
+[source,yaml]
+----
+kind: "Site"
+processors:
+- name: "tracker" # <1>
+  order: 10       # <2>
 ----
 
-<1> @name indicates name of the controller file
-<2> @order indicates execution order, lower value means higher priority
+<1> *name* indicates the name of the controller file (without the `.js` extension).
+
+<2> *order* indicates execution order; lower value means higher priority.
 
 Response processors may change any of the values of the response object, including: HTTP status code, response body, HTTP headers, cookies and page contributions.
 It is also possible to return the response object received without any changes.

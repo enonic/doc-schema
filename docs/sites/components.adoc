@@ -31,7 +31,7 @@ TIP: Thanks to the site engine's built-in access control you are also guaranteed
 
 == Page controllers
 
-Page controlles must be placed next to your <<../cms/pages#, page descriptor>> i.e. `src/main/resources/site/pages/<page-name>/<page-name.js>`.
+Page controllers must be placed next to your <<../cms/pages#, page descriptor>> i.e. `src/main/resources/cms/pages/<page-name>/<page-name>.js`.
 
 .Sample page controller using the context
 [source,javascript]
@@ -53,7 +53,7 @@ exports.GET = function(req) {
 
 == Part controllers
 
-Part controlles must be placed next to your <<../cms/pages/parts#, part descriptor>> i.e. `src/main/resources/site/parts/<part-name>/<part-name.js>`.
+Part controllers must be placed next to your <<../cms/pages/parts#, part descriptor>> i.e. `src/main/resources/cms/parts/<part-name>/<part-name>.js`.
 
 .Sample part controller using the form value
 [source,javascript]
@@ -73,7 +73,7 @@ exports.GET = function(req) {
 
 == Layout controllers
 
-Layout controlles must be placed next to your <<../cms/pages/layouts#, layout descriptor>> i.e. `src/main/resources/site/layouts/<layout-name>/<layout-name.js>`.
+Layout controllers must be placed next to your <<../cms/pages/layouts#, layout descriptor>> i.e. `src/main/resources/cms/layouts/<layout-name>/<layout-name>.js`.
 
 
 .Sample layout using Thymeleaf to render two regions
@@ -209,12 +209,13 @@ To mitigate this, the recommended approach is adding a controller mapping to hel
 
 Add a <<mappings#, controller mapping>> for the `portal:fragment` content type. This will then be executed every time a fragment is rendered.
 
-.site.xml
-[source, XML]
+.cms/site.yaml
+[source,yaml]
 ----
-<mapping controller="/site/pages/default/default.js">
-  <match>type:'portal:fragment'</match>
-</mapping>
+kind: "Site"
+mappings:
+- controller: "/cms/pages/default/default.js"
+  match: "type:'portal:fragment'"
 ----
 
 NOTE: It can often be convenient to reuse your page controller, as this is already doing the job.

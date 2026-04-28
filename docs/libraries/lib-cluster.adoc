@@ -27,9 +27,9 @@ You are now ready to use the API.
 
 == Functions
 
-=== isMaster
+=== isLeader
 
-Tests whether the current node is the master node in a cluster. A cluster with multiple master nodes will only return true on the elected node.
+Tests whether the current node is the leader for the calling application. Useful for guarding work that should run on a single node — scheduled initialization, one-shot tasks, or event handlers that must not fire on every cluster node.
 
 [.lead]
 Parameters
@@ -39,49 +39,60 @@ None
 [.lead]
 Returns
 
-*boolean* : `true` if the current node is master; `false` otherwise.
+*boolean* : `true` if the current node is the leader; `false` otherwise.
 
 [.lead]
 Examples
 
-.Initialize data only on the master node
+.Initialize data only on the leader node
 [source,typescript]
 ----
-import {isMaster} from '/lib/xp/cluster';
-if (isMaster()) {
+import {isLeader} from '/lib/xp/cluster';
+if (isLeader()) {
     initializeRepo();
 }
 ----
 
-.Run task only on master
+.Run a named task only on the leader
 [source,typescript]
 ----
-import {isMaster} from '/lib/xp/cluster';
-import {submit} from '/lib/xp/task';
+import {isLeader} from '/lib/xp/cluster';
+import {submitTask} from '/lib/xp/task';
 
-if (isMaster() {
-    const taskId = submit({
-        description: 'Master only task',
-        task: () => {
-          longRunningTask();
-        }
+if (isLeader()) {
+    submitTask({
+        descriptor: 'longRunningTask'
     });
-})
+}
 ----
 
-.Catch event and execute something only on master
+.Handle an event only on the leader
 [source,typescript]
 ----
-import {isMaster} from '/lib/xp/cluster';
+import {isLeader} from '/lib/xp/cluster';
 import {listener} from '/lib/xp/event';
 
 listener({
     type: 'node.pushed',
     localOnly: false,
     callback: (event) => {
-        if(isMaster()) {
+        if (isLeader()) {
             log.info('event: %s', JSON.stringify(event));
         }
     }
 });
+----
+
+=== isMaster
+
+WARNING: Deprecated since XP 8 — use <<isLeader>> instead.
+
+Tests whether the current node is the master node in the cluster. Same signature and return type as `isLeader`.
+
+[source,typescript]
+----
+import {isMaster} from '/lib/xp/cluster';
+if (isMaster()) {
+    initializeRepo();
+}
 ----

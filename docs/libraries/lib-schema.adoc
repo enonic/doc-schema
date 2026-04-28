@@ -2,7 +2,9 @@
 :toc: right
 :imagesdir: ../images
 
-image:xp-7110.svg[XP 7.11.0,opts=inline] API for fetching and manipulating dynamic schemas.
+API for fetching and manipulating dynamic schemas.
+
+WARNING: In XP 8 all `resource` strings passed to and returned from this library are *YAML*. XML resources are no longer accepted — `createSchema`, `createComponent`, `createStyles`, `updateSite`, and the `update*` counterparts all parse YAML only. Examples below use the XP 8 `kind:` form.
 
 TIP: Functions of this library require the Schema Admin role. It means that user role in the current context may lack sufficient permissions, for example when executed from inside a service - in this case you must explicitly execute the function in the <<lib-context#runcontext, context>> of `system.schema.admin` role.
 
@@ -50,7 +52,7 @@ Parameters
 !===
 ! Name      ! Type   !  Description
 ! name      ! string !  Schema name
-! type      ! string !  Schema type(`CONTENT_TYPE`, `MIXIN` or `XDATA`)
+! type      ! string !  Schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, or `MIXIN`)
 !===
 
 |===
@@ -132,7 +134,7 @@ Parameters
 !===
 ! Name             ! Type   !  Description
 ! application      ! string !  Application key
-! type             ! string !  Schema type(`CONTENT_TYPE`, `MIXIN` or `XDATA`)
+! type             ! string !  Schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, or `MIXIN`)
 !===
 
 |===
@@ -165,7 +167,7 @@ const expected = {
     displayName: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
-    resource: '<content-type><some-data></some-data></content-type>',
+    resource: 'kind: "ContentType"\ntitle: "My type display name"\nform: []\n',
     type: 'CONTENT_TYPE',
     form: [
         {
@@ -205,7 +207,7 @@ const expected = {
     displayName: 'My type display name 2',
     description: 'My type description 2',
     modifiedTime: '2012-01-01T10:00:00Z',
-    resource: '<content-type><some-other-data></some-other-data></content-type>',
+    resource: 'kind: "ContentType"\ntitle: "My type display name 2"\nform: []\n',
     type: 'CONTENT_TYPE',
     form: [],
     config: {}
@@ -234,7 +236,7 @@ Parameters
 !===
 ! Name      ! Type   !  Description
 ! name      ! string !  Dynamic schema name
-! type      ! string !  Dynamic schema type(`CONTENT_TYPE`,`MIXIN` or `XDATA`)
+! type      ! string !  Dynamic schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, or `MIXIN`)
 ! resource  ! string !  Dynamic schema resource value
 !===
 
@@ -253,18 +255,17 @@ Example
 ----
 import {createSchema} from '/lib/xp/schema';
 
-const resource = `<?xml version='1.0' encoding='UTF-8'?>
-<content-type xmlns='urn:enonic:xp:model:1.0'>
-    <display-name>Tag</display-name>
-    <super-type>base:structured</super-type>
-    <form>
-        <input name="tag" type="Tag">
-        <label>Tag, unlimited occurrences</label>
-        <occurrences minimum="0"
-        maximum="0"/>
-        </input>
-    </form>
-</content-type>`;
+const resource = `kind: "ContentType"
+title: "Tag"
+superType: "base:structured"
+form:
+- type: "Tag"
+  name: "tag"
+  label: "Tag, unlimited occurrences"
+  occurrences:
+    min: 0
+    max: 0
+`;
 
 const result = createSchema({
     name: 'myapp:mytype',
@@ -330,7 +331,7 @@ Parameters
 !===
 ! Name      ! Type   !  Description
 ! name      ! string !  Dynamic schema name
-! type      ! string !  Dynamic schema type(`CONTENT_TYPE`,`MIXIN` or `XDATA`)
+! type      ! string !  Dynamic schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, or `MIXIN`)
 ! resource  ! string !  Dynamic schema resource value
 !===
 
@@ -349,24 +350,20 @@ Example
 ----
 import {updateSchema} from '/lib/xp/schema';
 
-const resource = `<?xml version='1.0' encoding='UTF-8'?>
-       <mixin xmlns='urn:enonic:xp:model:1.0'>
-          <display-name>Virtual Mixin</display-name>
-          <description>Mixin description</description>
-          <form>
-            <input type='TextLine' name='text2'>
-              <label>Text 2</label>
-            </input>
-
-            <mixin name='myapplication:inline'/>
-          </form>
-        </mixin>`;
+const resource = `kind: "Mixin"
+title: "Virtual Mixin"
+description: "Mixin description"
+form:
+- type: "TextLine"
+  name: "text2"
+  label: "Text 2"
+- include: "myapplication:inline"
+`;
 
 const result = updateSchema({
     name: 'myapp:mytype',
     type: 'MIXIN',
     resource
-
 });
 ----
 .Return value:
@@ -425,7 +422,7 @@ Parameters
 !===
 ! Name      ! Type   !  Description
 ! name      ! string !  Dynamic schema name
-! type      ! string !  Dynamic schema type(`CONTENT_TYPE`,`MIXIN` or `XDATA`)
+! type      ! string !  Dynamic schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, or `MIXIN`)
 !===
 
 |===
@@ -438,20 +435,20 @@ Returns
 [.lead]
 Example
 
-.Updates a mixin schema:
+.Deletes a mixin schema:
 [source,typescript]
 ----
 import {deleteSchema} from '/lib/xp/schema';
 
 const result = deleteSchema({
     name: 'myapp:mytype',
-    type: 'XDATA'
+    type: 'MIXIN'
 });
 
 if (result) {
-    log.info('Deleted x-data: [myapp:mytype]');
+    log.info('Deleted mixin: [myapp:mytype]');
 } else {
-    log.info('X-data deletion failed: [myapp:mytype]');
+    log.info('Mixin deletion failed: [myapp:mytype]');
 }
 ----
 
@@ -512,7 +509,7 @@ const expected = {
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '<page><some-data></some-data></page>',
+    resource: 'kind: "Page"\ntitle: "News page"\nform: []\nregions:\n- "region-one"\n',
     type: 'PAGE',
     form: [
         {
@@ -593,7 +590,7 @@ const expected = [
         descriptionI18nKey: 'key.description',
         componentPath: 'myapp:/site/parts/part1',
         modifiedTime: '2021-02-25T10:44:33.170079900Z',
-        resource: '<part><some-data></some-data></part>',
+        resource: 'kind: "Part"\ntitle: "News part"\nform: []\n',
         type: 'PART',
         form: [
             {
@@ -616,7 +613,7 @@ const expected = [
         displayName: 'Other part',
         componentPath: 'myapp:/site/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
-        resource: '<part><some-other-data></some-other-data></part>',
+        resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
         type: 'PART',
         form: [],
         config: {}
@@ -665,18 +662,18 @@ Example
 ----
 import {createComponent} from '/lib/xp/schema';
 
-const resource = `<?xml version='1.0' encoding='UTF-8'?>
-                <content-type xmlns='urn:enonic:xp:model:1.0'>
-               <display-name>Tag</display-name>
-               <super-type>base:structured</super-type>
-               <form>
-                 <input name="tag" type="Tag">
-                   <label>Tag, unlimited occurrences</label>
-                   <occurrences minimum="0"
-                    maximum="0"/>
-                 </input>
-               </form>
-              </content-type>`;
+const resource = `kind: "Part"
+title: "Virtual Part"
+description: "My Part Description"
+form:
+- type: "Double"
+  name: "width"
+  label: "Column width"
+  occurrences:
+    min: 0
+    max: 1
+- include: "myapplication:link-urls"
+`;
 
 const result = createComponent({
     key: 'myapp:mypart',
@@ -767,44 +764,40 @@ Example
 ----
 import {updateComponent} from '/lib/xp/schema';
 
-const resource = `<?xml version='1.0' encoding='UTF-8'?>
-<layout xmlns='urn:enonic:xp:model:1.0'>
-    <display-name i18n='key.display-name'>Virtual Layout</display-name>
-    <description i18n='key.description'>My Layout Description</description>
-    <form>
-    <input type='Double' name='pause'>
-        <label i18n='key1.label'>Pause parameter</label>
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <help-text i18n='key1.help-text'/>
-        <occurrences minimum='0' maximum='1'/>
-    </input>
-    <item-set name='myFormItemSet'>
-        <label>My form item set</label>
-        <immutable>false</immutable>
-        <occurrences minimum='0' maximum='1'/>
-        <items>
-        <input type='TextLine' name='myTextLine'>
-            <label>My text line</label>
-            <immutable>false</immutable>
-            <indexed>false</indexed>
-            <occurrences minimum='1' maximum='1'/>
-        </input>
-        <input type='TextLine' name='myCustomInput'>
-            <label>My custom input</label>
-            <immutable>false</immutable>
-            <indexed>false</indexed>
-            <occurrences minimum='0' maximum='1'/>
-        </input>
-        </items>
-    </item-set>
-    </form>
-    <regions>
-    <region name='header'/>
-    <region name='main'/>
-    <region name='footer'/>
-    </regions>
-</layout>`;
+const resource = `kind: "Layout"
+title: "Virtual Layout"
+description: "My Layout Description"
+form:
+- type: "Double"
+  name: "pause"
+  label: "Pause parameter"
+  occurrences:
+    min: 0
+    max: 1
+- type: "ItemSet"
+  name: "myFormItemSet"
+  label: "My form item set"
+  occurrences:
+    min: 0
+    max: 1
+  items:
+  - type: "TextLine"
+    name: "myTextLine"
+    label: "My text line"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "myCustomInput"
+    label: "My custom input"
+    occurrences:
+      min: 0
+      max: 1
+regions:
+- "header"
+- "main"
+- "footer"
+`;
 
 const result = updateComponent({
     key: 'myapp:mylayout',
@@ -988,7 +981,7 @@ const expected = {
     application: 'myapp',
     cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '<styles><some-data></some-data></styles>',
+    resource: 'kind: "Style"\nstyles: []\n',
     elements: [
         {
             element: 'style',
@@ -1039,20 +1032,29 @@ Example
 ----
 import {createStyles} from '/lib/xp/schema';
 
-const resource = '<?xml version="1.0" encoding="UTF-8"?>' +
-    '<styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0">' +
-    '<style name="warning">' +
-    '<display-name i18n="warning.displayName">Warning</display-name>' +
-    '</style>' +
-    '<image name="editor-width-auto">' +
-    '<display-name i18n="editor-width-auto-text">Override ${width}</display-name>' +
-    '</image>' +
-    '<image name="editor-style-cinema">' +
-    '<display-name i18n="editor-style-cinema-text">Cinema</display-name>' +
-    '<aspect-ratio>21:9</aspect-ratio>' +
-    '<filter>pixelate(10)</filter>' +
-    '</image>' +
-    '</styles>';
+const resource = `kind: "Style"
+styles:
+- name: "warning"
+  type: "Style"
+  label: "Warning"
+  editor:
+    css: |
+      .warning { /* CSS selectors */ }
+- name: "editor-width-auto"
+  type: "Image"
+  label: "Override \${width}"
+  editor:
+    css: |
+      .editor-width-auto { /* CSS selectors */ }
+- name: "editor-style-cinema"
+  type: "Image"
+  label: "Cinema"
+  aspectRatio: "21:9"
+  filter: "pixelate(10)"
+  editor:
+    css: |
+      .editor-style-cinema { /* CSS selectors */ }
+`;
 
 const result = createStyles({
     application: 'myapp',
@@ -1128,20 +1130,29 @@ Example
 ----
 import {updateStyles} from '/lib/xp/schema';
 
-const resource = '<?xml version="1.0" encoding="UTF-8"?>' +
-    '<styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0">' +
-    '<style name="warning">' +
-    '<display-name i18n="warning.displayName">Warning</display-name>' +
-    '</style>' +
-    '<image name="editor-width-auto">' +
-    '<display-name i18n="editor-width-auto-text">Override ${width}</display-name>' +
-    '</image>' +
-    '<image name="editor-style-cinema">' +
-    '<display-name i18n="editor-style-cinema-text">Cinema</display-name>' +
-    '<aspect-ratio>21:9</aspect-ratio>' +
-    '<filter>pixelate(10)</filter>' +
-    '</image>' +
-    '</styles>';
+const resource = `kind: "Style"
+styles:
+- name: "warning"
+  type: "Style"
+  label: "Warning"
+  editor:
+    css: |
+      .warning { /* CSS selectors */ }
+- name: "editor-width-auto"
+  type: "Image"
+  label: "Override \${width}"
+  editor:
+    css: |
+      .editor-width-auto { /* CSS selectors */ }
+- name: "editor-style-cinema"
+  type: "Image"
+  label: "Cinema"
+  aspectRatio: "21:9"
+  filter: "pixelate(10)"
+  editor:
+    css: |
+      .editor-style-cinema { /* CSS selectors */ }
+`;
 
 const result = updateStyles({
     application: 'myapp',
@@ -1292,7 +1303,7 @@ const expected = {
             config: {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             name: 'myapplication:my',
             optional: false
@@ -1336,48 +1347,33 @@ Returns
 [.lead]
 Example
 
-.Updates application site descriptor:
+.Updates the application's CMS descriptor (form and mixin references):
 [source,typescript]
 ----
 import {updateSite} from '/lib/xp/schema';
 
-const resource = `<?xml version='1.0' encoding='UTF-8'?>
-<site xmlns='urn:enonic:xp:model:1.0'>
-    <x-data name='myapp1:menu-item'/>
-    <x-data name='myapp2:my-meta-mixin'/>
-    <form>
-    <input type='TextLine' name='some-name'>
-        <label>Textline</label>
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <custom-text/>
-        <help-text/>
-        <occurrences minimum='0' maximum='1'/>
-    </input>
-    </form>
-    <processors>
-    <response-processor name='filter1' order='10'/>
-    <response-processor name='filter2' order='20'/>
-    </processors>
-    <mappings>
-    <mapping controller='/site/page/person/person.js' order='10'>
-        <pattern>/person/*</pattern>
-    </mapping>
-    <mapping controller='controller1.js'>
-        <match>_path:'/*/fisk'</match>
-    </mapping>
-    <mapping controller='controller2.js' order='5'>
-        <pattern invert='true'>/.*</pattern>
-        <match>type:'portal:fragment'</match>
-    </mapping>
-    </mappings>
-</site>`;
+const resource = `kind: "CMS"
+mixin:
+- name: "myapp1:menu-item"
+  optional: false
+- name: "myapp2:my-meta-mixin"
+  optional: false
+form:
+- type: "TextLine"
+  name: "some-name"
+  label: "Textline"
+  occurrences:
+    min: 0
+    max: 1
+`;
 
 const result = updateSite({
     application: 'myapp',
     resource
 });
 ----
+
+NOTE: Despite its name, `updateSite` writes the *CMS descriptor* (`cms/cms.yaml`) which holds the site form and mixin references. The site descriptor (`cms/site.yaml`) — which carries `processors`, `mappings`, and `apis` — is not modifiable through this library; manage it as part of the application source.
 
 .Return value:
 [source,typescript]
@@ -1401,7 +1397,7 @@ const expected = {
             config: {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             name: 'myapp1:menu-item',
             optional: false,
@@ -1420,7 +1416,7 @@ const expected = {
 
 === Schema
 [[schema]]
-(abstract for <<content_type,ContentType>>, <<mixin,Mixin>> and <<xdata,XData>>)
+(abstract for <<content_type,ContentType>>, <<form_fragment,FormFragment>> and <<mixin,Mixin>>)
 
 [.lead]
 Type
@@ -1445,7 +1441,7 @@ Properties
 | modifiedTime              | string             | Modified zulu time
 | modifier                  | string             | Modifier principal key
 | resource                  | string             | Schema resource value
-| type                      | string             | Schema type(`CONTENT_TYPE`, `MIXIN`, `XDATA`)
+| type                      | string             | Schema type (`CONTENT_TYPE`, `FORM_FRAGMENT`, `MIXIN`)
 | form                      | object[]           | Schema form
 | icon                      | <<icon,Icon>>   | Schema icon
 
@@ -1470,22 +1466,26 @@ Properties
 |===
 | Name                      | Type                      | Description
 | config                    | object                    | Content type config
-| xDataNames                | string[]                  | Form x-data names
+| mixinNames                | string[]                  | Form mixin names (formerly known as x-data)
 
 |===
 
-=== Mixin
-[[mixin]]
+=== FormFragment
+[[form_fragment]]
 (extends <<schema,`Schema`>>)
+
+In XP 8 this is what was called `Mixin` in XP 7.
 
 [.lead]
 Type
 
 *object*
 
-=== XData
-[[xdata]]
+=== Mixin
+[[mixin]]
 (extends <<schema,`Schema`>>)
+
+In XP 8 this is what was called `XData` in XP 7. Each mixin attaches optional metadata to a content item.
 
 [.lead]
 Type
@@ -1606,7 +1606,7 @@ Properties
 | modifiedTime              | string                            | Site zulu modified time
 | resource                  | string                            | Site xml resource value
 | form                      | object[]                          | Site descriptor form
-| xDataMappings             | <<xDataMapping,XDataMapping[]>>| XData mappings
+| mixinMappings             | <<mixinMapping,MixinMapping[]>>| Mixin mappings
 
 |===
 
@@ -1634,8 +1634,8 @@ Properties
 
 |===
 
-=== XDataMapping
-[[xDataMapping]]
+=== MixinMapping
+[[mixinMapping]]
 
 [.lead]
 Type
@@ -1650,9 +1650,9 @@ Properties
 [grid="none"]
 |===
 | Name                   | Type    | Description
-| name                   | object  | xdata name
+| name                   | object  | Mixin name (formerly known as x-data)
 | optional               | boolean | `true` if optional
-| allowContentTypes      | string  | allowed content type pattern
+| allowContentTypes      | string  | Allowed content type pattern
 
 |===
 

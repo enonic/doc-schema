@@ -15,21 +15,21 @@ This section describes how to implement an ID provider application.
 
 == Descriptor
 An IDprovider application requires a descriptor file.
-The descriptor should be placed in your project as `src/main/resources/idprovider/idprovider.xml`.
+The descriptor should be placed in your project as `src/main/resources/idprovider/idprovider.yaml`.
 
-.Sample idprovider.xml
-[source,XML]
+.Sample idprovider.yaml
+[source,yaml]
 ----
-<id-provider>
-  <mode>LOCAL</mode>  // <1>
-  <form>  // <2>
-    <input name="title" type="TextLine">
-      <label>Title</label>
-      <occurrences minimum="0" maximum="1"/>
-      <default>User Login</default>
-    </input>
-  </form>
-</id-provider>
+kind: "IdProvider"
+mode: "LOCAL" # <1>
+form:         # <2>
+- type: "TextLine"
+  name: "title"
+  label: "Title"
+  default: "User Login"
+  occurrences:
+    min: 0
+    max: 1
 ----
 
 <1> *mode* specifies how users and groups are process and stored in XP. Allowed values are:

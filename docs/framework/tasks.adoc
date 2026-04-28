@@ -13,25 +13,25 @@ image::task-engine.svg[Task execution process, 768px]
 
 == Descriptor
 Named tasks requires a descriptor file.
-The descriptor must be placed in task folder as follows: `src/main/resources/tasks/<taskname>/<taskname>.xml`.
+The descriptor must be placed in task folder as follows: `src/main/resources/tasks/<taskname>/<taskname>.yaml`.
 
 .Sample descriptor
-[source,xml]
+[source,yaml]
 ----
-<task>
-  <description>Background job</description>
-  <form>
-    <input type="Long" name="count">
-      <label>Number of items to process</label>
-      <occurrences minimum="1" maximum="1"/>
-    </input>
-  </form>
-</task>
+kind: "Task"
+description: "Background job"
+form:
+- type: "Long"
+  name: "count"
+  label: "Number of items to process"
+  occurrences:
+    min: 1
+    max: 1
 ----
 
 When parameters are passed to the task controller, they will be validated according to the descriptor schema.
 
-The form element in the descriptor XML is optional, and may be left empty if the task does not accept any parameters.
+The `form` list in the descriptor is optional, and may be omitted if the task does not accept any parameters.
 
 [#controller]
 == Controller
@@ -96,7 +96,7 @@ If none of the nodes can accept a distributable task, an error will be thrown.
 
 Distributable tasks get executed with the same context (user, repository/branch) it was originally submitted.
 
-WARNING: Make sure your Named task does not require a specific node to run on (i.e. it must not check for `isMaster`).
+WARNING: Make sure your Named task does not require a specific node to run on (i.e. it must not check for `isLeader`).
 If you need such check, use inline function task instead.
 
 NOTE: Nodes that do not accept distributable tasks execution are still capable to submit them.
