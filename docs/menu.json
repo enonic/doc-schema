@@ -43,7 +43,7 @@
           "document": "framework/globals"
         },
         {
-          "title": "Main controller",
+          "title": "Main",
           "document": "framework/main"
         },
         {
@@ -257,6 +257,10 @@
           "document": "metrics"
         }
       ]
+    },
+    {
+      "title": "Upgrading",
+      "document": "upgrade"
     }
   ]
 }
