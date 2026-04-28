@@ -92,7 +92,7 @@ main.js:: The application's <<../framework/main#, main controller>>. Executed wh
 
 i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>.
 
-idprovider/:: The application may implement an <<../framework/idprovider#part,ID Provider>> here.
+idprovider/:: The application may implement an <<../id-providers#,ID Provider>> here.
 
 tasks/:: May contain <<../libraries/lib-task#, task controllers>> for asynchronous and background processing.
 
@@ -137,5 +137,4 @@ A library may consist of the same files and functionality you would find in an a
 Enonic libraries are added to your application by declaring a dependency in the <<build#build.gradle, build file>>.
 
 The core functionality of XP is exposed via standard libraries. Check out the <<../libraries#,Standard Libraries documentation>>. You will also find additional libraries on https://market.enonic.com/libraries[Enonic Market]
-
 
