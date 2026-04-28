@@ -18,7 +18,25 @@ Before you start the upgrade procedure:
 
 == App migrator tool
 
-TODO: Describe how to use the migrator here
+The https://github.com/enonic/xp8migrator[xp8migrator] is a small CLI that converts an XP 7 project's XML descriptors into the XP 8 YAML form. Run it from your project root.
+
+=== Linux / macOS
+
+[source,sh]
+----
+curl -fsSL https://raw.githubusercontent.com/enonic/xp8migrator/main/migrator-install.sh | sh
+./migrator
+----
+
+=== Windows
+
+[source,powershell]
+----
+irm https://raw.githubusercontent.com/enonic/xp8migrator/main/migrator-install.ps1 | iex
+.\migrator.exe
+----
+
+The `migrator` binary can be removed after a successful migration.
 
 
 == Build system
