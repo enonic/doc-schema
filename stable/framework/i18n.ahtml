@@ -580,15 +580,15 @@ The filenames are case sensitive!
 Language is required, country and variant are optional.</p>
 </div>
 <div class="paragraph">
-<p>For the property files, all codes are case sensitive and separated by and underscore (_).</p>
+<p>For the property files, all codes are case sensitive and separated by and underscore (<code>_</code>).</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">The string-representation of a locale is</dt>
-<dd>
-<p>la[_CO][_VA]</p>
-</dd>
-</dl>
+<div class="paragraph">
+<p>The string-representation of a locale is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>la[_CO][_VA]</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>where</p>
@@ -744,7 +744,7 @@ The given number corresponds with the function argument named <code>values</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 15:16:59 UTC
+Last updated 2026-04-28 16:12:12 UTC
 </div>
 </div>
 </body>

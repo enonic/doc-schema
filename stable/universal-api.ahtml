@@ -548,7 +548,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>An API descriptor is required. It defines the API&#8217;s access control, its availability on the <code>/api</code> endpoint, and metadata such as title, description, and documentation URL.</p>
+<p>An API descriptor is required. It defines the API&#8217;s access control, the connectors it is mounted on, and metadata such as title, description, and documentation URL.</p>
 </div>
 <div class="paragraph">
 <p>Example of a full API descriptor:</p>
@@ -613,13 +613,26 @@ To enable it, add <code>"web"</code> to the <code>mount</code> list.</td>
 </ul>
 </div>
 <div class="paragraph">
-<p>Each engine descriptor declares the APIs it exposes via its <code>apis</code> list.</p>
+<p>Each engine descriptor declares the APIs it exposes via its <code>apis</code> list. For <code>webapp</code> and <code>admin</code> this is sufficient — the descriptor of the hosting application controls the mount. For <code>site</code>, two conditions must both hold:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The application providing the site descriptor must be <strong>configured on the site instance</strong>  Without this, the site descriptor&#8217;s <code>apis</code> list is not consulted at all for that site.</p>
+</li>
+<li>
+<p>That application&#8217;s site descriptor must list the API in its <code>apis</code> field.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The site mount is also limited to the <strong>site root</strong>: the path between <code>&lt;branch&gt;</code> and <code>/_/</code> must be the site&#8217;s root content path. Deeper content paths like <code>/site/&lt;project&gt;/&lt;branch&gt;/some/page/_/&lt;app&gt;:&lt;api&gt;/</code> do not resolve as APIs.</p>
 </div>
 <div class="paragraph">
 <p>Example site descriptor with mounting of self-contained and external APIs:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/site/site.yaml</div>
+<div class="title">src/main/resources/cms/site.yaml</div>
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
 apis:
@@ -773,7 +786,7 @@ This list includes but is not limited to:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 15:16:59 UTC
+Last updated 2026-04-28 16:12:12 UTC
 </div>
 </div>
 </body>

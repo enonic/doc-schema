@@ -452,6 +452,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Server-Sent Events (SSE) provide one-way streaming from server to client over HTTP.</p>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+An SSE stream keeps an HTTP connection open for its entire lifetime. Over HTTP/1.x, browsers cap concurrent connections per origin to a small number (typically 6 in current Chrome, Firefox, and Safari), so a handful of open SSE streams — across tabs or endpoints on the same origin — can saturate that budget and block the rest of the page&#8217;s requests. Serve SSE over HTTP/2 (or HTTP/3), where many streams multiplex on a single connection and this limit does not apply.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -496,9 +508,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.sseEvent = function (event) {
     if (event.type === 'open') {
-        // greet the client using event.clientId, or add it to a group for later broadcasts
-    } else if (event.type === 'close' || event.type === 'timeout' || event.type === 'error') {
-        // optional teardown — note that group membership is cleaned up automatically
+        // send a message back using event.clientId, or add it to a group for later broadcasts
+    } else if (event.type === 'close') {
+        // optional teardown — group membership is cleaned up automatically
     }
 };</code></pre>
 </div>
@@ -520,7 +532,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Event type. One of <code>open</code>, <code>close</code>, <code>timeout</code>, <code>error</code>.</td>
+<td>Event type. One of <code>open</code>, <code>close</code>, <code>timeout</code>, <code>error</code>. <code>close</code> is always the terminal event — it fires after <code>timeout</code> and after <code>error</code>, so use it for teardown and reserve <code>timeout</code>/<code>error</code> for diagnostics.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -562,7 +574,17 @@ exports.sseEvent = function (event) {
 <p><code>message.id</code> updates the client&#8217;s last-event-id buffer for reconnects. <code>message.comment</code> emits an SSE comment line — useful for keep-alive pings. A message with no <code>data</code> does not dispatch a client event but any <code>id</code> still updates the buffer.</p>
 </div>
 <div class="paragraph">
-<p>To address a client from outside the handler (a task, an event listener, another request), keep the id around. The library can do the bookkeeping for you via named groups:</p>
+<p>To address a client from outside the <code>sseEvent</code> handler, do not store <code>event.clientId</code> in module-scope state — controller code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For a <strong>task</strong> or other background job, capture the <code>clientId</code> when the task is started and hold it in the task&#8217;s own local scope. Each task instance then targets exactly the connection it was started for.</p>
+</li>
+<li>
+<p>For an <strong>event listener</strong>, use named groups: add the connection on <code>open</code>, then call <code>sendToGroup</code> from the listener.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -574,12 +596,12 @@ exports.sseEvent = function (event) {
     }
 };
 
-// from anywhere:
+// from an event listener:
 sseLib.sendToGroup({ group: 'live', message: { data: 'Update' } });</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Other functions: <code>close</code>, <code>isOpen</code>, <code>removeFromGroup</code>, <code>getGroupSize</code>. See <a href="../libraries/lib-sse.ahtml">SSE library</a> for the full reference.</p>
+<p>See <a href="../libraries/lib-sse.ahtml">SSE library</a> for the full reference.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -598,7 +620,7 @@ sseLib.sendToGroup({ group: 'live', message: { data: 'Update' } });</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 15:16:59 UTC
+Last updated 2026-04-28 16:12:12 UTC
 </div>
 </div>
 </body>
