@@ -143,7 +143,7 @@ declare global {
 
 === Other imports
 
-If you want to use custom import functions, like `__non_webpack_require__` with Webpack, just use `XpRequire` from `global` types for this:
+If you want to use custom import functions, like `+__non_webpack_require__+` with Webpack, just use `XpRequire` from `global` types for this:
 
 ```ts
 declare const __non_webpack_require__: XpRequire;

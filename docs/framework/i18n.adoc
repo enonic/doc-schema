@@ -53,9 +53,9 @@ CAUTION: The filenames are case sensitive!
 A locale is composed of two-letter codes for language, country and variant.
 Language is required, country and variant are optional.
 
-For the property files, all codes are case sensitive and separated by and underscore (_).
+For the property files, all codes are case sensitive and separated by and underscore (`+_+`).
 
-The string-representation of a locale is::
+The string-representation of a locale is:
 
   la[_CO][_VA]
 

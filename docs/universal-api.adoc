@@ -44,7 +44,7 @@ A custom API can act as a WebSocket channel or a Server-Sent Events stream — s
 [#descriptor]
 == Descriptor
 
-An API descriptor is required. It defines the API's access control, its availability on the `/api` endpoint, and metadata such as title, description, and documentation URL.
+An API descriptor is required. It defines the API's access control, the connectors it is mounted on, and metadata such as title, description, and documentation URL.
 
 Example of a full API descriptor:
 
@@ -81,11 +81,16 @@ In the `site`, `webapp`, and `admin` engines, APIs are reachable as service poin
 * For the `webapp` engine: `+/webapp/<webapp-app>/_/<app-name>:<api-name>/+`
 * For the `admin` engine: `+/admin/<admin-app>/<tool>/_/<app-name>:<api-name>/+`
 
-Each engine descriptor declares the APIs it exposes via its `apis` list.
+Each engine descriptor declares the APIs it exposes via its `apis` list. For `webapp` and `admin` this is sufficient — the descriptor of the hosting application controls the mount. For `site`, two conditions must both hold:
+
+. The application providing the site descriptor must be *configured on the site instance*  Without this, the site descriptor's `apis` list is not consulted at all for that site.
+. That application's site descriptor must list the API in its `apis` field.
+
+The site mount is also limited to the *site root*: the path between `<branch>` and `+/_/+` must be the site's root content path. Deeper content paths like `+/site/<project>/<branch>/some/page/_/<app>:<api>/+` do not resolve as APIs.
 
 Example site descriptor with mounting of self-contained and external APIs:
 
-.src/main/resources/site/site.yaml
+.src/main/resources/cms/site.yaml
 [source,yaml]
 ----
 kind: "Site"
