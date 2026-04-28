@@ -4,6 +4,8 @@
 
 Server-Sent Events (SSE) provide one-way streaming from server to client over HTTP.
 
+WARNING: An SSE stream keeps an HTTP connection open for its entire lifetime. Over HTTP/1.x, browsers cap concurrent connections per origin to a small number (typically 6 in current Chrome, Firefox, and Safari), so a handful of open SSE streams — across tabs or endpoints on the same origin — can saturate that budget and block the rest of the page's requests. Serve SSE over HTTP/2 (or HTTP/3), where many streams multiplex on a single connection and this limit does not apply.
+
 [#http-sse]
 == SSE
 
@@ -32,9 +34,9 @@ A controller can react to lifecycle events by exporting an `sseEvent` function:
 ----
 exports.sseEvent = function (event) {
     if (event.type === 'open') {
-        // greet the client using event.clientId, or add it to a group for later broadcasts
-    } else if (event.type === 'close' || event.type === 'timeout' || event.type === 'error') {
-        // optional teardown — note that group membership is cleaned up automatically
+        // send a message back using event.clientId, or add it to a group for later broadcasts
+    } else if (event.type === 'close') {
+        // optional teardown — group membership is cleaned up automatically
     }
 };
 ----
@@ -51,7 +53,7 @@ Lifecycle event:
 }
 ----
 
-<1> Event type. One of `open`, `close`, `timeout`, `error`.
+<1> Event type. One of `open`, `close`, `timeout`, `error`. `close` is always the terminal event — it fires after `timeout` and after `error`, so use it for teardown and reserve `timeout`/`error` for diagnostics.
 <2> Server-generated id of the SSE connection. Capture it on `open` and use it with `lib/xp/sse` to push messages.
 <3> Value of the client's `Last-Event-ID` header on reconnection, or `null` on the first connect. Use it to resume a stream from a known point.
 <4> The same `attributes` object passed to the response, shared across the connection's lifetime.
@@ -76,7 +78,10 @@ exports.sseEvent = function (event) {
 
 `message.id` updates the client's last-event-id buffer for reconnects. `message.comment` emits an SSE comment line — useful for keep-alive pings. A message with no `data` does not dispatch a client event but any `id` still updates the buffer.
 
-To address a client from outside the handler (a task, an event listener, another request), keep the id around. The library can do the bookkeeping for you via named groups:
+To address a client from outside the `sseEvent` handler, do not store `event.clientId` in module-scope state — controller code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:
+
+* For a *task* or other background job, capture the `clientId` when the task is started and hold it in the task's own local scope. Each task instance then targets exactly the connection it was started for.
+* For an *event listener*, use named groups: add the connection on `open`, then call `sendToGroup` from the listener.
 
 [source,javascript]
 ----
@@ -88,10 +93,10 @@ exports.sseEvent = function (event) {
     }
 };
 
-// from anywhere:
+// from an event listener:
 sseLib.sendToGroup({ group: 'live', message: { data: 'Update' } });
 ----
 
-Other functions: `close`, `isOpen`, `removeFromGroup`, `getGroupSize`. See <<../libraries/lib-sse#,SSE library>> for the full reference.
+See <<../libraries/lib-sse#,SSE library>> for the full reference.
 
 NOTE: `send` is a safe no-op for closed connections — do not guard with `isOpen` to avoid races. Use `isOpen` to abort expensive work when a client has disconnected.
