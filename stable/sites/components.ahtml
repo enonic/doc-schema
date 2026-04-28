@@ -546,7 +546,7 @@ Thanks to the site engine&#8217;s built-in access control you are also guarantee
 <h2 id="page_controllers"><a class="link" href="#page_controllers">Page controllers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Page controlles must be placed next to your <a href="../cms/pages.ahtml">page descriptor</a> i.e. <code>src/main/resources/site/pages/&lt;page-name&gt;/&lt;page-name.js&gt;</code>.</p>
+<p>Page controllers must be placed next to your <a href="../cms/pages.ahtml">page descriptor</a> i.e. <code>src/main/resources/cms/pages/&lt;page-name&gt;/&lt;page-name&gt;.js</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample page controller using the context</div>
@@ -572,7 +572,7 @@ exports.GET = function(req) {
 <h2 id="part_controllers"><a class="link" href="#part_controllers">Part controllers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part controlles must be placed next to your <a href="../cms/pages/parts.ahtml">part descriptor</a> i.e. <code>src/main/resources/site/parts/&lt;part-name&gt;/&lt;part-name.js&gt;</code>.</p>
+<p>Part controllers must be placed next to your <a href="../cms/pages/parts.ahtml">part descriptor</a> i.e. <code>src/main/resources/cms/parts/&lt;part-name&gt;/&lt;part-name&gt;.js</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample part controller using the form value</div>
@@ -596,7 +596,7 @@ exports.GET = function(req) {
 <h2 id="layout_controllers"><a class="link" href="#layout_controllers">Layout controllers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Layout controlles must be placed next to your <a href="../cms/pages/layouts.ahtml">layout descriptor</a> i.e. <code>src/main/resources/site/layouts/&lt;layout-name&gt;/&lt;layout-name.js&gt;</code>.</p>
+<p>Layout controllers must be placed next to your <a href="../cms/pages/layouts.ahtml">layout descriptor</a> i.e. <code>src/main/resources/cms/layouts/&lt;layout-name&gt;/&lt;layout-name&gt;.js</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample layout using Thymeleaf to render two regions</div>
@@ -750,11 +750,12 @@ exports.GET = function(req) {
 <p>Add a <a href="mappings.ahtml">controller mapping</a> for the <code>portal:fragment</code> content type. This will then be executed every time a fragment is rendered.</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml</div>
+<div class="title">cms/site.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;mapping controller="/site/pages/default/default.js"&gt;
-  &lt;match&gt;type:'portal:fragment'&lt;/match&gt;
-&lt;/mapping&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
+mappings:
+- controller: "/cms/pages/default/default.js"
+  match: "type:'portal:fragment'"</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -811,7 +812,7 @@ Optionally bypass the built-in controller by running your own code rather than c
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

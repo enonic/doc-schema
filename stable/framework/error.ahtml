@@ -469,7 +469,7 @@ By implementing an error handler this will effectively replace the default error
 <h2 id="error_js"><a class="link" href="#error_js">error.js</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You may add an error handler to your application by creating the file <code>src/main/resources/site/error/error.js</code>.</p>
+<p>You may add a site-specific error handler to your application by creating the file <code>src/main/resources/cms/error/error.js</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -478,8 +478,7 @@ By implementing an error handler this will effectively replace the default error
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Starting from v7.2, you may add a generic error handler by creating the file <code>src/main/resources/error/error.js</code>.
-This error handled will also handle errors that are not site related (admin tools, widgets, &#8230;&#8203;).
+A generic error handler can be defined at <code>src/main/resources/error/error.js</code>. This handler also catches errors that are not site related (admin tools, extensions, …).
 </td>
 </tr>
 </table>
@@ -581,7 +580,7 @@ The object contains the status code, error message, Exception object, and the or
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

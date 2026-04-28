@@ -501,52 +501,48 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">site.xml mapping examples</div>
+<div class="title">cms/site.yaml mapping examples</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;mappings&gt;
-    &lt;mapping controller="/site/foobar/api.js" order="10"&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-      &lt;pattern&gt;/api/v\d+/.*&lt;/pattern&gt;  <i class="conum" data-value="3"></i><b>(3)</b>
-    &lt;/mapping&gt;
-    &lt;mapping controller="/site/pages/default/default.js"&gt;
-      &lt;match&gt;type:'portal:fragment'&lt;/match&gt;  <i class="conum" data-value="4"></i><b>(4)</b>
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/foobar/filter.js" order="10"&gt;  <i class="conum" data-value="5"></i><b>(5)</b>
-      &lt;pattern invert="true"&gt;/dont-match-me/.*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping filter="/site/services/image.js"&gt;  <i class="conum" data-value="6"></i><b>(6)</b>
-      &lt;service&gt;image&lt;/pattern&gt;
-    &lt;/mapping&gt;
-  &lt;/mappings&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
+mappings:
+- controller: "/cms/foobar/api.js" <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
+  pattern: '/api/v\d+/.*'          <i class="conum" data-value="3"></i><b>(3)</b>
+  order: 10
+- controller: "/cms/pages/default/default.js"
+  match: "type:'portal:fragment'"  <i class="conum" data-value="4"></i><b>(4)</b>
+- filter: "/cms/foobar/filter.js"  <i class="conum" data-value="5"></i><b>(5)</b>
+  pattern: '/dont-match-me/.*'
+  invertPattern: true
+  order: 10
+- filter: "/cms/services/image.js" <i class="conum" data-value="6"></i><b>(6)</b>
+  service: "image"</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>@controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a></td>
+<td><strong>controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>@order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
+<td><strong>order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>&lt;pattern&gt;</strong> specifies a regular expression based site contextual URL <a href="#Patterns">[Patterns]</a>. Default is <code>/.*</code></td>
+<td><strong>pattern</strong> specifies a regular expression based site contextual URL — see <a href="#pattern_mappings">Pattern mappings</a>. Default is <code>/.*</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>&lt;match&gt;</strong> a property condition to evaluate <a href="#Matches">[Matches]</a> for the contextual content.</td>
+<td><strong>match</strong> is a property condition evaluated against the contextual content — see <a href="#match_mappings">Match mappings</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>@filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a></td>
+<td><strong>filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>@service</strong> specifies a system service which will be handled by the filter i.e. (<code>&#8230;&#8203;/_/image/&#8230;&#8203;</code> endpoint).</td>
+<td><strong>service</strong> specifies a system service handled by the filter (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a> — this feature is <strong>deprecated</strong> in XP 8.</td>
 </tr>
 </table>
 </div>
@@ -585,11 +581,11 @@ the mapping with the <strong>lower</strong> <code>order</code> value is used.</p
 An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;pattern&gt;</code> element specifies a regular expression to be matched against the request URL.</p>
+<p>The <code>pattern</code> property specifies a regular expression to be matched against the request URL.</p>
 </div>
 <div class="paragraph">
 <p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then the pattern <code>&lt;pattern&gt;/api/.<strong>&lt;/pattern&gt;</code> will match with requests with URL ending in <code>example.com/mysite/api/.</strong></code>
+For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then <code>pattern: '/api/.*'</code> will match requests with URL ending in <code>example.com/mysite/api/.*</code>.
 The protocol, host and port are not involved in the pattern matching.</p>
 </div>
 <div class="paragraph">
@@ -597,7 +593,7 @@ The protocol, host and port are not involved in the pattern matching.</p>
 The query parameters will be normalized, so they are always in alphabetical order.</p>
 </div>
 <div class="paragraph">
-<p>For example the pattern <code>&lt;pattern&gt;/api\?category=foo&amp;key=\d+&lt;/pattern&gt;</code> will match with both:</p>
+<p>For example, the pattern <code>pattern: '/api\?category=foo&amp;key=\d'+</code> matches both:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -616,17 +612,13 @@ The query parameters will be normalized, so they are always in alphabetical orde
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>In the previous example the question mark character <code>?</code> is escaped with a backslash because the question mark is a quantifier in regular expressions.
-And also the ampersand character <code>&amp;</code> needs to be XML-escaped because the pattern string is in an XML.
-Another alternative to XML-escape is to wrap the string in a CDATA block, as in the example below.</p>
-</div>
+The question mark <code>?</code> is escaped with a backslash in the pattern because it is a quantifier in regular expressions. Use <strong>single-quoted</strong> YAML strings for any pattern containing backslashes — YAML&#8217;s double-quoted form interprets backslash escapes and would corrupt regex tokens like <code>\d</code>.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>A pattern element may also contain an <strong>@invert</strong> attribute to indicate that the result of evaluating the regular expression should be negated i.e.: <code>&lt;pattern invert="true"&gt;</code></p>
+<p>Set <code>invertPattern: true</code> on a mapping to negate the result of evaluating the regular expression.</p>
 </div>
 <div class="paragraph">
 <p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
@@ -637,19 +629,16 @@ Another alternative to XML-escape is to wrap the string in a CDATA block, as in 
 <div class="ulist">
 <ul>
 <li>
-<p>Anything ending with .json within the /api/* path: <code>&lt;pattern&gt;/api/.*\.json&lt;/pattern&gt;</code></p>
+<p>Anything ending with <code>.json</code> within the <code>/api/*</code> path: <code>pattern: '/api/.*\.json'</code></p>
 </li>
 <li>
-<p>All items within the site, including site itself: <code>&lt;pattern&gt;/.*&lt;/pattern&gt;</code></p>
+<p>All items within the site, including the site itself: <code>pattern: '/.*'</code></p>
 </li>
 <li>
-<p>Regular expression pattern: <code>&lt;pattern&gt;/endpoint\?bar=\d+&amp;foo=.*&lt;/pattern&gt;</code></p>
+<p>Regex with query string: <code>pattern: '/endpoint\?bar=\d&amp;foo=.*'+</code></p>
 </li>
 <li>
-<p>Regular expression encapsulated in CDATA to avoid XML encoding: <code>&lt;pattern&gt;&lt;![CDATA[/endpoint\?bar=\d+&amp;foo=.*]]&gt;&lt;/pattern&gt;</code></p>
-</li>
-<li>
-<p>Inverted with invert option enabled: <code>&lt;pattern invert="true"&gt;/section/.*&lt;/pattern&gt;</code></p>
+<p>Inverted via <code>invertPattern: true</code> together with <code>pattern: '/section/.*'</code></p>
 </li>
 </ul>
 </div>
@@ -675,13 +664,13 @@ Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not p
 An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
 </div>
 <div class="paragraph">
-<p>The <code>&lt;match&gt;</code> element specifies a condition related to the content corresponding with the requested URL path.</p>
+<p>The <code>match</code> property specifies a condition related to the content corresponding with the requested URL path.</p>
 </div>
 <div class="paragraph">
 <p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
 </div>
 <div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content</p>
+<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content.</p>
 </div>
 <div class="paragraph">
 <p>Examples:</p>
@@ -689,22 +678,22 @@ An example use case is automatic handling of the content type <code>portal:fragm
 <div class="ulist">
 <ul>
 <li>
-<p>Match fragment content type: <code>&lt;match&gt;type:'portal:fragment'&lt;/match&gt;</code></p>
+<p>Match fragment content type: <code>match: "type:'portal:fragment'"</code></p>
 </li>
 <li>
-<p>Match content within the features/ path: <code>&lt;match&gt;_path:'/features/.*'&lt;/match&gt;</code></p>
+<p>Match content within the <code>/features/</code> path: <code>match: "_path:'/features/.*'"</code></p>
 </li>
 <li>
-<p>Match custom property with string value <code>&lt;match&gt;data.employee.type:'developer'&lt;/match&gt;</code></p>
+<p>Match custom property with string value: <code>match: "data.employee.type:'developer'"</code></p>
 </li>
 <li>
-<p>Match custom property with a number: <code>&lt;match&gt;data.product.category:42&lt;/match&gt;</code></p>
+<p>Match custom property with a number: <code>match: "data.product.category:42"</code></p>
 </li>
 <li>
-<p>Match custom property with a boolean: <code>&lt;match&gt;x.com-enonic-myapp.menuItem.show:true&lt;/match&gt;</code></p>
+<p>Match custom property with a boolean: <code>match: "x.com-enonic-myapp.menuItem.show:true"</code></p>
 </li>
 <li>
-<p>Match any content: <code>&lt;match&gt;type:'.+'&lt;/match&gt;</code></p>
+<p>Match any content: <code>match: "type:'.+'"</code></p>
 </li>
 </ul>
 </div>
@@ -718,8 +707,7 @@ An example use case is automatic handling of the content type <code>portal:fragm
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Missing/unavailable content does not match any condition.
-Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/filter to the URL that does not correspond to any content.
+Missing/unavailable content does not match any condition. Omit <code>match</code> if you need to map a controller or filter to a URL that does not correspond to any content.
 </td>
 </tr>
 </table>
@@ -730,13 +718,10 @@ Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/fil
 <h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span></p>
-</div>
-<div class="paragraph">
 <p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
 </div>
 <div class="paragraph">
-<p>Supported services: <code>image</code>, <code>attachment</code>, and <code>component</code>.</p>
+<p>Supported services: <code>image</code> (deprecated), <code>attachment</code> (deprecated), and <code>component</code>.</p>
 </div>
 <div class="paragraph">
 <p>Examples:</p>
@@ -744,29 +729,19 @@ Don&#8217;t specify <code>&lt;match&gt;</code> if you need to map controller/fil
 <div class="ulist">
 <ul>
 <li>
-<p><code>&lt;service&gt;component&lt;/service&gt;</code></p>
+<p><code>service: "component"</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>&lt;service&gt;image&lt;/service&gt;</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Allows to filter or redirect to a controller rendering of images on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-content&gt;/_/image/&lt;image-path&gt;</code></p>
+<p>Allows filtering or redirecting to a controller for contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

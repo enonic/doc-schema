@@ -496,7 +496,7 @@ Response processors are only available in the <a href="../runtime/engines/site-e
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Create a response processor by placing a controller file in you project folder under <code>src/main/resources/site/processors</code> i.e. <code>src/main/resources/site/processors/myprocessor.js</code></p>
+<p>Create a response processor by placing a controller file in your project folder under <code>src/main/resources/cms/processors/</code> i.e. <code>src/main/resources/cms/processors/myprocessor.js</code>.</p>
 </div>
 <div class="paragraph">
 <p>The controller must export a <code>responseProcessor</code>. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a <code>bodyEnd</code> <a href="contributions.ahtml">page contribution</a> to the response.</p>
@@ -529,26 +529,23 @@ Response processors are only available in the <a href="../runtime/engines/site-e
 <p>To wire a processor into the execution pipeline, it must be declared in the app&#8217;s <a href="../cms/sites.ahtml#site_xml">site descriptor</a>, and the application must be added to the respective site.</p>
 </div>
 <div class="listingblock">
-<div class="title">site.xml</div>
+<div class="title">cms/site.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site&gt;
-  &lt;processors&gt;
-    &lt;response-processor name="tracker" order="10"/&gt; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-  &lt;/processors&gt;
-  &lt;form/&gt;
-&lt;/site&gt;
-----</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
+processors:
+- name: "tracker" <i class="conum" data-value="1"></i><b>(1)</b>
+  order: 10       <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>@name indicates name of the controller file</td>
+<td><strong>name</strong> indicates the name of the controller file (without the <code>.js</code> extension).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>@order indicates execution order, lower value means higher priority</td>
+<td><strong>order</strong> indicates execution order; lower value means higher priority.</td>
 </tr>
 </table>
 </div>
@@ -592,7 +589,7 @@ If <code>applyFilters</code> is set to <code>false</code> in the <a href="../fra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

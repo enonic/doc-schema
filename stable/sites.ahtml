@@ -482,7 +482,7 @@ TUTORIALS HERE!
 <p>Unlike <a href="webapps.ahtml">XP webapps</a>, XP sites do not have a default controller, but instead rely on resolving controllers based on the content being requested.</p>
 </div>
 <div class="paragraph">
-<p>To implement a site, start by placing a site descriptor file in <code>src/main/resources/site/site.xml</code> of your project.</p>
+<p>To implement a site, start by placing the site descriptors under <code>src/main/resources/cms/</code> of your project. The site descriptor is split into two files: <code>cms/site.yaml</code> (processors, mappings, and API mounts) and <code>cms/cms.yaml</code> (site form and mixin references).</p>
 </div>
 <div class="paragraph">
 <p>Implement at least TODO: Add descriptor example and explain the main elements of it.</p>
@@ -500,7 +500,7 @@ TUTORIALS HERE!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

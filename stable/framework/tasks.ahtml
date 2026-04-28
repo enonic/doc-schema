@@ -473,27 +473,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>Named tasks requires a descriptor file.
-The descriptor must be placed in task folder as follows: <code>src/main/resources/tasks/&lt;taskname&gt;/&lt;taskname&gt;.xml</code>.</p>
+The descriptor must be placed in task folder as follows: <code>src/main/resources/tasks/&lt;taskname&gt;/&lt;taskname&gt;.yaml</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample descriptor</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;task&gt;
-  &lt;description&gt;Background job&lt;/description&gt;
-  &lt;form&gt;
-    &lt;input type="Long" name="count"&gt;
-      &lt;label&gt;Number of items to process&lt;/label&gt;
-      &lt;occurrences minimum="1" maximum="1"/&gt;
-    &lt;/input&gt;
-  &lt;/form&gt;
-&lt;/task&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Task"
+description: "Background job"
+form:
+- type: "Long"
+  name: "count"
+  label: "Number of items to process"
+  occurrences:
+    min: 1
+    max: 1</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>When parameters are passed to the task controller, they will be validated according to the descriptor schema.</p>
 </div>
 <div class="paragraph">
-<p>The form element in the descriptor XML is optional, and may be left empty if the task does not accept any parameters.</p>
+<p>The <code>form</code> list in the descriptor is optional, and may be omitted if the task does not accept any parameters.</p>
 </div>
 </div>
 </div>
@@ -581,7 +581,7 @@ If none of the nodes can accept a distributable task, an error will be thrown.</
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Make sure your Named task does not require a specific node to run on (i.e. it must not check for <code>isMaster</code>).
+Make sure your Named task does not require a specific node to run on (i.e. it must not check for <code>isLeader</code>).
 If you need such check, use inline function task instead.
 </td>
 </tr>
@@ -630,7 +630,7 @@ For fine-grained control which nodes should be capable to execute distributable 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

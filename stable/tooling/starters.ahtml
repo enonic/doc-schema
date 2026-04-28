@@ -503,27 +503,27 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
     main/
       resources/
         application.svg
-        application.yml
+        application.yaml
         admin/
           tools/
-          widgets/
-        api/
+          extensions/
+        apis/
         assets/
         error/
         i18n/
         idprovider/
         main.js
         cms/
-          cms.yml
-          site.yml
+          cms.yaml
+          site.yaml
           content-types/
+          form-fragments/
           layouts/
           macros/
           mixins/
           pages/
           parts/
           processors/
-          x-data/
         webapp/
         tasks/
       java/
@@ -574,37 +574,37 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 <dd>
 <p>Admin tools are defined here. Tools are administrative apps listed in the admin console menu.</p>
 </dd>
-<dt class="hdlist1">admin/widgets/</dt>
+<dt class="hdlist1">admin/extensions/</dt>
 <dd>
-<p>Admin widgets are essentially user interface components that can be embedded within other admin tools.</p>
+<p>Admin extensions are user interface components that can be embedded within admin tools (formerly known as widgets).</p>
+</dd>
+<dt class="hdlist1">apis/</dt>
+<dd>
+<p><a href="../universal-api.ahtml">Universal API</a> controllers and descriptors.</p>
 </dd>
 <dt class="hdlist1">application.svg</dt>
 <dd>
 <p>Application icon in SVG format. Should be in a square format.</p>
 </dd>
-<dt class="hdlist1">application.xml</dt>
+<dt class="hdlist1">application.yaml</dt>
 <dd>
-<p>Application information in XML format.</p>
+<p>Application descriptor (<code>kind: "Application"</code>).</p>
 </dd>
 <dt class="hdlist1">assets/</dt>
 <dd>
-<p>Standard folder for serving of static assets, such as css and javascript. Assets are served by the <a href="../runtime/engines/asset-service.ahtml">asset service</a>.</p>
+<p>Standard folder for serving static assets such as CSS and JavaScript. Assets are served by the <a href="../runtime/engines/asset-service.ahtml">asset service</a>.</p>
 </dd>
 <dt class="hdlist1">error/error.js</dt>
 <dd>
-<p>The <a href="../framework/error.ahtml">HTTP error handler</a></p>
+<p>The <a href="../framework/error.ahtml">HTTP error handler</a>.</p>
 </dd>
 <dt class="hdlist1">main.js</dt>
 <dd>
 <p>The application&#8217;s <a href="../framework/main.ahtml">main controller</a>. Executed when an application starts and stops.</p>
 </dd>
-<dt class="hdlist1">services/</dt>
-<dd>
-<p>Contains <a href="../runtime/engines/http-service.ahtml">Http service controllers</a></p>
-</dd>
 <dt class="hdlist1">i18n/</dt>
 <dd>
-<p>Short for internationalization, this folder contains <a href="../libraries/lib-i18n.ahtml">app localization files</a></p>
+<p>Short for internationalization, this folder contains <a href="../libraries/lib-i18n.ahtml">app localization files</a>.</p>
 </dd>
 <dt class="hdlist1">idprovider/</dt>
 <dd>
@@ -612,47 +612,51 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">tasks/</dt>
 <dd>
-<p>May contain <a href="../libraries/lib-task.ahtml">task controllers</a> for running asynchronous and background processing.</p>
+<p>May contain <a href="../libraries/lib-task.ahtml">task controllers</a> for asynchronous and background processing.</p>
 </dd>
-<dt class="hdlist1">site/site.xml</dt>
+<dt class="hdlist1">webapp/</dt>
 <dd>
-<p>Contains <a href="../cms/sites.ahtml#site_xml">site configuration schema</a>, and declaring that the app can be added to projects and sites</p>
+<p>Optional <a href="../webapps.ahtml">webapp</a> entry point. Contains <code>webapp.js</code> (controller) and <code>webapp.yaml</code> (descriptor).</p>
 </dd>
-<dt class="hdlist1">site/content-types/</dt>
+<dt class="hdlist1">cms/site.yaml</dt>
 <dd>
-<p>Contains <a href="../cms/content-types.ahtml">Content type</a> definitions.</p>
+<p>Site configuration — API mounts, processors, and mappings.</p>
 </dd>
-<dt class="hdlist1">site/processors/</dt>
+<dt class="hdlist1">cms/cms.yaml</dt>
 <dd>
-<p>For post processing of HTML response from pages built with the <a href="../framework.ahtml">Enonic JS framework</a>.</p>
+<p>Site form and mixin references.</p>
 </dd>
-<dt class="hdlist1">site/layouts/</dt>
+<dt class="hdlist1">cms/content-types/</dt>
 <dd>
-<p><a href="../cms/pages/layouts.ahtml">Layout components</a> are placed here.</p>
+<p><a href="../cms/content-types.ahtml">Content type</a> definitions.</p>
 </dd>
-<dt class="hdlist1">site/mixins/</dt>
+<dt class="hdlist1">cms/processors/</dt>
 <dd>
-<p><a href="../cms/schemas/mixins.ahtml">Reusable schemas</a> are placed here.</p>
+<p><a href="../sites/processors.ahtml">Response processors</a> for post-processing the HTML response from sites.</p>
 </dd>
-<dt class="hdlist1">site/macros/</dt>
+<dt class="hdlist1">cms/layouts/</dt>
 <dd>
-<p><a href="../cms/macros.ahtml">Rich text Macro components</a> are placed here.</p>
+<p><a href="../cms/pages/layouts.ahtml">Layout components</a>.</p>
 </dd>
-<dt class="hdlist1">site/pages/</dt>
+<dt class="hdlist1">cms/form-fragments/</dt>
 <dd>
-<p><a href="../cms/pages.ahtml">Page components</a> are placed here.</p>
+<p>Reusable form pieces (formerly known as <code>mixins</code>).</p>
 </dd>
-<dt class="hdlist1">site/parts/</dt>
+<dt class="hdlist1">cms/macros/</dt>
 <dd>
-<p><a href="../cms/pages/parts.ahtml">Part components</a> are placed here.</p>
+<p><a href="../cms/macros.ahtml">Rich-text macro components</a>.</p>
 </dd>
-<dt class="hdlist1">site/x-data/</dt>
+<dt class="hdlist1">cms/pages/</dt>
 <dd>
-<p><a href="../cms/x-data.ahtml">X-data schemas</a> are defined here</p>
+<p><a href="../cms/pages.ahtml">Page components</a>.</p>
 </dd>
-<dt class="hdlist1">webapp/webapp.js</dt>
+<dt class="hdlist1">cms/parts/</dt>
 <dd>
-<p><a href="../runtime.ahtml#webapp_js">Webapp</a> based on the Enonic JS framework are placed here.</p>
+<p><a href="../cms/pages/parts.ahtml">Part components</a>.</p>
+</dd>
+<dt class="hdlist1">cms/mixins/</dt>
+<dd>
+<p>Extra metadata attached to content (formerly known as <code>x-data</code>).</p>
 </dd>
 </dl>
 </div>
@@ -706,7 +710,7 @@ Check out <a href="https://market.enonic.com/starters/library-starter">the libra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

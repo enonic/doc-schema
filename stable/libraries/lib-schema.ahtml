@@ -466,15 +466,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#schema">Schema</a></li>
 <li><a href="#contenttype">ContentType</a></li>
+<li><a href="#formfragment">FormFragment</a></li>
 <li><a href="#mixin">Mixin</a></li>
-<li><a href="#xdata">XData</a></li>
 <li><a href="#component">Component</a></li>
 <li><a href="#page">Page</a></li>
 <li><a href="#layout">Layout</a></li>
 <li><a href="#part">Part</a></li>
 <li><a href="#site">Site</a></li>
 <li><a href="#styles">Styles</a></li>
-<li><a href="#xdatamapping">XDataMapping</a></li>
+<li><a href="#mixinmapping">MixinMapping</a></li>
 <li><a href="#styleelement">StyleElement</a></li>
 <li><a href="#icon">Icon</a></li>
 </ul>
@@ -486,7 +486,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.11.0</span></span> API for fetching and manipulating dynamic schemas.</p>
+<p>API for fetching and manipulating dynamic schemas.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+In XP 8 all <code>resource</code> strings passed to and returned from this library are <strong>YAML</strong>. XML resources are no longer accepted — <code>createSchema</code>, <code>createComponent</code>, <code>createStyles</code>, <code>updateSite</code>, and the <code>update*</code> counterparts all parse YAML only. Examples below use the XP 8 <code>kind:</code> form.
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -585,7 +597,7 @@ Functions of this library require the Schema Admin role. It means that user role
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Schema type(<code>CONTENT_TYPE</code>, <code>MIXIN</code> or <code>XDATA</code>)</p>
+<p>Schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, or <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -704,7 +716,7 @@ const result = getSchema({
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Schema type(<code>CONTENT_TYPE</code>, <code>MIXIN</code> or <code>XDATA</code>)</p>
+<p>Schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, or <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -741,7 +753,7 @@ const result = listSchemas({
     displayName: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
-    resource: '&lt;content-type&gt;&lt;some-data&gt;&lt;/some-data&gt;&lt;/content-type&gt;',
+    resource: 'kind: "ContentType"\ntitle: "My type display name"\nform: []\n',
     type: 'CONTENT_TYPE',
     form: [
         {
@@ -781,7 +793,7 @@ const result = listSchemas({
     displayName: 'My type display name 2',
     description: 'My type description 2',
     modifiedTime: '2012-01-01T10:00:00Z',
-    resource: '&lt;content-type&gt;&lt;some-other-data&gt;&lt;/some-other-data&gt;&lt;/content-type&gt;',
+    resource: 'kind: "ContentType"\ntitle: "My type display name 2"\nform: []\n',
     type: 'CONTENT_TYPE',
     form: [],
     config: {}
@@ -843,7 +855,7 @@ const result = listSchemas({
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Dynamic schema type(<code>CONTENT_TYPE</code>,<code>MIXIN</code> or <code>XDATA</code>)</p>
+<p>Dynamic schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, or <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -872,18 +884,17 @@ const result = listSchemas({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {createSchema} from '/lib/xp/schema';
 
-const resource = `&lt;?xml version='1.0' encoding='UTF-8'?&gt;
-&lt;content-type xmlns='urn:enonic:xp:model:1.0'&gt;
-    &lt;display-name&gt;Tag&lt;/display-name&gt;
-    &lt;super-type&gt;base:structured&lt;/super-type&gt;
-    &lt;form&gt;
-        &lt;input name="tag" type="Tag"&gt;
-        &lt;label&gt;Tag, unlimited occurrences&lt;/label&gt;
-        &lt;occurrences minimum="0"
-        maximum="0"/&gt;
-        &lt;/input&gt;
-    &lt;/form&gt;
-&lt;/content-type&gt;`;
+const resource = `kind: "ContentType"
+title: "Tag"
+superType: "base:structured"
+form:
+- type: "Tag"
+  name: "tag"
+  label: "Tag, unlimited occurrences"
+  occurrences:
+    min: 0
+    max: 0
+`;
 
 const result = createSchema({
     name: 'myapp:mytype',
@@ -982,7 +993,7 @@ const result = createSchema({
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Dynamic schema type(<code>CONTENT_TYPE</code>,<code>MIXIN</code> or <code>XDATA</code>)</p>
+<p>Dynamic schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, or <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1011,24 +1022,20 @@ const result = createSchema({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateSchema} from '/lib/xp/schema';
 
-const resource = `&lt;?xml version='1.0' encoding='UTF-8'?&gt;
-       &lt;mixin xmlns='urn:enonic:xp:model:1.0'&gt;
-          &lt;display-name&gt;Virtual Mixin&lt;/display-name&gt;
-          &lt;description&gt;Mixin description&lt;/description&gt;
-          &lt;form&gt;
-            &lt;input type='TextLine' name='text2'&gt;
-              &lt;label&gt;Text 2&lt;/label&gt;
-            &lt;/input&gt;
-
-            &lt;mixin name='myapplication:inline'/&gt;
-          &lt;/form&gt;
-        &lt;/mixin&gt;`;
+const resource = `kind: "Mixin"
+title: "Virtual Mixin"
+description: "Mixin description"
+form:
+- type: "TextLine"
+  name: "text2"
+  label: "Text 2"
+- include: "myapplication:inline"
+`;
 
 const result = updateSchema({
     name: 'myapp:mytype',
     type: 'MIXIN',
     resource
-
 });</code></pre>
 </div>
 </div>
@@ -1121,7 +1128,7 @@ const result = updateSchema({
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Dynamic schema type(<code>CONTENT_TYPE</code>,<code>MIXIN</code> or <code>XDATA</code>)</p>
+<p>Dynamic schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, or <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1139,19 +1146,19 @@ const result = updateSchema({
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Updates a mixin schema:</div>
+<div class="title">Deletes a mixin schema:</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {deleteSchema} from '/lib/xp/schema';
 
 const result = deleteSchema({
     name: 'myapp:mytype',
-    type: 'XDATA'
+    type: 'MIXIN'
 });
 
 if (result) {
-    log.info('Deleted x-data: [myapp:mytype]');
+    log.info('Deleted mixin: [myapp:mytype]');
 } else {
-    log.info('X-data deletion failed: [myapp:mytype]');
+    log.info('Mixin deletion failed: [myapp:mytype]');
 }</code></pre>
 </div>
 </div>
@@ -1249,7 +1256,7 @@ const result = getComponent({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '&lt;page&gt;&lt;some-data&gt;&lt;/some-data&gt;&lt;/page&gt;',
+    resource: 'kind: "Page"\ntitle: "News page"\nform: []\nregions:\n- "region-one"\n',
     type: 'PAGE',
     form: [
         {
@@ -1367,7 +1374,7 @@ const result = listComponents({
         descriptionI18nKey: 'key.description',
         componentPath: 'myapp:/site/parts/part1',
         modifiedTime: '2021-02-25T10:44:33.170079900Z',
-        resource: '&lt;part&gt;&lt;some-data&gt;&lt;/some-data&gt;&lt;/part&gt;',
+        resource: 'kind: "Part"\ntitle: "News part"\nform: []\n',
         type: 'PART',
         form: [
             {
@@ -1390,7 +1397,7 @@ const result = listComponents({
         displayName: 'Other part',
         componentPath: 'myapp:/site/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
-        resource: '&lt;part&gt;&lt;some-other-data&gt;&lt;/some-other-data&gt;&lt;/part&gt;',
+        resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
         type: 'PART',
         form: [],
         config: {}
@@ -1482,18 +1489,18 @@ const result = listComponents({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {createComponent} from '/lib/xp/schema';
 
-const resource = `&lt;?xml version='1.0' encoding='UTF-8'?&gt;
-                &lt;content-type xmlns='urn:enonic:xp:model:1.0'&gt;
-               &lt;display-name&gt;Tag&lt;/display-name&gt;
-               &lt;super-type&gt;base:structured&lt;/super-type&gt;
-               &lt;form&gt;
-                 &lt;input name="tag" type="Tag"&gt;
-                   &lt;label&gt;Tag, unlimited occurrences&lt;/label&gt;
-                   &lt;occurrences minimum="0"
-                    maximum="0"/&gt;
-                 &lt;/input&gt;
-               &lt;/form&gt;
-              &lt;/content-type&gt;`;
+const resource = `kind: "Part"
+title: "Virtual Part"
+description: "My Part Description"
+form:
+- type: "Double"
+  name: "width"
+  label: "Column width"
+  occurrences:
+    min: 0
+    max: 1
+- include: "myapplication:link-urls"
+`;
 
 const result = createComponent({
     key: 'myapp:mypart',
@@ -1627,44 +1634,40 @@ const result = createComponent({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateComponent} from '/lib/xp/schema';
 
-const resource = `&lt;?xml version='1.0' encoding='UTF-8'?&gt;
-&lt;layout xmlns='urn:enonic:xp:model:1.0'&gt;
-    &lt;display-name i18n='key.display-name'&gt;Virtual Layout&lt;/display-name&gt;
-    &lt;description i18n='key.description'&gt;My Layout Description&lt;/description&gt;
-    &lt;form&gt;
-    &lt;input type='Double' name='pause'&gt;
-        &lt;label i18n='key1.label'&gt;Pause parameter&lt;/label&gt;
-        &lt;immutable&gt;false&lt;/immutable&gt;
-        &lt;indexed&gt;false&lt;/indexed&gt;
-        &lt;help-text i18n='key1.help-text'/&gt;
-        &lt;occurrences minimum='0' maximum='1'/&gt;
-    &lt;/input&gt;
-    &lt;item-set name='myFormItemSet'&gt;
-        &lt;label&gt;My form item set&lt;/label&gt;
-        &lt;immutable&gt;false&lt;/immutable&gt;
-        &lt;occurrences minimum='0' maximum='1'/&gt;
-        &lt;items&gt;
-        &lt;input type='TextLine' name='myTextLine'&gt;
-            &lt;label&gt;My text line&lt;/label&gt;
-            &lt;immutable&gt;false&lt;/immutable&gt;
-            &lt;indexed&gt;false&lt;/indexed&gt;
-            &lt;occurrences minimum='1' maximum='1'/&gt;
-        &lt;/input&gt;
-        &lt;input type='TextLine' name='myCustomInput'&gt;
-            &lt;label&gt;My custom input&lt;/label&gt;
-            &lt;immutable&gt;false&lt;/immutable&gt;
-            &lt;indexed&gt;false&lt;/indexed&gt;
-            &lt;occurrences minimum='0' maximum='1'/&gt;
-        &lt;/input&gt;
-        &lt;/items&gt;
-    &lt;/item-set&gt;
-    &lt;/form&gt;
-    &lt;regions&gt;
-    &lt;region name='header'/&gt;
-    &lt;region name='main'/&gt;
-    &lt;region name='footer'/&gt;
-    &lt;/regions&gt;
-&lt;/layout&gt;`;
+const resource = `kind: "Layout"
+title: "Virtual Layout"
+description: "My Layout Description"
+form:
+- type: "Double"
+  name: "pause"
+  label: "Pause parameter"
+  occurrences:
+    min: 0
+    max: 1
+- type: "ItemSet"
+  name: "myFormItemSet"
+  label: "My form item set"
+  occurrences:
+    min: 0
+    max: 1
+  items:
+  - type: "TextLine"
+    name: "myTextLine"
+    label: "My text line"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "myCustomInput"
+    label: "My custom input"
+    occurrences:
+      min: 0
+      max: 1
+regions:
+- "header"
+- "main"
+- "footer"
+`;
 
 const result = updateComponent({
     key: 'myapp:mylayout',
@@ -1916,7 +1919,7 @@ const result = getStyles({
     application: 'myapp',
     cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '&lt;styles&gt;&lt;some-data&gt;&lt;/some-data&gt;&lt;/styles&gt;',
+    resource: 'kind: "Style"\nstyles: []\n',
     elements: [
         {
             element: 'style',
@@ -2004,20 +2007,29 @@ const result = getStyles({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {createStyles} from '/lib/xp/schema';
 
-const resource = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;' +
-    '&lt;styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0"&gt;' +
-    '&lt;style name="warning"&gt;' +
-    '&lt;display-name i18n="warning.displayName"&gt;Warning&lt;/display-name&gt;' +
-    '&lt;/style&gt;' +
-    '&lt;image name="editor-width-auto"&gt;' +
-    '&lt;display-name i18n="editor-width-auto-text"&gt;Override ${width}&lt;/display-name&gt;' +
-    '&lt;/image&gt;' +
-    '&lt;image name="editor-style-cinema"&gt;' +
-    '&lt;display-name i18n="editor-style-cinema-text"&gt;Cinema&lt;/display-name&gt;' +
-    '&lt;aspect-ratio&gt;21:9&lt;/aspect-ratio&gt;' +
-    '&lt;filter&gt;pixelate(10)&lt;/filter&gt;' +
-    '&lt;/image&gt;' +
-    '&lt;/styles&gt;';
+const resource = `kind: "Style"
+styles:
+- name: "warning"
+  type: "Style"
+  label: "Warning"
+  editor:
+    css: |
+      .warning { /* CSS selectors */ }
+- name: "editor-width-auto"
+  type: "Image"
+  label: "Override \${width}"
+  editor:
+    css: |
+      .editor-width-auto { /* CSS selectors */ }
+- name: "editor-style-cinema"
+  type: "Image"
+  label: "Cinema"
+  aspectRatio: "21:9"
+  filter: "pixelate(10)"
+  editor:
+    css: |
+      .editor-style-cinema { /* CSS selectors */ }
+`;
 
 const result = createStyles({
     application: 'myapp',
@@ -2130,20 +2142,29 @@ const result = createStyles({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateStyles} from '/lib/xp/schema';
 
-const resource = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;' +
-    '&lt;styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0"&gt;' +
-    '&lt;style name="warning"&gt;' +
-    '&lt;display-name i18n="warning.displayName"&gt;Warning&lt;/display-name&gt;' +
-    '&lt;/style&gt;' +
-    '&lt;image name="editor-width-auto"&gt;' +
-    '&lt;display-name i18n="editor-width-auto-text"&gt;Override ${width}&lt;/display-name&gt;' +
-    '&lt;/image&gt;' +
-    '&lt;image name="editor-style-cinema"&gt;' +
-    '&lt;display-name i18n="editor-style-cinema-text"&gt;Cinema&lt;/display-name&gt;' +
-    '&lt;aspect-ratio&gt;21:9&lt;/aspect-ratio&gt;' +
-    '&lt;filter&gt;pixelate(10)&lt;/filter&gt;' +
-    '&lt;/image&gt;' +
-    '&lt;/styles&gt;';
+const resource = `kind: "Style"
+styles:
+- name: "warning"
+  type: "Style"
+  label: "Warning"
+  editor:
+    css: |
+      .warning { /* CSS selectors */ }
+- name: "editor-width-auto"
+  type: "Image"
+  label: "Override \${width}"
+  editor:
+    css: |
+      .editor-width-auto { /* CSS selectors */ }
+- name: "editor-style-cinema"
+  type: "Image"
+  label: "Cinema"
+  aspectRatio: "21:9"
+  filter: "pixelate(10)"
+  editor:
+    css: |
+      .editor-style-cinema { /* CSS selectors */ }
+`;
 
 const result = updateStyles({
     application: 'myapp',
@@ -2356,7 +2377,7 @@ const result = getSite({
             config: {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             name: 'myapplication:my',
             optional: false
@@ -2438,47 +2459,42 @@ const result = getSite({
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Updates application site descriptor:</div>
+<div class="title">Updates the application&#8217;s CMS descriptor (form and mixin references):</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateSite} from '/lib/xp/schema';
 
-const resource = `&lt;?xml version='1.0' encoding='UTF-8'?&gt;
-&lt;site xmlns='urn:enonic:xp:model:1.0'&gt;
-    &lt;x-data name='myapp1:menu-item'/&gt;
-    &lt;x-data name='myapp2:my-meta-mixin'/&gt;
-    &lt;form&gt;
-    &lt;input type='TextLine' name='some-name'&gt;
-        &lt;label&gt;Textline&lt;/label&gt;
-        &lt;immutable&gt;false&lt;/immutable&gt;
-        &lt;indexed&gt;false&lt;/indexed&gt;
-        &lt;custom-text/&gt;
-        &lt;help-text/&gt;
-        &lt;occurrences minimum='0' maximum='1'/&gt;
-    &lt;/input&gt;
-    &lt;/form&gt;
-    &lt;processors&gt;
-    &lt;response-processor name='filter1' order='10'/&gt;
-    &lt;response-processor name='filter2' order='20'/&gt;
-    &lt;/processors&gt;
-    &lt;mappings&gt;
-    &lt;mapping controller='/site/page/person/person.js' order='10'&gt;
-        &lt;pattern&gt;/person/*&lt;/pattern&gt;
-    &lt;/mapping&gt;
-    &lt;mapping controller='controller1.js'&gt;
-        &lt;match&gt;_path:'/*/fisk'&lt;/match&gt;
-    &lt;/mapping&gt;
-    &lt;mapping controller='controller2.js' order='5'&gt;
-        &lt;pattern invert='true'&gt;/.*&lt;/pattern&gt;
-        &lt;match&gt;type:'portal:fragment'&lt;/match&gt;
-    &lt;/mapping&gt;
-    &lt;/mappings&gt;
-&lt;/site&gt;`;
+const resource = `kind: "CMS"
+mixin:
+- name: "myapp1:menu-item"
+  optional: false
+- name: "myapp2:my-meta-mixin"
+  optional: false
+form:
+- type: "TextLine"
+  name: "some-name"
+  label: "Textline"
+  occurrences:
+    min: 0
+    max: 1
+`;
 
 const result = updateSite({
     application: 'myapp',
     resource
 });</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</strong> (<code>cms/cms.yaml</code>) which holds the site form and mixin references. The site descriptor (<code>cms/site.yaml</code>) — which carries <code>processors</code>, <code>mappings</code>, and <code>apis</code> — is not modifiable through this library; manage it as part of the application source.
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">Return value:</div>
@@ -2502,7 +2518,7 @@ const result = updateSite({
             config: {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             name: 'myapp1:menu-item',
             optional: false,
@@ -2526,7 +2542,7 @@ const result = updateSite({
 <div class="sect2">
 <h3 id="schema"><a class="link" href="#schema">Schema</a></h3>
 <div id="schema" class="paragraph">
-<p>(abstract for <a href="#content_type">ContentType</a>, <a href="#mixin">Mixin</a> and <a href="#xdata">XData</a>)</p>
+<p>(abstract for <a href="#content_type">ContentType</a>, <a href="#form_fragment">FormFragment</a> and <a href="#mixin">Mixin</a>)</p>
 </div>
 <div class="paragraph lead">
 <p>Type</p>
@@ -2625,7 +2641,7 @@ const result = updateSite({
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Schema type(<code>CONTENT_TYPE</code>, <code>MIXIN</code>, <code>XDATA</code>)</p>
+<p>Schema type (<code>CONTENT_TYPE</code>, <code>FORM_FRAGMENT</code>, <code>MIXIN</code>)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2681,19 +2697,22 @@ const result = updateSite({
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">xDataNames</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mixinNames</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Form x-data names</p>
+<p>Form mixin names (formerly known as x-data)</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="mixin"><a class="link" href="#mixin">Mixin</a></h3>
-<div id="mixin" class="paragraph">
+<h3 id="formfragment"><a class="link" href="#formfragment">FormFragment</a></h3>
+<div id="form_fragment" class="paragraph">
 <p>(extends <a href="#schema"><code>Schema</code></a>)</p>
+</div>
+<div class="paragraph">
+<p>In XP 8 this is what was called <code>Mixin</code> in XP 7.</p>
 </div>
 <div class="paragraph lead">
 <p>Type</p>
@@ -2703,9 +2722,12 @@ const result = updateSite({
 </div>
 </div>
 <div class="sect2">
-<h3 id="xdata"><a class="link" href="#xdata">XData</a></h3>
-<div id="xdata" class="paragraph">
+<h3 id="mixin"><a class="link" href="#mixin">Mixin</a></h3>
+<div id="mixin" class="paragraph">
 <p>(extends <a href="#schema"><code>Schema</code></a>)</p>
+</div>
+<div class="paragraph">
+<p>In XP 8 this is what was called <code>XData</code> in XP 7. Each mixin attaches optional metadata to a content item.</p>
 </div>
 <div class="paragraph lead">
 <p>Type</p>
@@ -2990,10 +3012,10 @@ const result = updateSite({
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">xDataMappings</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#xDataMapping">XDataMapping[]</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mixinMappings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#mixinMapping">MixinMapping[]</a></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>XData mappings</p>
+<p>Mixin mappings</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3063,8 +3085,8 @@ const result = updateSite({
 </table>
 </div>
 <div class="sect2">
-<h3 id="xdatamapping"><a class="link" href="#xdatamapping">XDataMapping</a></h3>
-<div id="xDataMapping" class="paragraph lead">
+<h3 id="mixinmapping"><a class="link" href="#mixinmapping">MixinMapping</a></h3>
+<div id="mixinMapping" class="paragraph lead">
 <p>Type</p>
 </div>
 <div class="paragraph">
@@ -3091,7 +3113,7 @@ const result = updateSite({
 <td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>xdata name</p>
+<p>Mixin name (formerly known as x-data)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3105,7 +3127,7 @@ const result = updateSite({
 <td class="tableblock halign-left valign-top"><p class="tableblock">allowContentTypes</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>allowed content type pattern</p>
+<p>Allowed content type pattern</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3214,7 +3236,7 @@ const result = updateSite({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

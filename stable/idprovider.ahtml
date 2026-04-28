@@ -485,21 +485,21 @@ They participate both in pipeline execution steps, and through the <a href="../r
 <div class="sectionbody">
 <div class="paragraph">
 <p>An IDprovider application requires a descriptor file.
-The descriptor should be placed in your project as <code>src/main/resources/idprovider/idprovider.xml</code>.</p>
+The descriptor should be placed in your project as <code>src/main/resources/idprovider/idprovider.yaml</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">Sample idprovider.xml</div>
+<div class="title">Sample idprovider.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-XML" data-lang="XML">&lt;id-provider&gt;
-  &lt;mode&gt;LOCAL&lt;/mode&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
-  &lt;form&gt;  <i class="conum" data-value="2"></i><b>(2)</b>
-    &lt;input name="title" type="TextLine"&gt;
-      &lt;label&gt;Title&lt;/label&gt;
-      &lt;occurrences minimum="0" maximum="1"/&gt;
-      &lt;default&gt;User Login&lt;/default&gt;
-    &lt;/input&gt;
-  &lt;/form&gt;
-&lt;/id-provider&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "IdProvider"
+mode: "LOCAL" <i class="conum" data-value="1"></i><b>(1)</b>
+form:         <i class="conum" data-value="2"></i><b>(2)</b>
+- type: "TextLine"
+  name: "title"
+  label: "Title"
+  default: "User Login"
+  occurrences:
+    min: 0
+    max: 1</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -713,7 +713,7 @@ exports.logout = function (req) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>

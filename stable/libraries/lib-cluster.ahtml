@@ -444,6 +444,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#usage">Usage</a></li>
 <li><a href="#functions">Functions</a>
 <ul class="sectlevel2">
+<li><a href="#isleader">isLeader</a></li>
 <li><a href="#ismaster">isMaster</a></li>
 </ul>
 </li>
@@ -488,9 +489,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="ismaster"><a class="link" href="#ismaster">isMaster</a></h3>
+<h3 id="isleader"><a class="link" href="#isleader">isLeader</a></h3>
 <div class="paragraph">
-<p>Tests whether the current node is the master node in a cluster. A cluster with multiple master nodes will only return true on the elected node.</p>
+<p>Tests whether the current node is the leader for the calling application. Useful for guarding work that should run on a single node — scheduled initialization, one-shot tasks, or event handlers that must not fire on every cluster node.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -502,51 +503,74 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>boolean</strong> : <code>true</code> if the current node is master; <code>false</code> otherwise.</p>
+<p><strong>boolean</strong> : <code>true</code> if the current node is the leader; <code>false</code> otherwise.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
 </div>
 <div class="listingblock">
-<div class="title">Initialize data only on the master node</div>
+<div class="title">Initialize data only on the leader node</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isMaster} from '/lib/xp/cluster';
-if (isMaster()) {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isLeader} from '/lib/xp/cluster';
+if (isLeader()) {
     initializeRepo();
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Run task only on master</div>
+<div class="title">Run a named task only on the leader</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isMaster} from '/lib/xp/cluster';
-import {submit} from '/lib/xp/task';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isLeader} from '/lib/xp/cluster';
+import {submitTask} from '/lib/xp/task';
 
-if (isMaster() {
-    const taskId = submit({
-        description: 'Master only task',
-        task: () =&gt; {
-          longRunningTask();
-        }
+if (isLeader()) {
+    submitTask({
+        descriptor: 'longRunningTask'
     });
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Catch event and execute something only on master</div>
+<div class="title">Handle an event only on the leader</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isMaster} from '/lib/xp/cluster';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isLeader} from '/lib/xp/cluster';
 import {listener} from '/lib/xp/event';
 
 listener({
     type: 'node.pushed',
     localOnly: false,
     callback: (event) =&gt; {
-        if(isMaster()) {
+        if (isLeader()) {
             log.info('event: %s', JSON.stringify(event));
         }
     }
 });</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ismaster"><a class="link" href="#ismaster">isMaster</a></h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Deprecated since XP 8 — use <a href="#isleader">isLeader</a> instead.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Tests whether the current node is the master node in the cluster. Same signature and return type as <code>isLeader</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isMaster} from '/lib/xp/cluster';
+if (isMaster()) {
+    initializeRepo();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -555,7 +579,7 @@ listener({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:54:30 UTC
+Last updated 2026-04-28 17:30:55 UTC
 </div>
 </div>
 </body>
