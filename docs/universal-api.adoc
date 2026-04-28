@@ -1,29 +1,28 @@
 = Building Custom APIs
 
-A core feature of Enonic XP the ability to build custom APIs and re-use them across the platform - aka the Universal API.
+A core feature of Enonic XP is the ability to build custom APIs and reuse them across the platform — aka the Universal API.
 
 == Introduction
 
-The Universal API is a powerful feature of the Enonic XP platform that allows developers to create custom APIs that can be securely exposed on the <<##custom-api#, API endpoint>>. Additionally, the APIs can also be deployed and accessed via other endpoints such as <<sites#,Sites>>, <<webapps#,Webapps>> and the <<extensions/admin#,XP Admin>>.
+The Universal API is a powerful feature of the Enonic XP platform that lets developers create custom APIs. It enables applications to dynamically extend the platform's API surface as they are installed.
 
 == Features
 
-The Main Features of Universal API are:
+The main features of the Universal API are:
 
-* Secure be default
- ** APIs are not mounted anywhere by default, so you don't need to worry about accidental exposure of an admin API on a site.
+* Secure by default.
+ ** APIs are not mounted anywhere by default, so there is no risk of accidentally exposing an admin API on a site.
  ** Nobody can access an API without explicitly specifying access rights in the descriptor.
- ** Cache pollution is avoided by mounting APIs to a single endpoint (per engine).
-* Headless friendly. APIs can be mounted on `/api` endpoint, so they can be used by any client.
-* Granular. Mounting of API must be explicitly specified in engine descriptor files.
-* Modular. APIs can be borrowed from other applications, so you can use existing APIs in your application.
-
+ ** APIs mount at a single, fixed location, never at arbitrary points along the URL.
+* Headless friendly. APIs can be mounted under the `/api` endpoint, so they can be used by any client.
+* Granular. Mounting must be explicitly specified in engine descriptor files.
+* Modular. APIs can be borrowed from other applications, so you can reuse existing APIs in your application.
 
 == Usage
 
-To create an API, place an http controller file in the `src/main/resources/apis/` structure of your project. Each controller needs to be placed in a folder matching its name i.e.: `src/main/resources/api/myapi/myapi.js`
+To create an API, place an HTTP controller file under `src/main/resources/apis/` in your project. Each controller must live in a folder matching its name, e.g. `src/main/resources/apis/myapi/myapi.js`.
 
-Example controller
+Example controller:
 
 .src/main/resources/apis/<api-name>/<api-name>.js
 [source,JavaScript]
@@ -38,92 +37,110 @@ exports.GET = function(req) {
 };
 ----
 
+=== WebSocket and SSE
+
+A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<framework/websocket#,WebSocket>> and <<framework/sse#,SSE>> for the controller-side details.
+
 [#descriptor]
 == Descriptor
 
-API descriptor is required. It provides a way to define the API's access, availability on `/api` endpoint as well as display name, description and documentation URL.
+An API descriptor is required. It defines the API's access control, its availability on the `/api` endpoint, and metadata such as title, description, and documentation URL.
 
-Example of Full API descriptor:
-[source,xml]
+Example of a full API descriptor:
+
+.src/main/resources/apis/<api-name>/<api-name>.yaml
+[source,yaml]
 ----
-<api>
-  <mount>true</mount> <--1-->
-  <display-name>My API</display-name> <--2-->
-  <description>API for My App</description> <--3-->
-  <documentation-url>https://developer.enonic.com/docs/api</documentation-url> <--4-->
-  <allow> <--5-->
-    <principal>role:system.admin</principal>
-    <principal>role:myapp.myrole</principal>
-  </allow>
-</api>
+kind: "API"
+title: "My API" # <1>
+description: "API for My App" # <2>
+documentationUrl: "https://developer.enonic.com/docs/api" # <3>
+mount: ["web"] # <4>
+allow: # <5>
+  - "role:system.admin"
+  - "role:myapp.myrole"
 ----
 
-<1> By default, APIs are not mounted on the <<#endpoint,Generic API endpoint>>.
-To enable it, `<mount>true</mount>` should be set in the descriptor.
-+
-<2> *display-name* is the name of the API that will be shown in the UI.
+<1> *title* is the name of the API that will be shown in the UI.
 
-<3> *description* is a short description of the API that will be shown in the UI.
+<2> *description* is a short description of the API that will be shown in the UI.
 
-<4> *documentation-url* is a link to the API documentation that will be shown in the UI.
+<3> *documentationUrl* is a link to the API documentation that will be shown in the UI.
 
-<5> APIs must list principles that have access to it. It is required to specify at least one principal. Use `role:system.everyone` to make the API public.
+<4> By default, APIs are not mounted on the <<#web-api,Generic API endpoint>>.
+To enable it, add `"web"` to the `mount` list.
 
-[#endpoint]
-== Endpoint
+<5> APIs must list principals that have access to it. It is required to specify at least one principal. Use `role:system.everyone` to make the API public.
 
-API mount is context-aware:
+[#service-point]
+== Service point
 
-* Generic API endpoint `+/api/<app-name>/<api-name>/+`
-* For `site` engine: `+/site/<site-path>/_/<app-name>/<api-name>/+`
-* For `webapp` engine: `+(/webapp/<app-name>/_/<app-name>/<api-name>/+`
-* For `admin` engine: `+/admin/_/<app-name>/<api-name>/+`
+In the `site`, `webapp`, and `admin` engines, APIs are reachable as service points under the engine's URL space. The `_` segment separates the engine's content path from service paths (services, components, idprovider, and APIs):
 
-Engine descriptors need to specify the available API names in the `api` element, while Generic API endpoint can be disabled in <<#descriptor,API Descriptor>> itself.
+* For the `site` engine: `+/site/<site-path>/_/<app-name>:<api-name>/+`
+* For the `webapp` engine: `+/webapp/<webapp-app>/_/<app-name>:<api-name>/+`
+* For the `admin` engine: `+/admin/<admin-app>/<tool>/_/<app-name>:<api-name>/+`
+
+Each engine descriptor declares the APIs it exposes via its `apis` list.
 
 Example site descriptor with mounting of self-contained and external APIs:
-[source,xml]
+
+.src/main/resources/site/site.yaml
+[source,yaml]
 ----
-<site xmlns="urn:enonic:xp:model:1.0">
-  <apis>
-        <api>ws</api>
-        <api>app:graphql</api>
-  </apis>
-  <form/>
-</site>
+kind: "Site"
+apis:
+  - "ws" # <1>
+  - "app:graphql" # <2>
 ----
 
-== Built-in APIs
+<1> A bare name resolves to an API in the current application — here, `ws` defined in `src/main/resources/apis/ws/`.
 
-=== Media APIs
+<2> The `<app-key>:<api-name>` form mounts an API from a different application, letting the site borrow APIs deployed by other apps.
 
-The Media APIs is a built-in API that provides access to media files in CMS repositories.
+NOTE: Wildcards and "expose all APIs from app X" rules are intentionally not supported here. Each API must be listed by its descriptor key. The reason is security: it prevents new or insecure APIs from being silently exposed on a service path when an app is upgraded or a new dependency is added. Publishing an additional API always requires an explicit change to the hosting descriptor.
 
-<<media-api#image-api,Media Image API>> is available real-time processing and delivery of rasterized RGB/RGBa image media.
+[#web-api]
+== Web API
 
-<<media-api#attachment-api,Media Attachment API>> gives access to Content attached binaries - like PDFs, Word documents, etc.
+The dedicated `/api` endpoint exposes APIs independently of any engine, so they can be consumed by any HTTP client:
 
-These two APIs are always mounted on Generic Endpoint as well as on Sites. Admin Tools and Webapps can also mount them by specifying them in the `api` element of the engine descriptor.
+* Generic API endpoint: `+/api/<app-name>:<api-name>/+`
 
-=== Widget API
+To opt in, an API must include `"web"` in its `mount` list (see <<#descriptor,API descriptor>>).
 
-<<../../admin/widgets#,Widget API>> provide the way to dynamically extend Admin UI.
+=== Management API
+
+An API can also be exposed on the management connector by adding `"management"` to its `mount` list. Use it for internal or operational APIs that should not be reachable from the public connector.
+
+.src/main/resources/apis/<api-name>/<api-name>.yaml
+[source,yaml]
+----
+kind: "API"
+title: "Cluster ops"
+mount: ["management"]
+allow:
+  - "role:system.admin"
+----
+
+Both mounts can be combined: `mount: ["web", "management"]` makes the API reachable on both connectors. The `allow` principal list is enforced on every request regardless of which connector served it.
 
 == API discovery
 
-`GET :8080/api` - returns JSON with a list of all available APIs in the system.
+`GET /api` returns JSON with a list of all available APIs in the system.
 
+NOTE: Discovery is intended for development. By default it is enabled only when XP runs in dev mode and disabled in production.
 
 == apiUrl()
 
-To safely generate an API URL, use the `apiUrl()` function that is part of the <<libraries/lib-portal#, Portal library>>.
+To safely generate an API URL, use the `apiUrl()` function from the <<libraries/lib-portal#,Portal library>>.
 
-NOTE: When invoked, the function will generate a contextual service url based on the context of the current controller.
+NOTE: The function generates a contextual URL based on the context of the current controller.
 
 == Reserved API application names
 
-Applications names without namespace are reserved.
-This list includes, but not limited to, the following:
+A few application names are reserved.
+This list includes but is not limited to:
 
 - `media`
 - `admin`

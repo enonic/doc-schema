@@ -1,0 +1,262 @@
+= SSE library
+:toc: right
+:imagesdir: ../images
+
+Server-Sent Events functions.
+
+== Usage
+
+Add the following to your `build.gradle` file:
+
+[source,groovy]
+----
+dependencies {
+  include "com.enonic.xp:lib-sse:${xpVersion}"
+}
+----
+
+Add the `import` statement to your controller:
+
+[source,typescript]
+----
+import sseLib from '/lib/xp/sse';
+----
+
+You are now ready to use the API.
+
+NOTE: Unlike `lib-websocket`, every function in this library takes a single object parameter.
+
+== Message shape
+
+The `send` and `sendToGroup` functions accept a `message` object with the following optional fields:
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name    | Type   | Description
+| event   | string | Event name. Optional.
+| data    | string | Event payload. A message with no `data` does not dispatch a client event, but any `id` still updates the client's last-event-id buffer.
+| id      | string | Event id used by the client for `Last-Event-ID` reconnection tracking.
+| comment | string | SSE comment line. Ignored by clients — useful for keep-alive pings.
+|===
+
+== Functions
+
+=== send
+
+Sends a message to a specific SSE connection.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name             | Type   | Description
+| params.clientId  | string | Client id, captured from the `open` event in the controller's `sseEvent` handler.
+| params.message   | object | Message to send. See <<#message-shape,Message shape>>.
+|===
+
+[.lead]
+Returns
+
+*void*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {send} from '/lib/xp/sse';
+
+send({clientId: clientId, message: {event: 'message', data: 'Hello!'}});
+----
+
+NOTE: `send` is a safe no-op when the connection is closed — do not guard with `isOpen` to avoid a race.
+
+=== sendToGroup
+
+Sends a message to all connections in a named group.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name           | Type   | Description
+| params.group   | string | Group name.
+| params.message | object | Message to send. See <<#message-shape,Message shape>>.
+|===
+
+[.lead]
+Returns
+
+*void*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {sendToGroup} from '/lib/xp/sse';
+
+sendToGroup({group: 'live', message: {data: 'Update'}});
+----
+
+=== close
+
+Closes an SSE connection. The connection's `sseEvent` handler will receive a `close` event.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name            | Type   | Description
+| params.clientId | string | Client id.
+|===
+
+[.lead]
+Returns
+
+*void*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {close} from '/lib/xp/sse';
+
+close({clientId: clientId});
+----
+
+=== isOpen
+
+Checks whether an SSE connection is still open. Use it to abort expensive work (long-running computation, large payload generation) when the client has disconnected.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name            | Type   | Description
+| params.clientId | string | Client id.
+|===
+
+[.lead]
+Returns
+
+*boolean* — `true` if the connection is still open.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {isOpen} from '/lib/xp/sse';
+
+if (!isOpen({clientId: clientId})) {
+    return;
+}
+----
+
+=== addToGroup
+
+Adds a connection to a named group.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name            | Type   | Description
+| params.group    | string | Group name.
+| params.clientId | string | Client id.
+|===
+
+[.lead]
+Returns
+
+*void*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {addToGroup} from '/lib/xp/sse';
+
+addToGroup({group: 'live', clientId: clientId});
+----
+
+=== removeFromGroup
+
+Removes a connection from a named group.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name            | Type   | Description
+| params.group    | string | Group name.
+| params.clientId | string | Client id.
+|===
+
+[.lead]
+Returns
+
+*void*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {removeFromGroup} from '/lib/xp/sse';
+
+removeFromGroup({group: 'live', clientId: clientId});
+----
+
+=== getGroupSize
+
+Returns the number of connections currently in a group.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name         | Type   | Description
+| params.group | string | Group name.
+|===
+
+[.lead]
+Returns
+
+*number*
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getGroupSize} from '/lib/xp/sse';
+
+const count = getGroupSize({group: 'live'});
+----

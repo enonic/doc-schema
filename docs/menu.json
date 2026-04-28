@@ -71,6 +71,10 @@
           "document": "framework/websocket"
         },
         {
+          "title": "SSE",
+          "document": "framework/sse"
+        },
+        {
           "title": "Events",
           "document": "framework/events"
         },
@@ -187,6 +191,10 @@
         {
           "title": "Value",
           "document": "libraries/lib-value"
+        },
+        {
+          "title": "SSE",
+          "document": "libraries/lib-sse"
         },
         {
           "title": "VHost",
