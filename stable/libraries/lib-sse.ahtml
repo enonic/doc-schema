@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Scheduler library</title>
+<title>SSE library</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,23 +437,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Scheduler library</h1>
+<h1>SSE library</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#usage">Usage</a></li>
+<li><a href="#message_shape">Message shape</a></li>
 <li><a href="#functions">Functions</a>
 <ul class="sectlevel2">
-<li><a href="#get">get</a></li>
-<li><a href="#list">list</a></li>
-<li><a href="#create">create</a></li>
-<li><a href="#modify">modify</a></li>
-<li><a href="#delete">delete</a></li>
-</ul>
-</li>
-<li><a href="#type_definitions">Type Definitions</a>
-<ul class="sectlevel2">
-<li><a href="#scheduledjob">ScheduledJob</a></li>
+<li><a href="#send">send</a></li>
+<li><a href="#sendtogroup">sendToGroup</a></li>
+<li><a href="#close">close</a></li>
+<li><a href="#isopen">isOpen</a></li>
+<li><a href="#addtogroup">addToGroup</a></li>
+<li><a href="#removefromgroup">removeFromGroup</a></li>
+<li><a href="#getgroupsize">getGroupSize</a></li>
 </ul>
 </li>
 </ul>
@@ -463,10 +461,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.7.0</span></span></p>
-</div>
-<div class="paragraph">
-<p>Functions for creating and managing scheduled jobs.</p>
+<p>Server-Sent Events functions.</p>
 </div>
 </div>
 </div>
@@ -479,7 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-scheduler:${xpVersion}"
+  include "com.enonic.xp:lib-sse:${xpVersion}"
 }</code></pre>
 </div>
 </div>
@@ -488,21 +483,85 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import schedulerLib from '/lib/xp/scheduler';</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import sseLib from '/lib/xp/sse';</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>You are now ready to use the API.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Unlike <code>lib-websocket</code>, every function in this library takes a single object parameter.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="message_shape"><a class="link" href="#message_shape">Message shape</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>send</code> and <code>sendToGroup</code> functions accept a <code>message</code> object with the following optional fields:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">event</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Event name. Optional.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Event payload. A message with no <code>data</code> does not dispatch a client event, but any <code>id</code> still updates the client&#8217;s last-event-id buffer.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Event id used by the client for <code>Last-Event-ID</code> reconnection tracking.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">comment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SSE comment line. Ignored by clients — useful for keep-alive pings.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
 <h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="get"><a class="link" href="#get">get</a></h3>
+<h3 id="send"><a class="link" href="#send">send</a></h3>
 <div class="paragraph">
-<p>Returns a scheduled job with the specified name.</p>
+<p>Sends a message to a specific SSE connection.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -522,38 +581,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with the parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 97%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>name of the job.</p>
+<p>Client id, captured from the <code>open</code> event in the controller&#8217;s <code>sseEvent</code> handler.</p>
 </div></div></td>
 </tr>
-</tbody>
-</table></div></td>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.message</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Message to send. See <a href="#message-shape">Message shape</a>.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -561,131 +600,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the job.
-Or null if the job could not be found.</p>
+<p><strong>void</strong></p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Obtains details of a scheduled job:</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {get as getJob} from '/lib/xp/scheduler';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {send} from '/lib/xp/sse';
 
-const job = getJob({ name: 'myjob' });
-
-if (job) {
-  log.info('Job is found: %s', JSON.stringify(job, null, 4));
-} else {
-  log.info('Job not found');
-}</code></pre>
+send({clientId: clientId, message: {event: 'message', data: 'Hello!'}});</code></pre>
 </div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    name: 'myjob',
-    descriptor: 'com.enonic.app.myapp:mytask',
-    description: 'cron job description',
-    enabled: true,
-    config: {
-        a: 1,
-        b: 'value',
-        c: {
-            d: {
-                e: 3.6,
-                f: true
-            }
-        }
-    },
-    user: 'user:system:user',
-    creator: 'user:system:creator',
-    modifier: 'user:system:creator',
-    createdTime: '2016-11-02T10:36:00Z',
-    modifiedTime: '2016-11-02T10:36:00Z',
-    lastRun: '2021-02-25T10:44:33.170079900Z',
-    lastTaskId: 'task-id',
-    schedule: {
-        value: '* * * * *',
-        type: 'CRON',
-        timeZone: 'GMT+2:00'
-    }
-};</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="list"><a class="link" href="#list">list</a></h3>
-<div class="paragraph">
-<p>Returns the list of scheduled jobs.</p>
-</div>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>Array</strong> : (<a href="#scheduled_job"><code>ScheduledJob[]</code></a>) List of all scheduled jobs.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">Obtains list of existing jobs:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {list} from '/lib/xp/scheduler';
-
-const jobs = list();</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [
-  {
-        name: 'job1',
-        descriptor: 'appKey:task',
-        description: 'job description',
-        enabled: true,
-        config: {
-            a: 1
-        },
-        user: 'user:system:user',
-        creator: 'user:system:creator',
-        modifier: 'user:system:creator',
-        createdTime: '2016-11-02T10:36:00Z',
-        modifiedTime: '2016-11-02T10:36:00Z',
-        lastRun: '2021-02-25T10:44:00.170079900Z',
-        lastTaskId: 'task-id',
-        schedule: {
-            value: '* * * * *',
-            timeZone: 'GMT+05:30',
-            type: 'CRON'
-        }
-    },
-    {
-        name: 'job2',
-        descriptor: 'appKey:task',
-        description: 'job description',
-        enabled: false,
-        config: { },
-        user: 'user:system:user',
-        creator: 'user:system:creator',
-        modifier: 'user:system:creator',
-        createdTime: '2021-02-02T10:36:00Z',
-        modifiedTime: '2021-02-02T10:36:00Z',
-        schedule: {
-            value: '2012-01-01T00:00:00Z',
-            type: 'ONE_TIME'
-        }
-    }
-];</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="create"><a class="link" href="#create">create</a></h3>
-<div class="paragraph">
-<p>Creates a scheduled job.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -694,10 +619,16 @@ const jobs = list();</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This function returns immediately.
+<code>send</code> is a safe no-op when the connection is closed — do not guard with <code>isOpen</code> to avoid a race.
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sendtogroup"><a class="link" href="#sendtogroup">sendToGroup</a></h3>
+<div class="paragraph">
+<p>Sends a message to all connections in a named group.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -717,110 +648,18 @@ This function returns immediately.
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.group</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Group name.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.message</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with the parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 97%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>unique job name.</p>
+<p>Message to send. See <a href="#message-shape">Message shape</a>.</p>
 </div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>job description.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">descriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>descriptor of the task to be scheduled.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>config of the task to be scheduled.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>task time run config.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.value</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule value according to its type.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule type (CRON or ONE_TIME).</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.timeZone</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required for schedule.type = CRON</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time zone of cron scheduling. It isn&#8217;t applicable to a onetime job.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>principal key of the user that submitted the task.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>job is active or not.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
 </tr>
 </tbody>
 </table>
@@ -828,110 +667,23 @@ This function returns immediately.
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the created job.</p>
+<p><strong>void</strong></p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {create} from '/lib/xp/scheduler';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {sendToGroup} from '/lib/xp/sse';
 
-const simpleOneTimeJob = create({
-    name: 'my-project',
-    descriptor: 'appKey:task',
-    enabled: true,
-    schedule: {type: 'ONE_TIME', value: '2021-01-01T00:00:00.00Z'}
-});
-
-const extendedCronJob = create({
-    name: 'myjob',
-    descriptor: 'appKey:task',
-    description: 'job description',
-    user: 'user:system:user',
-    enabled: true,
-    config: {
-        a: 1,
-        b: 2,
-        c: ['1', '2'],
-        d: {
-            e: {
-                f: 3.6,
-                g: true
-            }
-        }
-    },
-    schedule: {type: 'CRON', value: '* * * * 5', timeZone: 'GMT-2:00'}
-});</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expectedSimpleOneTimeJob = {
-    name: 'my-project',
-    descriptor: 'appKey:task',
-    enabled: true,
-    config: {},
-    creator: 'user:system:creator',
-    modifier: 'user:system:creator',
-    createdTime: '2016-11-02T10:36:00Z',
-    modifiedTime: '2016-11-02T10:36:00Z',
-    schedule: {
-        value: '2012-01-01T00:00:00Z',
-        type: 'ONE_TIME'
-    }
-}
-
-const expectedExtendedCronJob = {
-    name: 'myjob',
-    descriptor: 'appKey:task',
-    description: 'job description',
-    enabled: true,
-    config: {
-        a: 1,
-        b: 2,
-        c: {
-            0: '1',
-            1: '2'
-        },
-        d: {
-            e: {
-                f: 3.6,
-                g: true
-            }
-        }
-    },
-    user: 'user:system:user',
-    creator: 'user:system:creator',
-    modifier: 'user:system:creator',
-    createdTime: '2021-01-01T10:36:00Z',
-    modifiedTime: '2016-01-01T10:36:00Z',
-    schedule: {
-        value: '* * * * 5',
-        timeZone: 'GMT-02:00',
-        type: 'CRON'
-    }
-}</code></pre>
+sendToGroup({group: 'live', message: {data: 'Update'}});</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="modify"><a class="link" href="#modify">modify</a></h3>
+<h3 id="close"><a class="link" href="#close">close</a></h3>
 <div class="paragraph">
-<p>Modifies a job.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The previous task will be rescheduled, <code>lastRun</code> and <code>lastTaskId</code> properties will be cleaned.
-</td>
-</tr>
-</table>
+<p>Closes an SSE connection. The connection&#8217;s <code>sseEvent</code> handler will receive a <code>close</code> event.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -951,46 +703,11 @@ The previous task will be rescheduled, <code>lastRun</code> and <code>lastTaskId
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with the parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 97%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>unique job name.</p>
+<p>Client id.</p>
 </div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">editor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>editor callback function has an editable existing job as a param.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
 </tr>
 </tbody>
 </table>
@@ -998,61 +715,23 @@ The previous task will be rescheduled, <code>lastRun</code> and <code>lastTaskId
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#scheduled_job"><code>ScheduledJob</code></a>) Detail information for the modified job.</p>
+<p><strong>void</strong></p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modify} from '/lib/xp/scheduler';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {close} from '/lib/xp/sse';
 
-const result = modify({
-    name: 'myjob',
-    editor: (edit) =&gt; {
-        edit.descriptor = 'appKey:new-task';
-        edit.description = 'new job description';
-        edit.user = 'user:system:new-user';
-        edit.enabled = false;
-        edit.config = {
-            a1: 3
-        };
-        edit.schedule = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
-
-        return edit;
-    }
-});</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const resultExpected = {
-    name: 'myjob',
-    descriptor: 'appKey:new-task',
-    description: 'new job description',
-    enabled: false,
-    config: {
-        a1: 3
-    },
-    user: 'user:system:new-user',
-    creator: 'user:system:creator',
-    modifier: 'user:system:modifier',
-    createdTime: '2016-11-02T10:36:00Z',
-    modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    schedule: {
-        value: '* * * * *',
-        timeZone: 'GMT+05:30',
-        type: 'CRON'
-    }
-}</code></pre>
+close({clientId: clientId});</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="delete"><a class="link" href="#delete">delete</a></h3>
+<h3 id="isopen"><a class="link" href="#isopen">isOpen</a></h3>
 <div class="paragraph">
-<p>Deletes a scheduled job.</p>
+<p>Checks whether an SSE connection is still open. Use it to abort expensive work (long-running computation, large payload generation) when the client has disconnected.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1072,38 +751,11 @@ const result = modify({
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JSON with the parameters</p>
-</div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 97%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">required</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>name of the job to be deleted.</p>
+<p>Client id.</p>
 </div></div></td>
-</tr>
-</tbody>
-</table></div></td>
 </tr>
 </tbody>
 </table>
@@ -1111,42 +763,28 @@ const result = modify({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>boolean</strong> : <code>true</code> if deleted, <code>false</code> otherwise</p>
+<p><strong>boolean</strong> — <code>true</code> if the connection is still open.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {deleteJob} from '/lib/xp/scheduler';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {isOpen} from '/lib/xp/sse';
 
-const result = deleteJob({
-    name: 'myjob'
-});
-
-if (result) {
-    log.info('Job deleted');
-} else {
-    log.info('Job was not found');
+if (!isOpen({clientId: clientId})) {
+    return;
 }</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="type_definitions"><a class="link" href="#type_definitions">Type Definitions</a></h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="scheduledjob"><a class="link" href="#scheduledjob">ScheduledJob</a></h3>
-<div id="scheduled_job" class="paragraph lead">
-<p>Type</p>
-</div>
+<h3 id="addtogroup"><a class="link" href="#addtogroup">addToGroup</a></h3>
 <div class="paragraph">
-<p><strong>object</strong></p>
+<p>Adds a connection to a named group.</p>
 </div>
 <div class="paragraph lead">
-<p>Properties</p>
+<p>Parameters</p>
 </div>
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -1163,41 +801,47 @@ if (result) {
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Job name</p>
+<p>Group name.</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Job description</p>
+<p>Client id.</p>
 </div></div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">descriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>descriptor of the task to be scheduled</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>config of the task to be scheduled</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>task time run config</p>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
 </div>
-<table class="tableblock frame-ends grid-none stretch">
-<caption class="title">Properties</caption>
+<div class="paragraph">
+<p><strong>void</strong></p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addToGroup} from '/lib/xp/sse';
+
+addToGroup({group: 'live', clientId: clientId});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removefromgroup"><a class="link" href="#removefromgroup">removeFromGroup</a></h3>
+<div class="paragraph">
+<p>Removes a connection from a named group.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
 <colgroup>
 <col style="width: 1%;">
 <col style="width: 1%;">
@@ -1212,87 +856,85 @@ if (result) {
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule value</p>
+<p>Group name.</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>schedule type.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">schedule.timeZone</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time zone of cron scheduling. It isn&#8217;t applicable to a onetime job</p>
-</div></div></td>
-</tr>
-</tbody>
-</table></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>principal key of the user that submitted the task</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>job is active or not</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">creator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>principal key of user that created the task</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifier</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>principal key of the last user that modified the task</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">createdTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time of the task creation</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time of the last task modification</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">lastRun</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time of the last job run</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">lastTaskId</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>task id of the last job run</p>
+<p>Client id.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>void</strong></p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {removeFromGroup} from '/lib/xp/sse';
+
+removeFromGroup({group: 'live', clientId: clientId});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getgroupsize"><a class="link" href="#getgroupsize">getGroupSize</a></h3>
+<div class="paragraph">
+<p>Returns the number of connections currently in a group.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params.group</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Group name.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>number</strong></p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getGroupSize} from '/lib/xp/sse';
+
+const count = getGroupSize({group: 'live'});</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

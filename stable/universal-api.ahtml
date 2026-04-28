@@ -443,13 +443,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#features">Features</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#descriptor">Descriptor</a></li>
-<li><a href="#endpoint">Endpoint</a></li>
-<li><a href="#built_in_apis">Built-in APIs</a>
+<li><a href="#usage">Usage</a>
 <ul class="sectlevel2">
-<li><a href="#media_apis">Media APIs</a></li>
-<li><a href="#widget_api">Widget API</a></li>
+<li><a href="#websocket_and_sse">WebSocket and SSE</a></li>
+</ul>
+</li>
+<li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#service-point">Service point</a></li>
+<li><a href="#web-api">Web API</a>
+<ul class="sectlevel2">
+<li><a href="#management_api">Management API</a></li>
 </ul>
 </li>
 <li><a href="#api_discovery">API discovery</a></li>
@@ -462,7 +465,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A core feature of Enonic XP the ability to build custom APIs and re-use them across the platform - aka the Universal API.</p>
+<p>A core feature of Enonic XP is the ability to build custom APIs and reuse them across the platform — aka the Universal API.</p>
 </div>
 </div>
 </div>
@@ -470,7 +473,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Universal API is a powerful feature of the Enonic XP platform that allows developers to create custom APIs that can be securely exposed on the <a href="#<mark>custom-api</mark>">API endpoint</a>. Additionally, the APIs can also be deployed and accessed via other endpoints such as <a href="sites.ahtml">Sites</a>, <a href="webapps.ahtml">Webapps</a> and the <a href="extensions/admin.ahtml">XP Admin</a>.</p>
+<p>The Universal API is a powerful feature of the Enonic XP platform that lets developers create custom APIs. It enables applications to dynamically extend the platform&#8217;s API surface as they are installed.</p>
 </div>
 </div>
 </div>
@@ -478,34 +481,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="features"><a class="link" href="#features">Features</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Main Features of Universal API are:</p>
+<p>The main features of the Universal API are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Secure be default</p>
+<p>Secure by default.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>APIs are not mounted anywhere by default, so you don&#8217;t need to worry about accidental exposure of an admin API on a site.</p>
+<p>APIs are not mounted anywhere by default, so there is no risk of accidentally exposing an admin API on a site.</p>
 </li>
 <li>
 <p>Nobody can access an API without explicitly specifying access rights in the descriptor.</p>
 </li>
 <li>
-<p>Cache pollution is avoided by mounting APIs to a single endpoint (per engine).</p>
+<p>APIs mount at a single, fixed location, never at arbitrary points along the URL.</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>Headless friendly. APIs can be mounted on <code>/api</code> endpoint, so they can be used by any client.</p>
+<p>Headless friendly. APIs can be mounted under the <code>/api</code> endpoint, so they can be used by any client.</p>
 </li>
 <li>
-<p>Granular. Mounting of API must be explicitly specified in engine descriptor files.</p>
+<p>Granular. Mounting must be explicitly specified in engine descriptor files.</p>
 </li>
 <li>
-<p>Modular. APIs can be borrowed from other applications, so you can use existing APIs in your application.</p>
+<p>Modular. APIs can be borrowed from other applications, so you can reuse existing APIs in your application.</p>
 </li>
 </ul>
 </div>
@@ -515,10 +518,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To create an API, place an http controller file in the <code>src/main/resources/apis/</code> structure of your project. Each controller needs to be placed in a folder matching its name i.e.: <code>src/main/resources/api/myapi/myapi.js</code></p>
+<p>To create an API, place an HTTP controller file under <code>src/main/resources/apis/</code> in your project. Each controller must live in a folder matching its name, e.g. <code>src/main/resources/apis/myapi/myapi.js</code>.</p>
 </div>
 <div class="paragraph">
-<p>Example controller</p>
+<p>Example controller:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.js</div>
@@ -533,138 +536,108 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 };</code></pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h3>
+<div class="paragraph">
+<p>A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="framework/websocket.ahtml">WebSocket</a> and <a href="framework/sse.ahtml">SSE</a> for the controller-side details.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>API descriptor is required. It provides a way to define the API&#8217;s access, availability on <code>/api</code> endpoint as well as display name, description and documentation URL.</p>
+<p>An API descriptor is required. It defines the API&#8217;s access control, its availability on the <code>/api</code> endpoint, and metadata such as title, description, and documentation URL.</p>
 </div>
 <div class="paragraph">
-<p>Example of Full API descriptor:</p>
+<p>Example of a full API descriptor:</p>
 </div>
 <div class="listingblock">
+<div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;api&gt;
-  &lt;mount&gt;true&lt;/mount&gt; <i class="conum" data-value="1"></i><b>(1)</b>
-  &lt;display-name&gt;My API&lt;/display-name&gt; <i class="conum" data-value="2"></i><b>(2)</b>
-  &lt;description&gt;API for My App&lt;/description&gt; <i class="conum" data-value="3"></i><b>(3)</b>
-  &lt;documentation-url&gt;https://developer.enonic.com/docs/api&lt;/documentation-url&gt; <i class="conum" data-value="4"></i><b>(4)</b>
-  &lt;allow&gt; <i class="conum" data-value="5"></i><b>(5)</b>
-    &lt;principal&gt;role:system.admin&lt;/principal&gt;
-    &lt;principal&gt;role:myapp.myrole&lt;/principal&gt;
-  &lt;/allow&gt;
-&lt;/api&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "API"
+title: "My API" <i class="conum" data-value="1"></i><b>(1)</b>
+description: "API for My App" <i class="conum" data-value="2"></i><b>(2)</b>
+documentationUrl: "https://developer.enonic.com/docs/api" <i class="conum" data-value="3"></i><b>(3)</b>
+mount: ["web"] <i class="conum" data-value="4"></i><b>(4)</b>
+allow: <i class="conum" data-value="5"></i><b>(5)</b>
+  - "role:system.admin"
+  - "role:myapp.myrole"</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>By default, APIs are not mounted on the <a href="#endpoint">Generic API endpoint</a>.
-To enable it, <code>&lt;mount&gt;true&lt;/mount&gt;</code> should be set in the descriptor.</td>
+<td><strong>title</strong> is the name of the API that will be shown in the UI.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>display-name</strong> is the name of the API that will be shown in the UI.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><strong>description</strong> is a short description of the API that will be shown in the UI.</td>
 </tr>
 <tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><strong>documentationUrl</strong> is a link to the API documentation that will be shown in the UI.</td>
+</tr>
+<tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>documentation-url</strong> is a link to the API documentation that will be shown in the UI.</td>
+<td>By default, APIs are not mounted on the <a href="#web-api">Generic API endpoint</a>.
+To enable it, add <code>"web"</code> to the <code>mount</code> list.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>APIs must list principles that have access to it. It is required to specify at least one principal. Use <code>role:system.everyone</code> to make the API public.</td>
+<td>APIs must list principals that have access to it. It is required to specify at least one principal. Use <code>role:system.everyone</code> to make the API public.</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="endpoint"><a class="link" href="#endpoint">Endpoint</a></h2>
+<h2 id="service-point"><a class="link" href="#service-point">Service point</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>API mount is context-aware:</p>
+<p>In the <code>site</code>, <code>webapp</code>, and <code>admin</code> engines, APIs are reachable as service points under the engine&#8217;s URL space. The <code>_</code> segment separates the engine&#8217;s content path from service paths (services, components, idprovider, and APIs):</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Generic API endpoint <code>/api/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+<p>For the <code>site</code> engine: <code>/site/&lt;site-path&gt;/_/&lt;app-name&gt;:&lt;api-name&gt;/</code></p>
 </li>
 <li>
-<p>For <code>site</code> engine: <code>/site/&lt;site-path&gt;/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+<p>For the <code>webapp</code> engine: <code>/webapp/&lt;webapp-app&gt;/_/&lt;app-name&gt;:&lt;api-name&gt;/</code></p>
 </li>
 <li>
-<p>For <code>webapp</code> engine: <code>(/webapp/&lt;app-name&gt;/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
-</li>
-<li>
-<p>For <code>admin</code> engine: <code>/admin/_/&lt;app-name&gt;/&lt;api-name&gt;/</code></p>
+<p>For the <code>admin</code> engine: <code>/admin/&lt;admin-app&gt;/&lt;tool&gt;/_/&lt;app-name&gt;:&lt;api-name&gt;/</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Engine descriptors need to specify the available API names in the <code>api</code> element, while Generic API endpoint can be disabled in <a href="#descriptor">API Descriptor</a> itself.</p>
+<p>Each engine descriptor declares the APIs it exposes via its <code>apis</code> list.</p>
 </div>
 <div class="paragraph">
 <p>Example site descriptor with mounting of self-contained and external APIs:</p>
 </div>
 <div class="listingblock">
+<div class="title">src/main/resources/site/site.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;site xmlns="urn:enonic:xp:model:1.0"&gt;
-  &lt;apis&gt;
-        &lt;api&gt;ws&lt;/api&gt;
-        &lt;api&gt;app:graphql&lt;/api&gt;
-  &lt;/apis&gt;
-  &lt;form/&gt;
-&lt;/site&gt;</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
+apis:
+  - "ws" <i class="conum" data-value="1"></i><b>(1)</b>
+  - "app:graphql" <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="built_in_apis"><a class="link" href="#built_in_apis">Built-in APIs</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="media_apis"><a class="link" href="#media_apis">Media APIs</a></h3>
-<div class="paragraph">
-<p>The Media APIs is a built-in API that provides access to media files in CMS repositories.</p>
-</div>
-<div class="paragraph">
-<p><a href="media-api.ahtml#image-api">Media Image API</a> is available real-time processing and delivery of rasterized RGB/RGBa image media.</p>
-</div>
-<div class="paragraph">
-<p><a href="media-api.ahtml#attachment-api">Media Attachment API</a> gives access to Content attached binaries - like PDFs, Word documents, etc.</p>
-</div>
-<div class="paragraph">
-<p>These two APIs are always mounted on Generic Endpoint as well as on Sites. Admin Tools and Webapps can also mount them by specifying them in the <code>api</code> element of the engine descriptor.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="widget_api"><a class="link" href="#widget_api">Widget API</a></h3>
-<div class="paragraph">
-<p><a href="../../admin/widgets.ahtml">Widget API</a> provide the way to dynamically extend Admin UI.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api_discovery"><a class="link" href="#api_discovery">API discovery</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><code>GET :8080/api</code> - returns JSON with a list of all available APIs in the system.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="apiurl"><a class="link" href="#apiurl">apiUrl()</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To safely generate an API URL, use the <code>apiUrl()</code> function that is part of the <a href="libraries/lib-portal.ahtml">Portal library</a>.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A bare name resolves to an API in the current application — here, <code>ws</code> defined in <code>src/main/resources/apis/ws/</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>&lt;app-key&gt;:&lt;api-name&gt;</code> form mounts an API from a different application, letting the site borrow APIs deployed by other apps.</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -673,7 +646,84 @@ To enable it, <code>&lt;mount&gt;true&lt;/mount&gt;</code> should be set in the 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When invoked, the function will generate a contextual service url based on the context of the current controller.
+Wildcards and "expose all APIs from app X" rules are intentionally not supported here. Each API must be listed by its descriptor key. The reason is security: it prevents new or insecure APIs from being silently exposed on a service path when an app is upgraded or a new dependency is added. Publishing an additional API always requires an explicit change to the hosting descriptor.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="web-api"><a class="link" href="#web-api">Web API</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The dedicated <code>/api</code> endpoint exposes APIs independently of any engine, so they can be consumed by any HTTP client:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generic API endpoint: <code>/api/&lt;app-name&gt;:&lt;api-name&gt;/</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To opt in, an API must include <code>"web"</code> in its <code>mount</code> list (see <a href="#descriptor">API descriptor</a>).</p>
+</div>
+<div class="sect2">
+<h3 id="management_api"><a class="link" href="#management_api">Management API</a></h3>
+<div class="paragraph">
+<p>An API can also be exposed on the management connector by adding <code>"management"</code> to its <code>mount</code> list. Use it for internal or operational APIs that should not be reachable from the public connector.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "API"
+title: "Cluster ops"
+mount: ["management"]
+allow:
+  - "role:system.admin"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Both mounts can be combined: <code>mount: ["web", "management"]</code> makes the API reachable on both connectors. The <code>allow</code> principal list is enforced on every request regardless of which connector served it.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api_discovery"><a class="link" href="#api_discovery">API discovery</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GET /api</code> returns JSON with a list of all available APIs in the system.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Discovery is intended for development. By default it is enabled only when XP runs in dev mode and disabled in production.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="apiurl"><a class="link" href="#apiurl">apiUrl()</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To safely generate an API URL, use the <code>apiUrl()</code> function from the <a href="libraries/lib-portal.ahtml">Portal library</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The function generates a contextual URL based on the context of the current controller.
 </td>
 </tr>
 </table>
@@ -684,8 +734,8 @@ When invoked, the function will generate a contextual service url based on the c
 <h2 id="reserved_api_application_names"><a class="link" href="#reserved_api_application_names">Reserved API application names</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Applications names without namespace are reserved.
-This list includes, but not limited to, the following:</p>
+<p>A few application names are reserved.
+This list includes but is not limited to:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -723,7 +773,7 @@ This list includes, but not limited to, the following:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 14:55:41 UTC
+Last updated 2026-04-28 15:16:59 UTC
 </div>
 </div>
 </body>
