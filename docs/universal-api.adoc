@@ -37,6 +37,10 @@ exports.GET = function(req) {
 };
 ----
 
+=== Subpath routing
+
+A request to `+/api/<app>:<api>/foo/bar+` (or the equivalent service-point URL) reaches the same controller; everything after the descriptor segment arrives as `req.path`. The controller is free to dispatch on these any way it wants, but for anything beyond a couple of branches the `lib-router` library handles method dispatch, parameter extraction, and pattern matching idiomatically.
+
 === WebSocket and SSE
 
 A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<framework/websocket#,WebSocket>> and <<framework/sse#,SSE>> for the controller-side details.
@@ -72,6 +76,18 @@ To enable it, add `"web"` to the `mount` list.
 
 <5> APIs must list principals that have access to it. It is required to specify at least one principal. Use `role:system.everyone` to make the API public.
 
+NOTE: A request to an API that is not mounted on the matched URL returns *404 Not Found* — the absence is indistinguishable from a missing API. A request by a principal not in the `allow` list returns *401 Unauthorized* if the configured ID provider asks for credentials, otherwise *403 Forbidden*. Calls to APIs mounted under `/admin/...` additionally require the caller to hold `role:system.admin.login`, regardless of what the API's `allow` list grants.
+
+== Where APIs are reachable
+
+A Universal API can be exposed through three *independent* axes — they don't substitute for each other and any combination is valid:
+
+. *Service point* — the API is mounted into a `site`, `webapp`, or `admin tool` engine via that engine's descriptor.
+. *Web API* — the API opts in with `mount: "web"` and becomes reachable on the public XP connector under `/api/`.
+. *Management API* — the API opts in with `mount: "management"` and becomes reachable on the *management connector*, which listens on its own port.
+
+The `/api/` URL prefix is the same for both Web API and Management API, but the two are served by *different network connectors on different ports*. The management connector is not reachable through the public connector and vice versa.
+
 [#service-point]
 == Service point
 
@@ -88,7 +104,7 @@ Each engine descriptor declares the APIs it exposes via its `apis` list. For `we
 
 The site mount is also limited to the *site root*: the path between `<branch>` and `+/_/+` must be the site's root content path. Deeper content paths like `+/site/<project>/<branch>/some/page/_/<app>:<api>/+` do not resolve as APIs.
 
-Example site descriptor with mounting of self-contained and external APIs:
+All three engine descriptors use the same `apis:` list shape:
 
 .src/main/resources/cms/site.yaml
 [source,yaml]
@@ -101,7 +117,27 @@ apis:
 
 <1> A bare name resolves to an API in the current application — here, `ws` defined in `src/main/resources/apis/ws/`.
 
-<2> The `<app-key>:<api-name>` form mounts an API from a different application, letting the site borrow APIs deployed by other apps.
+<2> The `<app-key>:<api-name>` form mounts an API from a different application, letting the engine borrow APIs deployed by other apps.
+
+The webapp and admin tool descriptors take the same `apis:` list:
+
+.src/main/resources/webapp/webapp.yaml
+[source,yaml]
+----
+kind: "WebApp"
+apis:
+  - "ws"
+  - "app:graphql"
+----
+
+.src/main/resources/admin/tools/<tool-name>/<tool-name>.yaml
+[source,yaml]
+----
+kind: "AdminTool"
+apis:
+  - "ws"
+  - "app:graphql"
+----
 
 NOTE: Wildcards and "expose all APIs from app X" rules are intentionally not supported here. Each API must be listed by its descriptor key. The reason is security: it prevents new or insecure APIs from being silently exposed on a service path when an app is upgraded or a new dependency is added. Publishing an additional API always requires an explicit change to the hosting descriptor.
 
@@ -110,13 +146,14 @@ NOTE: Wildcards and "expose all APIs from app X" rules are intentionally not sup
 
 The dedicated `/api` endpoint exposes APIs independently of any engine, so they can be consumed by any HTTP client:
 
-* Generic API endpoint: `+/api/<app-name>:<api-name>/+`
+* Generic API endpoint: `/api/<app-name>:<api-name>/`
 
 To opt in, an API must include `"web"` in its `mount` list (see <<#descriptor,API descriptor>>).
 
-=== Management API
+[#management-api]
+== Management API
 
-An API can also be exposed on the management connector by adding `"management"` to its `mount` list. Use it for internal or operational APIs that should not be reachable from the public connector.
+An API can also be exposed on the *management connector* by adding `"management"` to its `mount` list. The management connector is a separate listener on its own port, distinct from the public web connector — use it for internal or operational APIs that should not be reachable from the public network.
 
 .src/main/resources/apis/<api-name>/<api-name>.yaml
 [source,yaml]
@@ -132,15 +169,58 @@ Both mounts can be combined: `mount: ["web", "management"]` makes the API reacha
 
 == API discovery
 
-`GET /api` returns JSON with a list of all available APIs in the system.
+`GET /api` (or `GET /api/`) returns a JSON index of every API that opts in to the Web API mount. The response is a `resources` array, one entry per API:
+
+[source,json]
+----
+{
+  "resources": [
+    {
+      "descriptor": "com.example.app:myapi",
+      "application": "com.example.app",
+      "name": "myapi",
+      "title": "My API",
+      "description": "API for my app",
+      "documentationUrl": "https://example.com/docs",
+      "mount": ["web"],
+      "allowedPrincipals": ["role:system.admin", "role:myapp.role"]
+    }
+  ]
+}
+----
+
+Behavior worth knowing:
+
+* Only APIs whose descriptor includes `"web"` in `mount` are listed. APIs that are mounted only on the management connector or exclusively as service points under sites, webapps, or admin tools do not appear here.
+* Both YAML-declared APIs and dynamically registered Java handlers are included.
+* The listing is *not* filtered by the caller's principals — clients see every web-mounted API and are expected to compare against the `allowedPrincipals` field themselves before invoking.
 
 NOTE: Discovery is intended for development. By default it is enabled only when XP runs in dev mode and disabled in production.
 
 == apiUrl()
 
-To safely generate an API URL, use the `apiUrl()` function from the <<libraries/lib-portal#,Portal library>>.
+To safely generate an API URL, use the `apiUrl()` function from the <<libraries/lib-portal#,Portal library>>. It picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
 
-NOTE: The function generates a contextual URL based on the context of the current controller.
+[source,javascript]
+----
+const portalLib = require('/lib/xp/portal');
+
+const url = portalLib.apiUrl({
+    api: 'com.example.myapp:myapi', // <1>
+    path: '/items',                 // <2>
+    params: { id: '42' }            // <3>
+});
+----
+
+<1> Descriptor key in `<app>:<api>` form. Required.
+
+<2> Optional path appended after the API segment. Accepts a string or a string array.
+
+<3> Optional query parameters.
+
+== Tracing
+
+Each Universal API request emits a `universalAPI` trace event with the API descriptor key and response status, observable through XP's standard tracing infrastructure.
 
 == Reserved API application names
 
