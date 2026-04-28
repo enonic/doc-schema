@@ -458,7 +458,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Localizing your projects</p>
+<p>Localizing strings in your XP applications.</p>
 </div>
 </div>
 </div>
@@ -472,30 +472,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This section applies to code level localization, not multi-lingual content and websites.
+This section covers code-level localization, not multi-lingual content or websites.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Any project targeting users with different languages, you may want to localize the interface.</p>
+<p>For any project targeting users in different languages, you may want to localize the interface.</p>
 </div>
 <div class="paragraph">
-<p>The XP framework provides localization for the following use-cases:</p>
+<p>The XP framework provides localization for the following use cases:</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">CMS/Sites</dt>
 <dd>
-<p>Use the <a href="../libraries/lib-i18n.ahtml">the localization API</a> to dynamically localize any text phrases in your app. The framework will attempt to apply the locale specified in the site&#8217;s language property.</p>
+<p>Use the <a href="../libraries/lib-i18n.ahtml">localization API</a> to dynamically localize any text phrases in your app. The framework will apply the locale specified in the site&#8217;s language property.</p>
 </dd>
 <dt class="hdlist1">Admin Console</dt>
 <dd>
-<p>Localise labels and texts in <a href="../cms/schemas.ahtml#schema_localization">schemas</a> such as content types. The framework will attempt to use the locale derived from the browser&#8217;s "accept-language" settings.</p>
+<p>Localize labels and texts in <a href="../cms/schemas.ahtml#schema_localization">schemas</a> such as content types. The framework will use the locale derived from the browser&#8217;s <code>Accept-Language</code> header.</p>
 </dd>
 <dt class="hdlist1">Webapps and more</dt>
 <dd>
-<p>The <a href="../libraries/lib-i18n.ahtml">the localization API</a> may also be used for any other purpose. In these cases, the developer must control and explicitly specify locale.</p>
+<p>The <a href="../libraries/lib-i18n.ahtml">localization API</a> may also be used for any other purpose. In these cases the developer controls and specifies the locale explicitly.</p>
 </dd>
 </dl>
 </div>
@@ -509,30 +509,30 @@ This section applies to code level localization, not multi-lingual content and w
 The files must be placed in a specific project folder: <code>/src/main/resources/i18n/</code>.</p>
 </div>
 <div class="paragraph">
-<p>Imagine, making an app that should support the following localizations.</p>
+<p>Imagine an app that supports the following localizations:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>'English' (en)</p>
+<p>English (<code>en</code>)</p>
 </li>
 <li>
-<p>'English US' (en-US)</p>
+<p>English (US) (<code>en-US</code>)</p>
 </li>
 <li>
-<p>'New Norwegian' (nn)</p>
+<p>Norwegian Nynorsk (<code>nn</code>)</p>
 </li>
 <li>
-<p>'New Norwegian Norway' (nn-NO)</p>
+<p>Norwegian Nynorsk, Norway (<code>nn-NO</code>)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Each locale then needs to have a matching localization file, in the format:</p>
+<p>Each locale needs a matching localization file, in the format:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>phrases[_LOCALE].properties</pre>
+<pre>+phrases[_LOCALE].properties+</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -551,8 +551,10 @@ The API&#8217;s country codes use <code>-</code> as separator but the files use 
 <div class="title">Sample localization bundle</div>
 <div class="content">
 <pre class="highlight"><code class="language-properties" data-lang="properties">i18n/phrases.properties
+i18n/phrases_en.properties
 i18n/phrases_en_US.properties
-i18n/phrases_no.properties</code></pre>
+i18n/phrases_nn.properties
+i18n/phrases_nn_NO.properties</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -576,18 +578,18 @@ The filenames are case sensitive!
 <h2 id="locale_format"><a class="link" href="#locale_format">Locale format</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A locale is composed of two-letter codes for language, country and variant.
-Language is required, country and variant are optional.</p>
+<p>A locale is composed of codes for language, country and variant.
+Language is required; country and variant are optional.</p>
 </div>
 <div class="paragraph">
-<p>For the property files, all codes are case sensitive and separated by and underscore (<code>_</code>).</p>
+<p>For the property files, all codes are case sensitive and separated by an underscore (<code>_</code>).</p>
 </div>
 <div class="paragraph">
-<p>The string-representation of a locale is:</p>
+<p>The string representation of a locale is:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>la[_CO][_VA]</pre>
+<pre>+la[_CO][_VA]+</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -596,22 +598,22 @@ Language is required, country and variant are optional.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>la</code>= two letter language code as specified by <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO-639</a></p>
+<p><code>la</code> — two-letter language code (<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO-639</a>).</p>
 </li>
 <li>
-<p><code>CO</code> = optional two-letter country code as specified by <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes">ISO-3166</a></p>
+<p><code>CO</code> — optional two-letter country code (<a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes">ISO-3166</a>).</p>
 </li>
 <li>
-<p><code>VA</code> = two letter rarely used variant-code.</p>
+<p><code>VA</code> — optional variant. May contain multiple subtags joined by <code>_</code>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>A sample locale including vendor specific variant:</p>
+<p>A sample locale including a vendor-specific variant:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>es_ES_Traditional_WIN"..</pre>
+<pre>+es_ES_Traditional_WIN+</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -621,7 +623,7 @@ Language is required, country and variant are optional.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Variants are rarely used in XP, and can pretty much be discarded.
+Variants are rarely used in XP and can usually be ignored.
 </td>
 </tr>
 </table>
@@ -632,10 +634,7 @@ Variants are rarely used in XP, and can pretty much be discarded.
 <h2 id="best_match_resolving"><a class="link" href="#best_match_resolving">Best match resolving</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Based on the requested locale to be used, the framework applies the best matching pattern to find the optimal localization file.</p>
-</div>
-<div class="paragraph">
-<p>If the requested locale is "en-US", the XP framework will look for localization files in the following order:</p>
+<p>Given a requested locale, the framework selects the best matching localization file. If the requested locale is <code>en-US</code>, the framework checks files in this order:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -651,13 +650,7 @@ Variants are rarely used in XP, and can pretty much be discarded.
 </ul>
 </div>
 <div class="paragraph">
-<p>As such, if the locale for a request was <code>en</code>, the <code>phrases_en.properties</code> file would be used.</p>
-</div>
-<div class="paragraph">
-<p>If the locale does not match any specific file, the default <code>phrases.properties</code> will be used as fallback.</p>
-</div>
-<div class="paragraph">
-<p>If no matching localization key is found in any of the files in a bundle, a default <code>NOT_TRANSLATED</code> will be displayed.</p>
+<p>If a request&#8217;s locale is <code>en</code>, the framework uses <code>phrases_en.properties</code>. If the locale does not match any file, <code>phrases.properties</code> is used as the fallback. If no matching key is found in any file in the bundle, the default <code>NOT_TRANSLATED</code> is returned.</p>
 </div>
 <div class="sect2">
 <h3 id="encoding_and_special_characters"><a class="link" href="#encoding_and_special_characters">Encoding and special characters</a></h3>
@@ -665,11 +658,11 @@ Variants are rarely used in XP, and can pretty much be discarded.
 <dl>
 <dt class="hdlist1">Property keys</dt>
 <dd>
-<p>Must be in the ISO-8859-1 range, also known as Latin-1 characters. Non-Latin-1 characters use Unicode escape characters, e.g \u00E6 for the Norwegian letter 'æ'.</p>
+<p>Must be in the ISO-8859-1 range (Latin-1). Non-Latin-1 characters must use Unicode escape sequences, e.g. <code>\u00E6</code> for the Norwegian letter <code>æ</code>.</p>
 </dd>
 <dt class="hdlist1">Property values</dt>
 <dd>
-<p>Supports any unicode characters</p>
+<p>Support any Unicode characters.</p>
 </dd>
 </dl>
 </div>
@@ -680,7 +673,7 @@ Variants are rarely used in XP, and can pretty much be discarded.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-We always recommend saving property files using the UTF charset.
+We always recommend saving property files using the UTF-8 charset.
 </td>
 </tr>
 </table>
@@ -692,7 +685,7 @@ We always recommend saving property files using the UTF charset.
 <h2 id="sample"><a class="link" href="#sample">Sample</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Below is an example of what a property file might look like</p>
+<p>A property file looks like this:</p>
 </div>
 <div class="listingblock">
 <div class="title">phrases.properties</div>
@@ -708,8 +701,7 @@ with_\u00e6_\u00f8_\u00e5 = This key contains norwegian characters æ, ø and å
 <h2 id="placeholders"><a class="link" href="#placeholders">Placeholders</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The properties format also supports parameter values that can be merged into the localized strings.
-Below is an example of what this might look like:</p>
+<p>The properties format supports parameter values that are merged into the localized strings:</p>
 </div>
 <div class="listingblock">
 <div class="title">phrases.properties</div>
@@ -721,11 +713,10 @@ message_placeholder = Hello, my name is {0}.</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Placeholders are marked with <code>{&lt;number&gt;}</code>.
-The given number corresponds with the function argument named <code>values</code> and the position of the parameter.</p>
+<p>Placeholders are marked with <code>{&lt;number&gt;}</code>. The number corresponds to the position of the value in the <code>values</code> argument passed to the API.</p>
 </div>
 <div class="paragraph">
-<p>See documentation for <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/MessageFormat.html">MessageFormat</a> for advanced use of placeholders.</p>
+<p>See <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/MessageFormat.html">MessageFormat</a> for advanced placeholder syntax.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -734,7 +725,7 @@ The given number corresponds with the function argument named <code>values</code
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<span class="image"><span class="alt">XP 7.8.0</span></span> Placeholders get formatted according to requested locale
+Placeholders are formatted according to the requested locale.
 </td>
 </tr>
 </table>
@@ -744,7 +735,7 @@ The given number corresponds with the function argument named <code>values</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 17:38:04 UTC
+Last updated 2026-04-28 17:46:20 UTC
 </div>
 </div>
 </body>
