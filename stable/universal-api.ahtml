@@ -445,18 +445,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#features">Features</a></li>
 <li><a href="#usage">Usage</a>
 <ul class="sectlevel2">
+<li><a href="#subpath_routing">Subpath routing</a></li>
 <li><a href="#websocket_and_sse">WebSocket and SSE</a></li>
 </ul>
 </li>
 <li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#where_apis_are_reachable">Where APIs are reachable</a></li>
 <li><a href="#service-point">Service point</a></li>
-<li><a href="#web-api">Web API</a>
-<ul class="sectlevel2">
-<li><a href="#management_api">Management API</a></li>
-</ul>
-</li>
+<li><a href="#web-api">Web API</a></li>
+<li><a href="#management-api">Management API</a></li>
 <li><a href="#api_discovery">API discovery</a></li>
 <li><a href="#apiurl">apiUrl()</a></li>
+<li><a href="#tracing">Tracing</a></li>
 <li><a href="#reserved_api_application_names">Reserved API application names</a></li>
 </ul>
 </div>
@@ -537,6 +537,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
+<h3 id="subpath_routing"><a class="link" href="#subpath_routing">Subpath routing</a></h3>
+<div class="paragraph">
+<p>A request to <code>/api/&lt;app&gt;:&lt;api&gt;/foo/bar</code> (or the equivalent service-point URL) reaches the same controller; everything after the descriptor segment arrives as <code>req.path</code>. The controller is free to dispatch on these any way it wants, but for anything beyond a couple of branches the <code>lib-router</code> library handles method dispatch, parameter extraction, and pattern matching idiomatically.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h3>
 <div class="paragraph">
 <p>A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="framework/websocket.ahtml">WebSocket</a> and <a href="framework/sse.ahtml">SSE</a> for the controller-side details.</p>
@@ -591,6 +597,42 @@ To enable it, add <code>"web"</code> to the <code>mount</code> list.</td>
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A request to an API that is not mounted on the matched URL returns <strong>404 Not Found</strong> — the absence is indistinguishable from a missing API. A request by a principal not in the <code>allow</code> list returns <strong>401 Unauthorized</strong> if the configured ID provider asks for credentials, otherwise <strong>403 Forbidden</strong>. Calls to APIs mounted under <code>/admin/&#8230;&#8203;</code> additionally require the caller to hold <code>role:system.admin.login</code>, regardless of what the API&#8217;s <code>allow</code> list grants.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="where_apis_are_reachable"><a class="link" href="#where_apis_are_reachable">Where APIs are reachable</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Universal API can be exposed through three <strong>independent</strong> axes — they don&#8217;t substitute for each other and any combination is valid:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Service point</strong> — the API is mounted into a <code>site</code>, <code>webapp</code>, or <code>admin tool</code> engine via that engine&#8217;s descriptor.</p>
+</li>
+<li>
+<p><strong>Web API</strong> — the API opts in with <code>mount: "web"</code> and becomes reachable on the public XP connector under <code>/api/</code>.</p>
+</li>
+<li>
+<p><strong>Management API</strong> — the API opts in with <code>mount: "management"</code> and becomes reachable on the <strong>management connector</strong>, which listens on its own port.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The <code>/api/</code> URL prefix is the same for both Web API and Management API, but the two are served by <strong>different network connectors on different ports</strong>. The management connector is not reachable through the public connector and vice versa.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -629,7 +671,7 @@ To enable it, add <code>"web"</code> to the <code>mount</code> list.</td>
 <p>The site mount is also limited to the <strong>site root</strong>: the path between <code>&lt;branch&gt;</code> and <code>/_/</code> must be the site&#8217;s root content path. Deeper content paths like <code>/site/&lt;project&gt;/&lt;branch&gt;/some/page/_/&lt;app&gt;:&lt;api&gt;/</code> do not resolve as APIs.</p>
 </div>
 <div class="paragraph">
-<p>Example site descriptor with mounting of self-contained and external APIs:</p>
+<p>All three engine descriptors use the same <code>apis:</code> list shape:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/cms/site.yaml</div>
@@ -648,9 +690,30 @@ apis:
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>&lt;app-key&gt;:&lt;api-name&gt;</code> form mounts an API from a different application, letting the site borrow APIs deployed by other apps.</td>
+<td>The <code>&lt;app-key&gt;:&lt;api-name&gt;</code> form mounts an API from a different application, letting the engine borrow APIs deployed by other apps.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>The webapp and admin tool descriptors take the same <code>apis:</code> list:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/webapp/webapp.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "WebApp"
+apis:
+  - "ws"
+  - "app:graphql"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "AdminTool"
+apis:
+  - "ws"
+  - "app:graphql"</code></pre>
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -682,10 +745,13 @@ Wildcards and "expose all APIs from app X" rules are intentionally not supported
 <div class="paragraph">
 <p>To opt in, an API must include <code>"web"</code> in its <code>mount</code> list (see <a href="#descriptor">API descriptor</a>).</p>
 </div>
-<div class="sect2">
-<h3 id="management_api"><a class="link" href="#management_api">Management API</a></h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="management-api"><a class="link" href="#management-api">Management API</a></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>An API can also be exposed on the management connector by adding <code>"management"</code> to its <code>mount</code> list. Use it for internal or operational APIs that should not be reachable from the public connector.</p>
+<p>An API can also be exposed on the <strong>management connector</strong> by adding <code>"management"</code> to its <code>mount</code> list. The management connector is a separate listener on its own port, distinct from the public web connector — use it for internal or operational APIs that should not be reachable from the public network.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.yaml</div>
@@ -702,12 +768,45 @@ allow:
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
 <h2 id="api_discovery"><a class="link" href="#api_discovery">API discovery</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>GET /api</code> returns JSON with a list of all available APIs in the system.</p>
+<p><code>GET /api</code> (or <code>GET /api/</code>) returns a JSON index of every API that opts in to the Web API mount. The response is a <code>resources</code> array, one entry per API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "resources": [
+    {
+      "descriptor": "com.example.app:myapi",
+      "application": "com.example.app",
+      "name": "myapi",
+      "title": "My API",
+      "description": "API for my app",
+      "documentationUrl": "https://example.com/docs",
+      "mount": ["web"],
+      "allowedPrincipals": ["role:system.admin", "role:myapp.role"]
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Behavior worth knowing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Only APIs whose descriptor includes <code>"web"</code> in <code>mount</code> are listed. APIs that are mounted only on the management connector or exclusively as service points under sites, webapps, or admin tools do not appear here.</p>
+</li>
+<li>
+<p>Both YAML-declared APIs and dynamically registered Java handlers are included.</p>
+</li>
+<li>
+<p>The listing is <strong>not</strong> filtered by the caller&#8217;s principals — clients see every web-mounted API and are expected to compare against the <code>allowedPrincipals</code> field themselves before invoking.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -727,19 +826,42 @@ Discovery is intended for development. By default it is enabled only when XP run
 <h2 id="apiurl"><a class="link" href="#apiurl">apiUrl()</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To safely generate an API URL, use the <code>apiUrl()</code> function from the <a href="libraries/lib-portal.ahtml">Portal library</a>.</p>
+<p>To safely generate an API URL, use the <code>apiUrl()</code> function from the <a href="libraries/lib-portal.ahtml">Portal library</a>. It picks the right URL form based on the current controller&#8217;s context — service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
 </div>
-<div class="admonitionblock note">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">const portalLib = require('/lib/xp/portal');
+
+const url = portalLib.apiUrl({
+    api: 'com.example.myapp:myapi', <i class="conum" data-value="1"></i><b>(1)</b>
+    path: '/items',                 <i class="conum" data-value="2"></i><b>(2)</b>
+    params: { id: '42' }            <i class="conum" data-value="3"></i><b>(3)</b>
+});</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The function generates a contextual URL based on the context of the current controller.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Descriptor key in <code>&lt;app&gt;:&lt;api&gt;</code> form. Required.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Optional path appended after the API segment. Accepts a string or a string array.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Optional query parameters.</td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="tracing"><a class="link" href="#tracing">Tracing</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each Universal API request emits a <code>universalAPI</code> trace event with the API descriptor key and response status, observable through XP&#8217;s standard tracing infrastructure.</p>
 </div>
 </div>
 </div>
@@ -786,7 +908,7 @@ This list includes but is not limited to:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 16:12:12 UTC
+Last updated 2026-04-28 16:52:09 UTC
 </div>
 </div>
 </body>
