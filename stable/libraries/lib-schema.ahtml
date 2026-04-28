@@ -631,8 +631,8 @@ const result = getSchema({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
   name: "myapp:mytype",
-  displayName: "Tag",
-  displayNameI18nKey: "",
+  title: "Tag",
+  titleI18nKey: "",
   createdTime: "2021-09-25T10:00:00Z",
   creator: "user:system:anonymous",
   modifiedTime: "2021-09-25T10:00:00Z",
@@ -750,7 +750,7 @@ const result = listSchemas({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     name: 'myapp:type1',
-    displayName: 'My type display name',
+    title: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
     resource: 'kind: "ContentType"\ntitle: "My type display name"\nform: []\n',
@@ -790,7 +790,7 @@ const result = listSchemas({
 },
 {
     name: 'myapp:type2',
-    displayName: 'My type display name 2',
+    title: 'My type display name 2',
     description: 'My type description 2',
     modifiedTime: '2012-01-01T10:00:00Z',
     resource: 'kind: "ContentType"\ntitle: "My type display name 2"\nform: []\n',
@@ -908,8 +908,8 @@ const result = createSchema({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
   name: "myapp:mytype",
-  displayName: "Tag",
-  displayNameI18nKey: "",
+  title: "Tag",
+  titleI18nKey: "",
   createdTime: "2021-09-25T10:00:00Z",
   creator: "user:system:anonymous",
   modifiedTime: "2021-09-25T10:00:00Z",
@@ -1044,8 +1044,8 @@ const result = updateSchema({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     name: 'myapp:mytype',
-    displayName: 'Virtual Mixin',
-    displayNameI18nKey: '',
+    title: 'Virtual Mixin',
+    titleI18nKey: '',
     description: 'Mixin description',
     descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
@@ -1251,7 +1251,7 @@ const result = getComponent({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     key: 'myapp:mypage',
-    displayName: 'News page',
+    title: 'News page',
     description: 'My news page',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/pages/mypage',
@@ -1369,7 +1369,7 @@ const result = listComponents({
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [
     {
         key: 'myapp:part1',
-        displayName: 'News part',
+        title: 'News part',
         description: 'My news part',
         descriptionI18nKey: 'key.description',
         componentPath: 'myapp:/site/parts/part1',
@@ -1394,7 +1394,7 @@ const result = listComponents({
     },
     {
         key: 'myapp:part2',
-        displayName: 'Other part',
+        title: 'Other part',
         componentPath: 'myapp:/site/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
@@ -1514,8 +1514,8 @@ const result = createComponent({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     key: 'myapp:mypart',
-    displayName: 'Virtual Part',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Part',
+    titleI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/parts/mypart',
@@ -1681,8 +1681,8 @@ const result = updateComponent({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     key: 'myapp:mylayout',
-    displayName: 'Virtual Layout',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Layout',
+    titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/layouts/mylayout',
@@ -1923,7 +1923,7 @@ const result = getStyles({
     elements: [
         {
             element: 'style',
-            displayName: 'Style display name',
+            label: 'Style display name',
             name: 'mystyle'
         }
     ]
@@ -2048,17 +2048,17 @@ const result = createStyles({
     elements: [
         {
             element: 'style',
-            displayName: 'Warning',
+            label: 'Warning',
             name: 'warning'
         },
         {
             element: 'image',
-            displayName: 'Override ${width}',
+            label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
             element: 'image',
-            displayName: 'Cinema',
+            label: 'Cinema',
             name: 'editor-style-cinema'
         }
     ]
@@ -2183,17 +2183,17 @@ const result = updateStyles({
     elements: [
         {
             element: 'style',
-            displayName: 'Warning',
+            label: 'Warning',
             name: 'warning'
         },
         {
             element: 'image',
-            displayName: 'Override ${width}',
+            label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
             element: 'image',
-            displayName: 'Cinema',
+            label: 'Cinema',
             name: 'editor-style-cinema'
         }
     ]
@@ -2575,17 +2575,17 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name</p>
+<p>Title</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayNameI18nKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">titleI18nKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name i18n key</p>
+<p>Title i18n key</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2772,17 +2772,17 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name</p>
+<p>Title</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayNameI18nKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">titleI18nKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name i18n key</p>
+<p>Title i18n key</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3160,21 +3160,21 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Style element name</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Style element display name</p>
+<p>Style element label</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">element</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Style element value</p>
 </div></div></td>
@@ -3236,7 +3236,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 17:30:55 UTC
+Last updated 2026-04-28 17:34:02 UTC
 </div>
 </div>
 </body>
