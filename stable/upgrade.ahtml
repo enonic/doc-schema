@@ -442,7 +442,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#preparations">Preparations</a></li>
-<li><a href="#app_migrator_tool">App migrator tool</a></li>
+<li><a href="#app_migrator_tool">App migrator tool</a>
+<ul class="sectlevel2">
+<li><a href="#linux_macos">Linux / macOS</a></li>
+<li><a href="#windows">Windows</a></li>
+</ul>
+</li>
 <li><a href="#build_system">Build system</a>
 <ul class="sectlevel2">
 <li><a href="#gradle_wrapper">Gradle Wrapper</a></li>
@@ -528,7 +533,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="app_migrator_tool"><a class="link" href="#app_migrator_tool">App migrator tool</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO: Describe how to use the migrator here</p>
+<p>The <a href="https://github.com/enonic/xp8migrator">xp8migrator</a> is a small CLI that converts an XP 7 project&#8217;s XML descriptors into the XP 8 YAML form. Run it from your project root.</p>
+</div>
+<div class="sect2">
+<h3 id="linux_macos"><a class="link" href="#linux_macos">Linux / macOS</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">curl -fsSL https://raw.githubusercontent.com/enonic/xp8migrator/main/migrator-install.sh | sh
+./migrator</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="windows"><a class="link" href="#windows">Windows</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-powershell" data-lang="powershell">irm https://raw.githubusercontent.com/enonic/xp8migrator/main/migrator-install.ps1 | iex
+.\migrator.exe</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>migrator</code> binary can be removed after a successful migration.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1915,7 +1941,7 @@ Folder-based exports from XP 7 should be converted to a ZIP archive before they 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 17:34:02 UTC
+Last updated 2026-04-28 17:38:04 UTC
 </div>
 </div>
 </body>
