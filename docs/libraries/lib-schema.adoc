@@ -82,8 +82,8 @@ const result = getSchema({
 ----
 const expected = {
   name: "myapp:mytype",
-  displayName: "Tag",
-  displayNameI18nKey: "",
+  title: "Tag",
+  titleI18nKey: "",
   createdTime: "2021-09-25T10:00:00Z",
   creator: "user:system:anonymous",
   modifiedTime: "2021-09-25T10:00:00Z",
@@ -164,7 +164,7 @@ const result = listSchemas({
 ----
 const expected = {
     name: 'myapp:type1',
-    displayName: 'My type display name',
+    title: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
     resource: 'kind: "ContentType"\ntitle: "My type display name"\nform: []\n',
@@ -204,7 +204,7 @@ const expected = {
 },
 {
     name: 'myapp:type2',
-    displayName: 'My type display name 2',
+    title: 'My type display name 2',
     description: 'My type description 2',
     modifiedTime: '2012-01-01T10:00:00Z',
     resource: 'kind: "ContentType"\ntitle: "My type display name 2"\nform: []\n',
@@ -279,8 +279,8 @@ const result = createSchema({
 ----
 const expected = {
   name: "myapp:mytype",
-  displayName: "Tag",
-  displayNameI18nKey: "",
+  title: "Tag",
+  titleI18nKey: "",
   createdTime: "2021-09-25T10:00:00Z",
   creator: "user:system:anonymous",
   modifiedTime: "2021-09-25T10:00:00Z",
@@ -371,8 +371,8 @@ const result = updateSchema({
 ----
 const expected = {
     name: 'myapp:mytype',
-    displayName: 'Virtual Mixin',
-    displayNameI18nKey: '',
+    title: 'Virtual Mixin',
+    titleI18nKey: '',
     description: 'Mixin description',
     descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
@@ -504,7 +504,7 @@ const result = getComponent({
 ----
 const expected = {
     key: 'myapp:mypage',
-    displayName: 'News page',
+    title: 'News page',
     description: 'My news page',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/pages/mypage',
@@ -585,7 +585,7 @@ const result = listComponents({
 const expected = [
     {
         key: 'myapp:part1',
-        displayName: 'News part',
+        title: 'News part',
         description: 'My news part',
         descriptionI18nKey: 'key.description',
         componentPath: 'myapp:/site/parts/part1',
@@ -610,7 +610,7 @@ const expected = [
     },
     {
         key: 'myapp:part2',
-        displayName: 'Other part',
+        title: 'Other part',
         componentPath: 'myapp:/site/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
@@ -687,8 +687,8 @@ const result = createComponent({
 ----
 const expected = {
     key: 'myapp:mypart',
-    displayName: 'Virtual Part',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Part',
+    titleI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/parts/mypart',
@@ -811,8 +811,8 @@ const result = updateComponent({
 ----
 const expected = {
     key: 'myapp:mylayout',
-    displayName: 'Virtual Layout',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Layout',
+    titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/layouts/mylayout',
@@ -985,7 +985,7 @@ const expected = {
     elements: [
         {
             element: 'style',
-            displayName: 'Style display name',
+            label: 'Style display name',
             name: 'mystyle'
         }
     ]
@@ -1073,17 +1073,17 @@ const expected = {
     elements: [
         {
             element: 'style',
-            displayName: 'Warning',
+            label: 'Warning',
             name: 'warning'
         },
         {
             element: 'image',
-            displayName: 'Override ${width}',
+            label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
             element: 'image',
-            displayName: 'Cinema',
+            label: 'Cinema',
             name: 'editor-style-cinema'
         }
     ]
@@ -1171,17 +1171,17 @@ const expected = {
     elements: [
         {
             element: 'style',
-            displayName: 'Warning',
+            label: 'Warning',
             name: 'warning'
         },
         {
             element: 'image',
-            displayName: 'Override ${width}',
+            label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
             element: 'image',
-            displayName: 'Cinema',
+            label: 'Cinema',
             name: 'editor-style-cinema'
         }
     ]
@@ -1432,8 +1432,8 @@ Properties
 |===
 | Name                      | Type               | Description
 | name                      | string             | Component name
-| displayName               | string             | Display name
-| displayNameI18nKey        | string             | Display name i18n key
+| title               | string             | Title
+| titleI18nKey        | string             | Title i18n key
 | description               | string             | Schema description
 | descriptionI18nKey        | string             | Schema description i18n key
 | createdTime               | string             | Created zulu time
@@ -1510,8 +1510,8 @@ Properties
 |===
 | Name                      | Type    | Description
 | key                       | string  | Component key
-| displayName               | string  | Display name
-| displayNameI18nKey        | string  | Display name i18n key
+| title               | string  | Title
+| titleI18nKey        | string  | Title i18n key
 | description               | string  | Component description
 | descriptionI18nKey        | string  | Component description i18n key
 | componentPath             | string  | Component path
@@ -1672,9 +1672,9 @@ Properties
 [grid="none"]
 |===
 | Name                      | Type    | Description
-| name                      | object  | Style element name
-| displayName               | object  | Style element display name
-| element                   | object  | Style element value
+| name                      | string  | Style element name
+| label                     | string  | Style element label
+| element                   | string  | Style element value
 
 |===
 
