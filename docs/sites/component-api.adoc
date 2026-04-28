@@ -15,7 +15,7 @@ Component rendering::  In this mode, only the *component rendering* step (as des
 
 [NOTE]
 ====
-By implementing `exports.post()` or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.
+By implementing `exports.POST()` or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.
 
 Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.
 ====
