@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Virtual Host library</title>
+<title>Building ID Providers</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,17 +437,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Virtual Host library</h1>
+<h1>Building ID Providers</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#usage">Usage</a></li>
-<li><a href="#functions">Functions</a>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#idprovider_js">idprovider.js</a>
 <ul class="sectlevel2">
-<li><a href="#isenabled">isEnabled</a></li>
-<li><a href="#list">list</a></li>
+<li><a href="#handle401">handle401</a></li>
+<li><a href="#login">login</a></li>
+<li><a href="#logout">logout</a></li>
+<li><a href="#autologin">autoLogin</a></li>
+<li><a href="#getpost_etc">GET/POST etc</a></li>
 </ul>
 </li>
+<li><a href="#sample">Sample</a></li>
 </ul>
 </div>
 </div>
@@ -455,135 +460,252 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.6.0</span></span></p>
-</div>
-<div class="paragraph">
-<p>This API provides functions for retrieving information about existing virtual host mappings.</p>
+<p>The XP framework offers a solution for pluggable authentication called ID providers</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Add the following dependency to your <code>build.gradle</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-vhost:${xpVersion}"
-}</code></pre>
-</div>
+<p>As part of the XP <a href="../iam.ahtml">IAM</a> (Identity and Access management), apps and sites may be loosely associated with an ID provider.
+The ID provider is responsible for providing  user authentication, independent of the source identity system.</p>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import vhostLib from '/lib/xp/vhost';</code></pre>
-</div>
+<p>ID providers are wired tightly into the <a href="../runtime/engines.ahtml#_common_request_pipeline">common HTTP execution pipeline</a>.
+They participate both in pipeline execution steps, and through the <a href="../runtime/engines/idprovider-service.ahtml">ID provider service endpoint</a></p>
 </div>
 <div class="paragraph">
-<p>You are now ready to use the API.</p>
+<p>This section describes how to implement an ID provider application.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="functions"><a class="link" href="#functions">Functions</a></h2>
+<h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>An IDprovider application requires a descriptor file.
+The descriptor should be placed in your project as <code>src/main/resources/idprovider/idprovider.yaml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Sample idprovider.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "IdProvider"
+mode: "LOCAL" <i class="conum" data-value="1"></i><b>(1)</b>
+form:         <i class="conum" data-value="2"></i><b>(2)</b>
+- type: "TextLine"
+  name: "title"
+  label: "Title"
+  default: "User Login"
+  occurrences:
+    min: 0
+    max: 1</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><strong>mode</strong> specifies how users and groups are process and stored in XP. Allowed values are:
+<div class="ulist">
+<ul>
+<li>
+<p><strong>LOCAL</strong> - Users and groups are fully managed by the IDprovider (i.e. no integrations or external ID systems).</p>
+</li>
+<li>
+<p><strong>EXTERNAL</strong> - Users and groups exist in a remote system. The IDprovider acts as a "broker" between XP and the remote Identity system.</p>
+</li>
+<li>
+<p><strong>MIXED</strong> - Users exist in a remote system, but the groups are created and managed locally in XP.</p>
+</li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><strong>form</strong> defines config options that can be defined from the UI when setting up ID providers.
+Forms are based on the <a href="../cms/schemas.ahtml">schema system</a>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This forms does not support CMS-specific input types, such as contentSelector and htmlArea.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="idprovider_js"><a class="link" href="#idprovider_js">idprovider.js</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You must add a specific idprovier JavaScript controller <code>src/main/resources/idprovider/idprovider.js</code> to the application.
+An application may only implement a single ID provider.</p>
+</div>
+<div class="paragraph">
+<p>To implement your ID provider, export one or more of the following functions:</p>
+</div>
 <div class="sect2">
-<h3 id="isenabled"><a class="link" href="#isenabled">isEnabled</a></h3>
+<h3 id="handle401"><a class="link" href="#handle401">handle401</a></h3>
 <div class="paragraph">
-<p>Returns value which is set for the <code>enabled</code> property in the <code>com.enonic.xp.web.vhost.cfg</code> file.</p>
-</div>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>Boolean</strong> : Returns <code>true</code> if vhost mapping is enabled, otherwise <code>false</code>.</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import vhostLib from '/lib/xp/vhost';
-
-const isEnabled = vhostLib.isEnabled();</code></pre>
-</div>
+<p>Perhaps the most common use of ID providers is handling 401 errors (Unauthorized).
+When a user attempts to access a resource or service that requires authentication, the pipeline will produce an HTTP 401 response.
+The IDprovider may intercept the response before this is sent to the client (browser) and perform an action that enables the user to authenticate,
+hopefully giving access to the resource.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="list"><a class="link" href="#list">list</a></h3>
+<h3 id="login"><a class="link" href="#login">login</a></h3>
 <div class="paragraph">
-<p>Returns list of vhost mappings which are specified in the <code>com.enonic.xp.web.vhost.cfg</code> file.</p>
-</div>
-<div class="paragraph lead">
-<p>Returns</p>
+<p>Clients may request a login directly through a pre-defined endpoint, available for all ID providers.
+This provides a deterministic endpoint for accessing the login page of any ID provider.</p>
 </div>
 <div class="paragraph">
-<p><strong>Object</strong> : Returns an object with  <code>vhosts</code> array.</p>
+<p>The URL to the endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_loginurl">loginUrl() function in the portal library</a></p>
 </div>
-<div class="paragraph lead">
-<p>Example</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the "login" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
+The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import vhostLib from '/lib/xp/vhost';
-
-const vhostMappings = vhostLib.list();
-
-const vhosts = vhostMappings.vhosts;</code></pre>
+</td>
+</tr>
+</table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="logout"><a class="link" href="#logout">logout</a></h3>
+<div class="paragraph">
+<p>Clients may request a logout directly through a pre-defined endpoint, available for all ID providers.
+This provides a deterministic endpoint for logging out of any ID provider.</p>
 </div>
 <div class="paragraph">
-<p>For instance, if the <code>com.enonic.xp.web.vhost.cfg</code> file contains the following mapping:</p>
+<p>The URL for this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_logouturl">logoutUrl() function in the portal library</a></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the "logout" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
+The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="autologin"><a class="link" href="#autologin">autoLogin</a></h3>
+<div class="paragraph">
+<p>An ID provider may optionally include an AutoLogin filter.
+The purpose of this filter is to automatically sign in users, before they may access other parts of the execution pipeline.
+This effectively blocks all unauthorised access attempts for the protected service.</p>
+</div>
+<div class="paragraph">
+<p>If no user already exists in the context, the autoLogin filter is executed early in the HTTP engine&#8217;s pipeline.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>autoLogin</code> works only for identity providers that are configured as <code>default</code> in the virtual host mapping. Visit the <a href="../deployment/config.ahtml#vhost">vhost configuration</a> section for more details.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getpost_etc"><a class="link" href="#getpost_etc">GET/POST etc</a></h3>
+<div class="paragraph">
+<p>Additionally, an ID provider may also act as a regular <a href="http.ahtml">HTTP function</a> — supporting any interaction as desired.
+Communication with the controller is handled via the <a href="../runtime/engines/idprovider-service.ahtml">ID provider endpoint</a>.</p>
+</div>
+<div class="paragraph">
+<p>The URL to this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_idproviderurl">idProviderUrl() function in the portal library</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sample"><a class="link" href="#sample">Sample</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The code below demonstrates how an ID provider may be implemented</p>
 </div>
 <div class="listingblock">
+<div class="title">Sample idprovider.js</div>
 <div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">mapping.admin.host = localhost
-mapping.admin.source = /admin
-mapping.admin.target = /admin
-mapping.admin.idProvider.system = default
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">var authLib = require('/lib/xp/auth');
 
-mapping.admintool.host = localhost
-mapping.admintool.source = /admin
-mapping.admintool.target = /admin
-mapping.admintool.idProvider.system = default</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample response</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-  vhosts: [
-    {
-      name: "admin",
-      source: "/admin",
-      target: "/admin",
-      host: "localhost",
-      defaultIdProviderKey: "system",
-      idProviderKeys: [
-        {
-          idProviderKey: "system"
-        }
-      ]
-    },
-    {
-      name: "admintool",
-      source: "/admin",
-      target: "/admin",
-      host: "localhost",
-      defaultIdProviderKey: "system",
-      idProviderKeys: [
-        {
-          idProviderKey: "system"
-        }
-      ]
+// Filter every reqeust
+exports.autoLogin = function (req) {
+    log.info('Invoked only unless user is already authenticated');
+};
+
+// Override error handler when authentication is required
+exports.handle401 = function (req) {
+    var body = generateLoginPage();
+    return {
+        status: 401,
+        contentType: 'text/html',
+        body: body
+    };
+};
+
+// Triggered when user visits the ID providers login endpoint
+exports.login = function (req) {
+
+    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
+
+    var body = generateLoginPage(redirectUrl);
+    return {
+        contentType: 'text/html',
+        body: body
+    };
+};
+
+// Triggered when user visits the ID providers logout endpoint
+exports.logout = function (req) {
+
+    // Sign user out of XP
+    authLib.logout();
+
+    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
+
+    if (redirectUrl) {
+        return {
+            redirect: redirectUrl
+        };
+    } else {
+        var body = generateLoginPage();
+        return {
+            contentType: 'text/html',
+            body: body
+        };
     }
-  ]
-}</code></pre>
-</div>
+};</code></pre>
 </div>
 </div>
 </div>

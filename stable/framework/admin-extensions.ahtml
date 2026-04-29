@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Building ID Providers</title>
+<title>Building Admin Extensions</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,22 +437,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Building ID Providers</h1>
+<h1>Building Admin Extensions</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
+<li><a href="#usage">Usage</a></li>
 <li><a href="#descriptor">Descriptor</a></li>
-<li><a href="#idprovider_js">idprovider.js</a>
-<ul class="sectlevel2">
-<li><a href="#handle401">handle401</a></li>
-<li><a href="#login">login</a></li>
-<li><a href="#logout">logout</a></li>
-<li><a href="#autologin">autoLogin</a></li>
-<li><a href="#getpost_etc">GET/POST etc</a></li>
-</ul>
-</li>
-<li><a href="#sample">Sample</a></li>
+<li><a href="#controller">Controller</a></li>
+<li><a href="#url">URL</a></li>
+<li><a href="#access_control">Access control</a></li>
+<li><a href="#discovery">Discovery</a></li>
+<li><a href="#interfaces">Interfaces</a></li>
 </ul>
 </div>
 </div>
@@ -460,7 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The XP framework offers a solution for pluggable authentication called ID providers</p>
+<p>Admin extensions are app-provided HTTP endpoints that mount into existing <a href="admin-tools.ahtml">admin tools</a> at named interface points. They were previously called <strong>widgets</strong>. The most common use is rendering an embedded UI fragment, but an extension is just an HTTP controller — it can equally well serve JSON, binary assets, or any other payload the host tool agrees to consume.</p>
 </div>
 </div>
 </div>
@@ -468,15 +464,59 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As part of the XP <a href="../iam.ahtml">IAM</a> (Identity and Access management), apps and sites may be loosely associated with an ID provider.
-The ID provider is responsible for providing  user authentication, independent of the source identity system.</p>
+<p>An admin extension:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Is contributed by an app and discovered by the host admin tool through a string identifier called an <strong>interface</strong>.</p>
+</li>
+<li>
+<p>Mounts only into tools that publish a matching interface name. The reserved name <code>"generic"</code> matches any tool.</p>
+</li>
+<li>
+<p>Is served by the admin engine through the <code>admin:extension</code> dispatcher API at <code>/admin/&lt;app&gt;/&lt;tool&gt;/_/admin:extension/&lt;app&gt;:&lt;extension-name&gt;</code>.</p>
+</li>
+<li>
+<p>Returns whatever HTTP payload the host tool expects — HTML fragments for UI widgets, JSON for data feeds, binary assets, etc.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To declare an extension, place a descriptor and a controller under <code>src/main/resources/admin/extensions/&lt;extension-name&gt;/</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-files" data-lang="files">src/main/resources/admin/extensions/
+  my-extension/
+    my-extension.yaml   <i class="conum" data-value="1"></i><b>(1)</b>
+    my-extension.js     <i class="conum" data-value="2"></i><b>(2)</b>
+    my-extension.svg    <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Descriptor — see <a href="#descriptor">below</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>HTTP controller for the extension URL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Optional SVG icon, served by the discovery endpoint.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>ID providers are wired tightly into the <a href="../runtime/engines.ahtml#_common_request_pipeline">common HTTP execution pipeline</a>.
-They participate both in pipeline execution steps, and through the <a href="../runtime/engines/idprovider-service.ahtml">ID provider service endpoint</a></p>
-</div>
-<div class="paragraph">
-<p>This section describes how to implement an ID provider application.</p>
+<p>The folder name, descriptor base name, and controller base name must all match <code>&lt;extension-name&gt;</code>.</p>
 </div>
 </div>
 </div>
@@ -484,236 +524,168 @@ They participate both in pipeline execution steps, and through the <a href="../r
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>An IDprovider application requires a descriptor file.
-The descriptor should be placed in your project as <code>src/main/resources/idprovider/idprovider.yaml</code>.</p>
+<p>The descriptor is YAML only — <code>.yaml</code> and <code>.yml</code> are both accepted.</p>
 </div>
 <div class="listingblock">
-<div class="title">Sample idprovider.yaml</div>
+<div class="title">src/main/resources/admin/extensions/&lt;extension-name&gt;/&lt;extension-name&gt;.yaml</div>
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "IdProvider"
-mode: "LOCAL" <i class="conum" data-value="1"></i><b>(1)</b>
-form:         <i class="conum" data-value="2"></i><b>(2)</b>
-- type: "TextLine"
-  name: "title"
-  label: "Title"
-  default: "User Login"
-  occurrences:
-    min: 0
-    max: 1</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "AdminExtension"
+title:                                <i class="conum" data-value="1"></i><b>(1)</b>
+  text: "My extension"
+  i18n: "i18n.my-extension.title"
+description: "My extension"           <i class="conum" data-value="2"></i><b>(2)</b>
+interfaces:                           <i class="conum" data-value="3"></i><b>(3)</b>
+  - "com.example.app.sidebar"
+  - "com.example.myinterface"
+allow:                                <i class="conum" data-value="4"></i><b>(4)</b>
+  - "role:system.authenticated"
+config:                               <i class="conum" data-value="5"></i><b>(5)</b>
+  property_1: "value_1"</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>mode</strong> specifies how users and groups are process and stored in XP. Allowed values are:
-<div class="ulist">
-<ul>
-<li>
-<p><strong>LOCAL</strong> - Users and groups are fully managed by the IDprovider (i.e. no integrations or external ID systems).</p>
-</li>
-<li>
-<p><strong>EXTERNAL</strong> - Users and groups exist in a remote system. The IDprovider acts as a "broker" between XP and the remote Identity system.</p>
-</li>
-<li>
-<p><strong>MIXED</strong> - Users exist in a remote system, but the groups are created and managed locally in XP.</p>
-</li>
-</ul>
-</div></td>
+<td><strong>title</strong> — string, or <code>{ text, i18n }</code> for localization. Used wherever the host tool renders an extension list.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>form</strong> defines config options that can be defined from the UI when setting up ID providers.
-Forms are based on the <a href="../cms/schemas.ahtml">schema system</a>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This forms does not support CMS-specific input types, such as contentSelector and htmlArea.
-</td>
+<td><strong>description</strong> — string, or <code>{ text, i18n }</code>.</td>
 </tr>
-</table>
-</div></td>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><strong>interfaces</strong> — names of interface points the extension plugs into. The host tool must publish a matching name in its own <code>interfaces:</code> list. Use the reserved value <code>"generic"</code> to make the extension mountable from any admin tool.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><strong>allow</strong> — principal keys granted access. <code>role:system.admin</code> is always permitted in addition to anything listed here. Required to expose the extension to non-admins.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><strong>config</strong> — free-form key/value map readable from the controller and surfaced in the discovery endpoint.</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="idprovider_js"><a class="link" href="#idprovider_js">idprovider.js</a></h2>
+<h2 id="controller"><a class="link" href="#controller">Controller</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You must add a specific idprovier JavaScript controller <code>src/main/resources/idprovider/idprovider.js</code> to the application.
-An application may only implement a single ID provider.</p>
-</div>
-<div class="paragraph">
-<p>To implement your ID provider, export one or more of the following functions:</p>
-</div>
-<div class="sect2">
-<h3 id="handle401"><a class="link" href="#handle401">handle401</a></h3>
-<div class="paragraph">
-<p>Perhaps the most common use of ID providers is handling 401 errors (Unauthorized).
-When a user attempts to access a resource or service that requires authentication, the pipeline will produce an HTTP 401 response.
-The IDprovider may intercept the response before this is sent to the client (browser) and perform an action that enables the user to authenticate,
-hopefully giving access to the resource.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="login"><a class="link" href="#login">login</a></h3>
-<div class="paragraph">
-<p>Clients may request a login directly through a pre-defined endpoint, available for all ID providers.
-This provides a deterministic endpoint for accessing the login page of any ID provider.</p>
-</div>
-<div class="paragraph">
-<p>The URL to the endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_loginurl">loginUrl() function in the portal library</a></p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the "login" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
-The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="logout"><a class="link" href="#logout">logout</a></h3>
-<div class="paragraph">
-<p>Clients may request a logout directly through a pre-defined endpoint, available for all ID providers.
-This provides a deterministic endpoint for logging out of any ID provider.</p>
-</div>
-<div class="paragraph">
-<p>The URL for this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_logouturl">logoutUrl() function in the portal library</a></p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the "logout" endpoint is called with a "redirect" parameter, a validation of the origin is performed.
-The result of this validation is then passed to the ID Provider as a request property "validTicket".</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="autologin"><a class="link" href="#autologin">autoLogin</a></h3>
-<div class="paragraph">
-<p>An ID provider may optionally include an AutoLogin filter.
-The purpose of this filter is to automatically sign in users, before they may access other parts of the execution pipeline.
-This effectively blocks all unauthorised access attempts for the protected service.</p>
-</div>
-<div class="paragraph">
-<p>If no user already exists in the context, the autoLogin filter is executed early in the HTTP engine&#8217;s pipeline.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p><code>autoLogin</code> works only for identity providers that are configured as <code>default</code> in the virtual host mapping. Visit the <a href="../deployment/config.ahtml#vhost">vhost configuration</a> section for more details.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="getpost_etc"><a class="link" href="#getpost_etc">GET/POST etc</a></h3>
-<div class="paragraph">
-<p>Additinoally, an ID provider may aso act as a regular <a href="../framework/http.ahtml">HTTP function</a> - supporting any interaction as desired.
-Communication with the controller is handled via the <a href="../runtime/engines/idprovider-service.ahtml">ID provider endpoint</a>.</p>
-</div>
-<div class="paragraph">
-<p>The URL to this endpoint can be generated using the <a href="../libraries/lib-portal.ahtml#_idproviderurl">idProviderUrl() function in the portal library</a></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="sample"><a class="link" href="#sample">Sample</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The code below demonstrates how an ID provider may be implemented</p>
+<p>The controller is a standard <a href="http.ahtml">HTTP controller</a> at <code>src/main/resources/admin/extensions/&lt;extension-name&gt;/&lt;extension-name&gt;.js</code>. The shape of the response is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate <code>contentType</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">Sample idprovider.js</div>
+<div class="title">Sample my-extension.js</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var authLib = require('/lib/xp/auth');
-
-// Filter every reqeust
-exports.autoLogin = function (req) {
-    log.info('Invoked only unless user is already authenticated');
-};
-
-// Override error handler when authentication is required
-exports.handle401 = function (req) {
-    var body = generateLoginPage();
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.GET = function (req) {
+    const contentId = req.params.contentId;
     return {
-        status: 401,
-        contentType: 'text/html',
-        body: body
+        body: '&lt;div&gt;Inspecting content ' + contentId + '&lt;/div&gt;',
+        contentType: 'text/html'
     };
-};
-
-// Triggered when user visits the ID providers login endpoint
-exports.login = function (req) {
-
-    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
-
-    var body = generateLoginPage(redirectUrl);
-    return {
-        contentType: 'text/html',
-        body: body
-    };
-};
-
-// Triggered when user visits the ID providers logout endpoint
-exports.logout = function (req) {
-
-    // Sign user out of XP
-    authLib.logout();
-
-    var redirectUrl = req.validTicket ? req.params.redirect : undefined;
-
-    if (redirectUrl) {
-        return {
-            redirect: redirectUrl
-        };
-    } else {
-        var body = generateLoginPage();
-        return {
-            contentType: 'text/html',
-            body: body
-        };
-    }
 };</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>For anything beyond a couple of static endpoints, dispatch on subpaths with the <code>lib-router</code> library rather than branching on <code>req.path</code> by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="url"><a class="link" href="#url">URL</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The URL at which an extension is reachable is a platform internal and may change between XP releases — <strong>do not hard-code it</strong>. Use <code>extensionUrl()</code> from <a href="../libraries/lib-admin.ahtml#extensionurl">lib-admin</a>; it resolves the URL based on the current admin tool context.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">const adminLib = require('/lib/xp/admin');
+
+const url = adminLib.extensionUrl({
+    application: 'com.example.app',
+    extension: 'my-extension',
+    params: { contentId: '123' }
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(<code>widgetUrl()</code> exists for backward compatibility but is deprecated; use <code>extensionUrl()</code> in new code.)</p>
+</div>
+<div class="paragraph">
+<p>Two preconditions still apply to every invocation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The host tool&#8217;s descriptor must include <code>"admin:extension"</code> in its <code>apis:</code> list, so the dispatcher is mounted under that tool.</p>
+</li>
+<li>
+<p>The interface match rule: unless the extension&#8217;s <code>interfaces:</code> list contains <code>"generic"</code>, at least one of its interfaces must also be present in the host tool&#8217;s <code>interfaces:</code> list — otherwise the request returns <strong>404 Not Found</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="access_control"><a class="link" href="#access_control">Access control</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Two checks are enforced:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The caller must hold <code>role:system.admin.login</code>.</p>
+</li>
+<li>
+<p>The extension&#8217;s descriptor must permit the caller — <code>role:system.admin</code> is always permitted; otherwise the caller must match at least one principal in <code>allow:</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="discovery"><a class="link" href="#discovery">Discovery</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The host tool typically queries <code>?interface=&lt;name&gt;</code> to find which extensions are available to the current user at a given interface point. The response is a JSON array, one entry per allowed extension:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">[
+  {
+    "key": "com.example.app:my-extension",
+    "title": "My extension",
+    "description": "My extension",
+    "iconUrl": "/admin/.../_/admin:extension?icon&amp;app=com.example.app&amp;extension=my-extension&amp;v=...",
+    "url": "/admin/.../_/admin:extension/com.example.app:my-extension",
+    "interfaces": ["com.example.app.sidebar"],
+    "config": { "property_1": "value_1" }
+  }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The listing is filtered by the caller&#8217;s principals — extensions the caller cannot access are omitted.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="interfaces"><a class="link" href="#interfaces">Interfaces</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Interface names are free-form strings, not a closed enum. The contract is purely a string match between the extension&#8217;s <code>interfaces:</code> and the host tool&#8217;s <code>interfaces:</code>. To define a new interface point in your own admin tool, declare a stable name (e.g. <code>&lt;app-key&gt;.&lt;purpose&gt;</code>) in the tool&#8217;s descriptor and document the request/response shape your tool expects from extensions.</p>
+</div>
+<div class="paragraph">
+<p>Each consuming admin tool defines its own set of interface names along with the request/response shape extensions must conform to — consult the host tool&#8217;s documentation for the contract.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-28 17:46:20 UTC
+Last updated 2026-04-29 07:11:57 UTC
 </div>
 </div>
 </body>
