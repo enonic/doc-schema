@@ -32,7 +32,6 @@ You are now ready to use the API.
 === exportNodes
 
 Creates a node export.
-Export will be created in <<../deployment/config#_export, exports>> directory.
 
 [.lead]
 Parameters
@@ -93,7 +92,7 @@ const expected = {
 ----
 === importNodes
 
-Imports nodes from a node export located in <<../deployment/config#_export, exports>> directory or from application resource files.
+Imports nodes from a node export or from application resource files.
 Optionally pre-transforms node XML node files with XSLT before import.
 
 NOTE: During node export, current permissions are included in the export file. But when importing, you may need to apply permissions according to your new environment/parent permissions. `includePermissions` parameter is used to control this behavior.
@@ -116,6 +115,7 @@ An object with the following keys and their values:
 | xsltParams | object  | <optional>| | Parameters used in XSLT transformation
 | includeNodeIds | boolean | <optional>| false | Set to `true` to use node IDs from the import, `false` to generate new node IDs
 | includePermissions | boolean | <optional>| false | Set to `true` to overwrite Node permissions with permissions from the import, `false` to merge permissions with new parent permissions
+| versionAttributes | object | <optional>| | Optional attributes attached to the node version of every imported node
 | nodeResolved | function | <optional>| | A function to be called during import with number of nodes imported since last call
 | nodeImported | function | <optional>| | A function to be called during import with number of nodes imported since last call
 | nodeSkipped | function | <optional>| | A function to be called during import with number of nodes skipped since last call
@@ -183,4 +183,29 @@ const expected = {
         }
     ]
 };
+----
+
+=== list
+
+Lists the available node exports.
+
+[.lead]
+Parameters
+
+None.
+
+[.lead]
+Returns
+
+*object* : `{ exports: [{ name: string }] }` — names of all available exports.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {list} from '/lib/xp/export';
+
+const result = list();
+// result.exports === [{ name: 'export-1' }, { name: 'export-2' }]
 ----
