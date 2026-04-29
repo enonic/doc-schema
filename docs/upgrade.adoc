@@ -895,8 +895,8 @@ dependencies {
 XP 8
 [source,groovy]
 dependencies {
-    include "com.enonic.xp:lib-admin:${xpVersion}"
-    include "com.enonic.xp:lib-portal:${xpVersion}"
+    include xplibs.admin
+    include xplibs.portal
 }
 
 === lib-node

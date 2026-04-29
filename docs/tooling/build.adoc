@@ -63,10 +63,10 @@ app { // <2>
 }
 
 dependencies { // <3>
-    implementation "com.enonic.xp:core-api:${xpVersion}"
-    implementation "com.enonic.xp:portal-api:${xpVersion}"
-    include "com.enonic.xp:lib-content:${xpVersion}"
-    include "com.enonic.xp:lib-portal:${xpVersion}"
+    implementation xplibs.api.core
+    implementation xplibs.api.portal
+    include xplibs.content
+    include xplibs.portal
 }
 
 tasks.register('dev', Exec) { // <4>

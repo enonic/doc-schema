@@ -13,7 +13,7 @@ Add the following dependency to your `build.gradle` file:
 [source,groovy]
 ----
 dependencies {
-  include "com.enonic.xp:lib-project:${xpVersion}"
+  include xplibs.project
 }
 ----
 
