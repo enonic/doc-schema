@@ -385,9 +385,11 @@ const resultExpected = {
 }
 ----
 
-=== delete
+=== deleteJob
 
 Deletes a scheduled job.
+
+NOTE: Renamed from `delete` to avoid the JavaScript reserved word. The old `delete` export is still available for backward compatibility.
 
 [.lead]
 Parameters

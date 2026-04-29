@@ -434,9 +434,11 @@ const expected = {
 };
 ----
 
-=== delete
+=== deleteContent
 
 Deletes a content. A published content will be unpublished before deletion.
+
+NOTE: Renamed from `delete` to avoid the JavaScript reserved word. The old `delete` export is still available for backward compatibility.
 
 [.lead]
 *Parameters:*

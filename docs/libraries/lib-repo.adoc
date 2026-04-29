@@ -171,9 +171,11 @@ try {
 }
 ----
 
-=== delete
+=== deleteRepo
 
-Deletes a repository
+Deletes a repository.
+
+NOTE: Renamed from `delete` to avoid the JavaScript reserved word. The old `delete` export is still available for backward compatibility.
 
 [.lead]
 Parameters
