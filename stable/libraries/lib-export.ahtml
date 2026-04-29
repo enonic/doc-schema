@@ -446,6 +446,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#exportnodes">exportNodes</a></li>
 <li><a href="#importnodes">importNodes</a></li>
+<li><a href="#list">list</a></li>
 </ul>
 </li>
 </ul>
@@ -494,8 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="exportnodes"><a class="link" href="#exportnodes">exportNodes</a></h3>
 <div class="paragraph">
-<p>Creates a node export.
-Export will be created in <a href="../deployment/config.ahtml#_export">exports</a> directory.</p>
+<p>Creates a node export.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -612,7 +612,7 @@ const expected = {
 <div class="sect2">
 <h3 id="importnodes"><a class="link" href="#importnodes">importNodes</a></h3>
 <div class="paragraph">
-<p>Imports nodes from a node export located in <a href="../deployment/config.ahtml#_export">exports</a> directory or from application resource files.
+<p>Imports nodes from a node export or from application resource files.
 Optionally pre-transforms node XML node files with XSLT before import.</p>
 </div>
 <div class="admonitionblock note">
@@ -703,6 +703,15 @@ During node export, current permissions are included in the export file. But whe
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Set to <code>true</code> to overwrite Node permissions with permissions from the import, <code>false</code> to merge permissions with new parent permissions</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">versionAttributes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional attributes attached to the node version of every imported node</p>
 </div></div></td>
 </tr>
 <tr>
@@ -799,12 +808,41 @@ const expected = {
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="list"><a class="link" href="#list">list</a></h3>
+<div class="paragraph">
+<p>Lists the available node exports.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<div class="paragraph">
+<p>None.</p>
+</div>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : <code>{ exports: [{ name: string }] }</code> — names of all available exports.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {list} from '/lib/xp/export';
+
+const result = list();
+// result.exports === [{ name: 'export-1' }, { name: 'export-2' }]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:53:14 UTC
+Last updated 2026-04-29 10:46:18 UTC
 </div>
 </div>
 </body>
