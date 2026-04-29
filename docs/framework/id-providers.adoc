@@ -1,6 +1,6 @@
 = Building ID Providers
 :toc: right
-:imagesdir: framework/images
+:imagesdir: ../images
 
 The XP framework offers a solution for pluggable authentication called ID providers
 
@@ -98,7 +98,7 @@ If no user already exists in the context, the autoLogin filter is executed early
 
 === GET/POST etc
 
-Additinoally, an ID provider may aso act as a regular <<../framework/http#, HTTP function>> - supporting any interaction as desired.
+Additionally, an ID provider may also act as a regular <<http#, HTTP function>> — supporting any interaction as desired.
 Communication with the controller is handled via the <<../runtime/engines/idprovider-service#,ID provider endpoint>>.
 
 The URL to this endpoint can be generated using the <<../libraries/lib-portal#_idproviderurl, idProviderUrl() function in the portal library>>
@@ -111,4 +111,3 @@ The code below demonstrates how an ID provider may be implemented
 ----
 include::code/idprovider.js[]
 ----
-

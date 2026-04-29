@@ -97,6 +97,18 @@
         {
           "title": "TypeScript",
           "document": "framework/typescript"
+        },
+        {
+          "title": "ID providers",
+          "document": "framework/id-providers"
+        },
+        {
+          "title": "Admin tools",
+          "document": "framework/admin-tools"
+        },
+        {
+          "title": "Admin extensions",
+          "document": "framework/admin-extensions"
         }
       ]
     },
@@ -247,18 +259,6 @@
         {
           "title": "Webapps",
           "document": "webapps"
-        },
-        {
-          "title": "Admin tools",
-          "document": "admin-tools"
-        },
-        {
-          "title": "Admin extensions",
-          "document": "admin-extensions"
-        },
-        {
-          "title": "ID providers",
-          "document": "id-providers"
         },
         {
           "title": "Metrics",
