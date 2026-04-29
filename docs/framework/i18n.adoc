@@ -69,7 +69,7 @@ where
 
 A sample locale including a vendor-specific variant:
 
-  +es_ES_Traditional_WIN+
+  es_ES_Traditional_WIN
 
 NOTE: Variants are rarely used in XP and can usually be ignored.
 
