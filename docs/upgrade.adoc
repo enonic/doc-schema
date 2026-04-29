@@ -865,10 +865,10 @@ apis:
 
 === Assets service
 
-Assets service has been deprecated since XP 7.15
-Use `lib-asset` instead.
+The built-in assets service has been deprecated since XP 7.15. Replace it with one of:
 
-TODO: Do we remove assets service?
+* https://developer.enonic.com/docs/lib-asset/stable[lib-asset] — best fit for site applications, where it integrates with the site engine and content context.
+* https://developer.enonic.com/docs/lib-static/stable[lib-static] — designed for serving static files from contexts where lib-asset does not fit, such as ID providers and admin extensions.
 
 === lib-admin
 
