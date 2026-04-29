@@ -74,12 +74,12 @@ title:
 
 == Controller
 
-The controller is a standard <<framework/http#,HTTP controller>> at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.js+`. Export functions for each HTTP method the tool should respond to.
+The controller is a standard <<http#,HTTP controller>> at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.js+`. Export a function for each HTTP method the tool should respond to.
 
 .Sample my-tool.js
 [source,javascript]
 ----
-exports.get = function (req) {
+exports.GET = function (req) {
     const view = resolve('my-tool.html');
     return {
         body: render(view, { user: req.user }),
@@ -88,7 +88,7 @@ exports.get = function (req) {
 };
 ----
 
-The controller is the entry point for `+/admin/<app-key>/<tool-name>+` and any deeper path that does not match a service-point URL.
+The controller is the entry point for `+/admin/<app-key>/<tool-name>+` and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, dispatch on subpaths with the `lib-router` library rather than branching on `req.path` by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.
 
 == URL
 

@@ -2,7 +2,7 @@
 :toc: right
 :imagesdir: images
 
-Admin extensions are app-provided UI components that mount into existing <<admin-tools#,admin tools>> at named interface points. They were previously called *widgets*.
+Admin extensions are app-provided HTTP endpoints that mount into existing <<admin-tools#,admin tools>> at named interface points. They were previously called *widgets*. The most common use is rendering an embedded UI fragment, but an extension is just an HTTP controller — it can equally well serve JSON, binary assets, or any other payload the host tool agrees to consume.
 
 == Introduction
 
@@ -11,7 +11,7 @@ An admin extension:
 * Is contributed by an app and discovered by the host admin tool through a string identifier called an *interface*.
 * Mounts only into tools that publish a matching interface name. The reserved name `"generic"` matches any tool.
 * Is served by the admin engine through the `admin:extension` dispatcher API at `+/admin/<app>/<tool>/_/admin:extension/<app>:<extension-name>+`.
-* Returns whatever HTTP payload the host tool expects — typically an HTML fragment or JSON.
+* Returns whatever HTTP payload the host tool expects — HTML fragments for UI widgets, JSON for data feeds, binary assets, etc.
 
 Content Studio is the main consumer of admin extensions in practice, with interfaces such as `contentstudio.menuitem` and `contentstudio.contextpanel`.
 
@@ -64,12 +64,12 @@ config:                               # <5>
 
 == Controller
 
-The controller is a standard <<framework/http#,HTTP controller>> at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.js+`. The shape of the response is determined by the host tool — Content Studio context-panel extensions, for example, return an HTML fragment.
+The controller is a standard <<http#,HTTP controller>> at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.js+`. The shape of the response is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
 
 .Sample my-extension.js
 [source,javascript]
 ----
-exports.get = function (req) {
+exports.GET = function (req) {
     const contentId = req.params.contentId;
     return {
         body: '<div>Inspecting content ' + contentId + '</div>',
@@ -78,17 +78,29 @@ exports.get = function (req) {
 };
 ----
 
+For anything beyond a couple of static endpoints, dispatch on subpaths with the `lib-router` library rather than branching on `req.path` by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.
+
 == URL
 
-Extensions are served as service points under whichever admin tool hosts them, through the `admin:extension` dispatcher API:
+The URL at which an extension is reachable is a platform internal and may change between XP releases — *do not hard-code it*. Use `extensionUrl()` from <<../libraries/lib-admin#extensionurl, lib-admin>>; it resolves the URL based on the current admin tool context.
 
-* Invocation: `+/admin/<app>/<tool>/_/admin:extension/<app>:<extension-name>+`
-* Discovery (list): `+/admin/<app>/<tool>/_/admin:extension?interface=<name>+`
-* Discovery (icon): `+/admin/<app>/<tool>/_/admin:extension?icon&app=<app>&extension=<name>+`
+[source,javascript]
+----
+const adminLib = require('/lib/xp/admin');
 
-For the dispatcher to be reachable, the host tool's descriptor must include `"admin:extension"` in its `apis:` list.
+const url = adminLib.extensionUrl({
+    application: 'com.example.app',
+    extension: 'my-extension',
+    params: { contentId: '123' }
+});
+----
 
-The interface match rule applies on every invocation: unless the extension's `interfaces:` list contains `"generic"`, at least one of its interfaces must also be present in the host tool's `interfaces:` list, otherwise the request returns *404 Not Found*.
+(`widgetUrl()` exists for backward compatibility but is deprecated; use `extensionUrl()` in new code.)
+
+Two preconditions still apply to every invocation:
+
+* The host tool's descriptor must include `"admin:extension"` in its `apis:` list, so the dispatcher is mounted under that tool.
+* The interface match rule: unless the extension's `interfaces:` list contains `"generic"`, at least one of its interfaces must also be present in the host tool's `interfaces:` list — otherwise the request returns *404 Not Found*.
 
 == Access control
 

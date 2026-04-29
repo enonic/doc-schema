@@ -92,7 +92,7 @@ main.js:: The application's <<../framework/main#, main controller>>. Executed wh
 
 i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>.
 
-idprovider/:: The application may implement an <<../id-providers#,ID Provider>> here.
+idprovider/:: The application may implement an <<../framework/id-providers#,ID Provider>> here.
 
 tasks/:: May contain <<../libraries/lib-task#, task controllers>> for asynchronous and background processing.
 
