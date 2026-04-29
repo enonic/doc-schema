@@ -613,7 +613,7 @@ Language is required; country and variant are optional.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>+es_ES_Traditional_WIN+</pre>
+<pre>es_ES_Traditional_WIN</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -735,7 +735,7 @@ Placeholders are formatted according to the requested locale.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:47:50 UTC
+Last updated 2026-04-29 07:53:14 UTC
 </div>
 </div>
 </body>
