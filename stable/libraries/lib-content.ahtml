@@ -455,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#create">create</a></li>
 <li><a href="#createmedia">createMedia</a></li>
 <li><a href="#updatemedia">updateMedia</a></li>
-<li><a href="#delete">delete</a></li>
+<li><a href="#deletecontent">deleteContent</a></li>
 <li><a href="#duplicate">duplicate</a></li>
 <li><a href="#exists">exists</a></li>
 <li><a href="#get">get</a></li>
@@ -1308,9 +1308,21 @@ const expected = {
 </div>
 </div>
 <div class="sect2">
-<h3 id="delete"><a class="link" href="#delete">delete</a></h3>
+<h3 id="deletecontent"><a class="link" href="#deletecontent">deleteContent</a></h3>
 <div class="paragraph">
 <p>Deletes a content. A published content will be unpublished before deletion.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Renamed from <code>delete</code> to avoid the JavaScript reserved word. The old <code>delete</code> export is still available for backward compatibility.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph lead">
 <p><strong>Parameters:</strong></p>
@@ -4762,7 +4774,7 @@ const expected = [
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:37:52 UTC
+Last updated 2026-04-29 07:47:50 UTC
 </div>
 </div>
 </body>
