@@ -13,8 +13,6 @@ An admin extension:
 * Is served by the admin engine through the `admin:extension` dispatcher API at `+/admin/<app>/<tool>/_/admin:extension/<app>:<extension-name>+`.
 * Returns whatever HTTP payload the host tool expects — HTML fragments for UI widgets, JSON for data feeds, binary assets, etc.
 
-Content Studio is the main consumer of admin extensions in practice, with interfaces such as `contentstudio.menuitem` and `contentstudio.contextpanel`.
-
 == Usage
 
 To declare an extension, place a descriptor and a controller under `+src/main/resources/admin/extensions/<extension-name>/+`:
@@ -48,7 +46,7 @@ title:                                # <1>
   i18n: "i18n.my-extension.title"
 description: "My extension"           # <2>
 interfaces:                           # <3>
-  - "contentstudio.contextpanel"
+  - "com.example.app.sidebar"
   - "com.example.myinterface"
 allow:                                # <4>
   - "role:system.authenticated"
@@ -122,7 +120,7 @@ The host tool typically queries `+?interface=<name>+` to find which extensions a
     "description": "My extension",
     "iconUrl": "/admin/.../_/admin:extension?icon&app=com.example.app&extension=my-extension&v=...",
     "url": "/admin/.../_/admin:extension/com.example.app:my-extension",
-    "interfaces": ["contentstudio.contextpanel"],
+    "interfaces": ["com.example.app.sidebar"],
     "config": { "property_1": "value_1" }
   }
 ]
@@ -134,4 +132,4 @@ The listing is filtered by the caller's principals — extensions the caller can
 
 Interface names are free-form strings, not a closed enum. The contract is purely a string match between the extension's `interfaces:` and the host tool's `interfaces:`. To define a new interface point in your own admin tool, declare a stable name (e.g. `<app-key>.<purpose>`) in the tool's descriptor and document the request/response shape your tool expects from extensions.
 
-Interfaces consumed in practice by Content Studio include `contentstudio.menuitem` and `contentstudio.contextpanel` — see Content Studio docs for the full list and the response shape each one expects.
+Each consuming admin tool defines its own set of interface names along with the request/response shape extensions must conform to — consult the host tool's documentation for the contract.
