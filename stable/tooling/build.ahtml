@@ -556,10 +556,10 @@ app { <i class="conum" data-value="2"></i><b>(2)</b>
 }
 
 dependencies { <i class="conum" data-value="3"></i><b>(3)</b>
-    implementation "com.enonic.xp:core-api:${xpVersion}"
-    implementation "com.enonic.xp:portal-api:${xpVersion}"
-    include "com.enonic.xp:lib-content:${xpVersion}"
-    include "com.enonic.xp:lib-portal:${xpVersion}"
+    implementation xplibs.api.core
+    implementation xplibs.api.portal
+    include xplibs.content
+    include xplibs.portal
 }
 
 tasks.register('dev', Exec) { <i class="conum" data-value="4"></i><b>(4)</b>
@@ -852,7 +852,7 @@ XP 7.x defaults to the Nashorn JavaScript engine for executing JavaScript. For a
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:20:46 UTC
+Last updated 2026-04-29 07:37:52 UTC
 </div>
 </div>
 </body>

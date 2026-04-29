@@ -489,7 +489,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-portal:${xpVersion}"
+  include xplibs.portal
 }</code></pre>
 </div>
 </div>
@@ -2547,7 +2547,7 @@ const url = buildUrl({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:20:46 UTC
+Last updated 2026-04-29 07:37:52 UTC
 </div>
 </div>
 </body>

@@ -481,7 +481,7 @@ This API uses standard framework functionality. Please read the <a href="../fram
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-i18n:${xpVersion}"
+  include xplibs.i18n
 }</code></pre>
 </div>
 </div>
@@ -724,7 +724,7 @@ const message2 = localize({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:20:46 UTC
+Last updated 2026-04-29 07:37:52 UTC
 </div>
 </div>
 </body>

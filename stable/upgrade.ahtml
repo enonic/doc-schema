@@ -1666,8 +1666,8 @@ apis:
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    include "com.enonic.xp:lib-admin:${xpVersion}"
-    include "com.enonic.xp:lib-portal:${xpVersion}"
+    include xplibs.admin
+    include xplibs.portal
 }</code></pre>
 </div>
 </div>
@@ -1947,7 +1947,7 @@ Folder-based exports from XP 7 should be converted to a ZIP archive before they 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:20:46 UTC
+Last updated 2026-04-29 07:37:52 UTC
 </div>
 </div>
 </body>

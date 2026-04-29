@@ -523,7 +523,7 @@ Functions of this library require the Schema Admin role. It means that user role
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-  include "com.enonic.xp:lib-schema:${xpVersion}"
+  include xplibs.schema
 }</code></pre>
 </div>
 </div>
@@ -3236,7 +3236,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 07:20:46 UTC
+Last updated 2026-04-29 07:37:52 UTC
 </div>
 </div>
 </body>
