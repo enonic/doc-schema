@@ -735,16 +735,28 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 </dd>
 <dt class="hdlist1"><code>component</code></dt>
 <dd>
-<p>Maps requests to contextual page components at <code>/_/component/&lt;component-path&gt;</code>. The full URL is <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code>.</p>
+<p>Maps requests to contextual page components at <code>/_/component/&lt;component-path&gt;</code>.</p>
 </dd>
 </dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="../framework/universal-api.ahtml">Universal APIs</a> mounted as service points (<code>/_/&lt;app&gt;:&lt;api&gt;/</code>) cannot be remapped through site mappings — they are routed before the site engine processes mappings. If you need custom behavior on a service-point URL, implement a custom Universal API instead.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 10:22:15 UTC
+Last updated 2026-04-30 10:32:01 UTC
 </div>
 </div>
 </body>
