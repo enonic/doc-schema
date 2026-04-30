@@ -26,13 +26,13 @@ npm i --save-dev @enonic-types/lib-auth
 
 === Global
 
-Along with library types it is *higlhy recommended* to install definitions for global objects (`app`, `__`, `log`) and functions (`resolve`, `require`):
+Along with library types it is *highly recommended* to install definitions for global objects (`app`, `__`, `log`) and functions (`resolve`, `require`):
 
 ```bash
 npm i --save-dev @enonic-types/global
 ```
 
-Since `global` types are not placed under the `node_modules/@types`, it is neccessary to include them manually:
+Since `global` types are not placed under the `node_modules/@types`, it is necessary to include them manually:
 
 `tsconfig.json`
 

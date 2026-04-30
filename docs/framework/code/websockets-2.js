@@ -6,7 +6,7 @@ exports.webSocketEvent = function (event) {
   }
 
   if (event.type == 'message') {
-    // Do something on message recieved
+    // Do something on message received
   }
 
   if (event.type == 'close') {

@@ -169,7 +169,7 @@ Both mounts can be combined: `mount: ["web", "management"]` makes the API reacha
 
 == API discovery
 
-`GET /api` (or `GET /api/`) returns a JSON index of every API that opts in to the Web API mount. The response is a `resources` array, one entry per API:
+`GET /api` (or `GET /api/`) returns a JSON index of every API that opts in to the Web API mount. Discovery is only served on the *web connector* (the public web port) — it is not exposed on the management connector. The response is a `resources` array, one entry per API:
 
 [source,json]
 ----

@@ -15,7 +15,7 @@ exports.webSocketEvent = function (event) {
   }
 
   if (event.type == 'message') {
-    // Propegate message to group
+    // Propagate message to group
     webSocketLib.sendToGroup('chat', event.message);
   }
 

@@ -79,7 +79,7 @@ Parameters
 [grid="none"]
 |===
 | Name | Kind | Details
-| params | <<Source>> | object with paramters
+| params | <<Source>> | object with parameters
 |===
 
 [.lead]

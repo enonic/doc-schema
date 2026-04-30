@@ -7,7 +7,7 @@ HTTP filters enable pipelined processing of http requests.
 [#http-filter]
 == Filters
 
-NOTE: You may wire a a filter into the Site engine's execution pipeline via a <<../sites/mappings#, Site mapping>>.
+NOTE: You may wire a filter into the Site engine's execution pipeline via a <<../sites/mappings#, Site mapping>>.
 
 Filters enable you to step into the request pipeline, and execute code at both request and response of the execution pipeline, possibly intercepting the request directly.
 Similar to an <<http#, HTTP function>>, standalone filters are triggered based on an export.
