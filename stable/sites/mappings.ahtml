@@ -542,7 +542,7 @@ mappings:
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>service</strong> specifies a system service handled by the filter (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a> — this feature is <strong>deprecated</strong> in XP 8.</td>
+<td><strong>service</strong> specifies a system service handled by the filter (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a>.</td>
 </tr>
 </table>
 </div>
@@ -724,16 +724,6 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 <p>Supported services: <code>image</code> (deprecated), <code>attachment</code> (deprecated), and <code>component</code>.</p>
 </div>
 <div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>service: "component"</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
 <p>Allows filtering or redirecting to a controller for contextual page components on URLs like <code>&lt;host&gt;:&lt;port&gt;/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code>.</p>
 </div>
 </div>
@@ -741,7 +731,7 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 08:30:57 UTC
+Last updated 2026-04-30 10:17:55 UTC
 </div>
 </div>
 </body>
