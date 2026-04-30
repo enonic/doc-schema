@@ -122,7 +122,11 @@ NOTE: Missing/unavailable content does not match any condition. Omit `match` if 
 
 Service-based mappings can be used to associate service requests with controllers or filters directly.
 
-Supported services: `image` (deprecated), `attachment` (deprecated), and `component`.
+Supported services:
 
-Allows filtering or redirecting to a controller for contextual page components on URLs like `+<host>:<port>/site/<repo>/<branch>/<path-to-page>/_/component/<component-path>+`.
+`image` (deprecated):: Maps requests to the legacy image service at `+/_/image/<id>[:<fingerprint>]/<scale>/<name>+` (e.g. `+/_/image/123456/scale-100-100/photo.jpg+`). Replaced by the `media:image` Universal API.
+
+`attachment` (deprecated):: Maps requests to the legacy attachment service at `+/_/attachment/<mode>/<id>[:<fingerprint>]/<name>+` (e.g. `+/_/attachment/inline/123456/logo.png+`). Replaced by the `media:attachment` Universal API.
+
+`component`:: Maps requests to contextual page components at `+/_/component/<component-path>+`. The full URL is `+<host>:<port>/site/<repo>/<branch>/<path-to-page>/_/component/<component-path>+`.
 
