@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#main_js">main.js</a></li>
+<li><a href="#main_ts">main.ts</a></li>
 </ul>
 </div>
 </div>
@@ -449,21 +449,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Handle application lifecycle events via main.js.</p>
+<p>Handle application lifecycle events via <code>main.ts</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="main_js"><a class="link" href="#main_js">main.js</a></h2>
+<h2 id="main_ts"><a class="link" href="#main_ts">main.ts</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic apps may contain a special "main.js" file. Place the file in <code>src/main/resources/main.js</code>.</p>
+<p>Enonic apps may contain a special <code>main.ts</code> at <code>src/main/resources/main.ts</code>.</p>
 </div>
 <div class="paragraph">
-<p><code>main.js</code> is invoked when an application lifecycle event occurs. A common use of is initialization like creating repositories, and registration of event listeners when the application starts, as well as cleaning up resources when the application stops.</p>
+<p><code>main.ts</code> is invoked when an application lifecycle event occurs. A common use is initialization — creating repositories, registering event listeners when the application starts — and cleaning up resources when the application stops.</p>
 </div>
 <div class="paragraph">
-<p>The code should complete as quickly as possible to prevent application stalling. Never call remote endpoints or wait in loops for events inside the <code>main.js</code> global scope.</p>
+<p>The code should complete as quickly as possible to prevent the application from stalling. Never call remote endpoints or wait in loops for events at the top level of <code>main.ts</code>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -472,7 +472,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If you need to perform time consuming work in the main controller, consider implementing it as a <a href="tasks.ahtml">task</a>.
+If you need to perform time-consuming work during startup, run it from a <a href="tasks.ahtml">task</a> instead.
 </td>
 </tr>
 </table>
@@ -481,21 +481,21 @@ If you need to perform time consuming work in the main controller, consider impl
 <p>Running code when the application starts:</p>
 </div>
 <div class="listingblock">
-<div class="title">main.js</div>
+<div class="title">main.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">// Log application start
-log.info('Application ' + app.name + ' started');</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">// Log application start
+log.info(`Application ${app.name} started`);</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Running code when the application stops:</p>
 </div>
 <div class="listingblock">
-<div class="title">main.js</div>
+<div class="title">main.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">// Log application stop
-__.disposer(function() {
-    log.info('Application ' + app.name + ' stopped');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">// Log application stop
+__.disposer(() =&gt; {
+    log.info(`Application ${app.name} stopped`);
 });</code></pre>
 </div>
 </div>
@@ -504,7 +504,7 @@ __.disposer(function() {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

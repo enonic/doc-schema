@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#request_pipeline">Request pipeline</a></li>
-<li><a href="#webapp_controller">WebApp controller</a></li>
+<li><a href="#implementation">Implementation</a></li>
 <li><a href="#websocket_and_sse">WebSocket and SSE</a></li>
 <li><a href="#descriptor">Descriptor</a></li>
 <li><a href="#tracing">Tracing</a></li>
@@ -463,7 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic is capable of delivering web applications natively, without the need for a 3rd party front-end framework. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.</p>
+<p>Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.</p>
 </div>
 </div>
 </div>
@@ -480,25 +480,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Web app controller</dt>
+<dt class="hdlist1">Webapp</dt>
 <dd>
-<p>Invokes the webapp controller of the contextual application.</p>
+<p>Invokes the webapp&#8217;s HTTP function matching the request method.</p>
 </dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="webapp_controller"><a class="link" href="#webapp_controller">WebApp controller</a></h2>
+<h2 id="implementation"><a class="link" href="#implementation">Implementation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To turn an application into a webapp, place an HTTP controller at <code>/src/main/resources/webapp/webapp.js</code>.</p>
+<p>To turn an application into a webapp, place an implementation at <code>/src/main/resources/webapp/webapp.ts</code> that exports one function per HTTP method it handles (<code>GET</code>, <code>POST</code>, etc.) — see <a href="http.ahtml">HTTP functions</a>.</p>
 </div>
 <div class="paragraph">
-<p>Once deployed, the controller is reachable at <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/</code> (e.g. <code>localhost:8080/webapp/my.webapp/</code>).</p>
-</div>
-<div class="paragraph">
-<p><code>webapp.js</code> acts as an <a href="http.ahtml#http-controller">HTTP controller</a> and may export one function per HTTP method it handles (<code>GET</code>, <code>POST</code>, etc.).</p>
+<p>Once deployed, the webapp is reachable at <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/</code> (e.g. <code>localhost:8080/webapp/my.webapp/</code>).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -507,7 +504,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For anything beyond a couple of static endpoints, it is recommended to use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.
+For anything beyond a couple of static endpoints, use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.
 </td>
 </tr>
 </table>
@@ -518,7 +515,7 @@ For anything beyond a couple of static endpoints, it is recommended to use the <
 <h2 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A webapp can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="websocket.ahtml">WebSocket</a> and <a href="sse.ahtml">SSE</a> for the controller-side details.</p>
+<p>A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="websocket.ahtml">WebSocket</a> and <a href="sse.ahtml">SSE</a> for the details.</p>
 </div>
 </div>
 </div>
@@ -526,10 +523,10 @@ For anything beyond a couple of static endpoints, it is recommended to use the <
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A webapp descriptor is <strong>optional</strong>. A webapp consisting of just <code>webapp.js</code> runs without any descriptor file.</p>
+<p>A webapp descriptor is <strong>optional</strong>. A webapp consisting of just <code>webapp.ts</code> runs without one.</p>
 </div>
 <div class="paragraph">
-<p>The descriptor <strong>can be used to mount <a href="universal-api.ahtml">Universal APIs</a> as service points</strong>. To do so, place a <code>webapp.yaml</code> next to the controller and list the APIs in its <code>apis:</code> field:</p>
+<p>The descriptor <strong>can be used to mount <a href="universal-api.ahtml">Universal APIs</a> as service points</strong>. Place a <code>webapp.yaml</code> alongside <code>webapp.ts</code> and list the APIs in its <code>apis:</code> field:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/webapp/webapp.yaml</div>
@@ -564,7 +561,7 @@ apis:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

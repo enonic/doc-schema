@@ -472,7 +472,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -575,7 +575,7 @@ const sanitizedText = sanitize("Piña CØLADÆ &lt;script&gt;alert('hi!');&lt;/s
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

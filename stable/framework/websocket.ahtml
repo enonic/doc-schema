@@ -564,7 +564,7 @@ exports.webSocketEvent = function (event) {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Data returned from WebSocket <code>GET</code> controller.</td>
+<td>Data returned from the WebSocket <code>GET</code> function.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
@@ -619,7 +619,7 @@ exports.webSocketEvent = function (event) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

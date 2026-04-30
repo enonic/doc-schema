@@ -479,7 +479,7 @@ For instance, one may render only the first part within in a page&#8217;s main r
 </td>
 <td class="content">
 <div class="paragraph">
-<p>By implementing <code>exports.POST()</code> or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.</p>
+<p>By exporting <code>POST</code> or any other HTTP method from the component implementation, it may also serve as the backend for the component.</p>
 </div>
 <div class="paragraph">
 <p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
@@ -493,7 +493,7 @@ For instance, one may render only the first part within in a page&#8217;s main r
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

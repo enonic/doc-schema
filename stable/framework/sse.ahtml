@@ -470,11 +470,11 @@ An SSE stream keeps an HTTP connection open for its entire lifetime. Over HTTP/1
 <h2 id="http-sse"><a class="link" href="#http-sse">SSE</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A controller becomes an SSE endpoint by returning an <code>sse</code> object from its <code>GET</code> method. Each connected client reuses the same controller instance; per-connection state lives in <code>attributes</code>.</p>
+<p>An implementation becomes an SSE endpoint by returning an <code>sse</code> object from its <code>GET</code> function. Each connected client reuses the same module instance; per-connection state lives in <code>attributes</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.GET = function (req) {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.GET = (req) =&gt; {
     return {
         sse: {
             attributes: { startedAt: Date.now() }, <i class="conum" data-value="1"></i><b>(1)</b>
@@ -502,11 +502,11 @@ An SSE stream keeps an HTTP connection open for its entire lifetime. Over HTTP/1
 </table>
 </div>
 <div class="paragraph">
-<p>A controller can react to lifecycle events by exporting an <code>sseEvent</code> function:</p>
+<p>The implementation can react to lifecycle events by exporting an <code>sseEvent</code> function:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.sseEvent = function (event) {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.sseEvent = (event) =&gt; {
     if (event.type === 'open') {
         // send a message back using event.clientId, or add it to a group for later broadcasts
     } else if (event.type === 'close') {
@@ -554,13 +554,13 @@ An SSE stream keeps an HTTP connection open for its entire lifetime. Over HTTP/1
 <h2 id="sending_messages"><a class="link" href="#sending_messages">Sending messages</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A connection is identified by <code>event.clientId</code>, delivered to the controller&#8217;s <code>sseEvent</code> handler when the connection opens. The example below sends a welcome message back to the client that just connected:</p>
+<p>A connection is identified by <code>event.clientId</code>, delivered to the <code>sseEvent</code> function when the connection opens. The example below sends a welcome message back to the client that just connected:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">const sseLib = require('/lib/xp/sse');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const sseLib = require('/lib/xp/sse');
 
-exports.sseEvent = function (event) {
+exports.sseEvent = (event) =&gt; {
     if (event.type === 'open') {
         sseLib.send({
             clientId: event.clientId,
@@ -574,7 +574,7 @@ exports.sseEvent = function (event) {
 <p><code>message.id</code> updates the client&#8217;s last-event-id buffer for reconnects. <code>message.comment</code> emits an SSE comment line — useful for keep-alive pings. A message with no <code>data</code> does not dispatch a client event but any <code>id</code> still updates the buffer.</p>
 </div>
 <div class="paragraph">
-<p>To address a client from outside the <code>sseEvent</code> handler, do not store <code>event.clientId</code> in module-scope state — controller code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:</p>
+<p>To address a client from outside the <code>sseEvent</code> function, do not store <code>event.clientId</code> in module-scope state — module code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -588,9 +588,9 @@ exports.sseEvent = function (event) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">const sseLib = require('/lib/xp/sse');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const sseLib = require('/lib/xp/sse');
 
-exports.sseEvent = function (event) {
+exports.sseEvent = (event) =&gt; {
     if (event.type === 'open') {
         sseLib.addToGroup({ group: 'live', clientId: event.clientId });
     }
@@ -620,7 +620,7 @@ sseLib.sendToGroup({ group: 'live', message: { data: 'Update' } });</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

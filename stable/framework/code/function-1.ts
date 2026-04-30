@@ -1,8 +1,8 @@
 // Handles a GET request
-exports.GET = function(req) {}
+exports.GET = (req) => {};
 
 // Handles a POST request
-exports.POST = function(req) {}
+exports.POST = (req) => {};
 
 // Handles all requests, other than GET or POST which are handled by the functions above
-exports.all = function(req) {}
+exports.all = (req) => {};

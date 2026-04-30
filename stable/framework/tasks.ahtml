@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#descriptor">Descriptor</a></li>
-<li><a href="#controller">Controller</a></li>
+<li><a href="#implementation">Implementation</a></li>
 <li><a href="#execution">Execution</a></li>
 <li><a href="#distributable">Distributable</a></li>
 <li><a href="#api">API</a></li>
@@ -456,10 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>The XP framework also supports execution of asynchronous (potentially long running) background tasks.</p>
 </div>
 <div class="paragraph">
-<p>Tasks may be executed as inline functions, or as named tasks. Named tasks are defined by creating a folder i.e. <code>src/main/resources/tasks/&lt;taskname&gt;</code> in your project.</p>
-</div>
-<div class="paragraph">
-<p>TODO</p>
+<p>Tasks may be executed as inline functions, or as named tasks. Named tasks are defined by creating a folder, e.g. <code>src/main/resources/tasks/&lt;taskname&gt;</code>, in your project.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -490,48 +487,38 @@ form:
 </div>
 </div>
 <div class="paragraph">
-<p>When parameters are passed to the task controller, they will be validated according to the descriptor schema.</p>
+<p>Parameters passed to the task are validated against the descriptor schema before the implementation runs.</p>
 </div>
 <div class="paragraph">
-<p>The <code>form</code> list in the descriptor is optional, and may be omitted if the task does not accept any parameters.</p>
+<p>The <code>form</code> list is optional and may be omitted if the task does not accept any parameters.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="controller"><a class="link" href="#controller">Controller</a></h2>
+<h2 id="implementation"><a class="link" href="#implementation">Implementation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Named tasks require a controller that represents the actual code to be executed. The controller must be placed in the task folder as <code>src/main/resources/tasks/&lt;taskname&gt;/&lt;taskname&gt;.js</code>.</p>
-</div>
-<div class="paragraph">
-<p>A named task controller must export a run function, which will be invoked by the <a href="../runtime/task-engine.ahtml">task engine</a>. once a task is executed.</p>
-</div>
-<div class="paragraph">
-<p>The run function will receive the task parameters as a JSON object.</p>
-</div>
-<div class="paragraph">
-<p><code>taskId</code> is provided as a second argument of the function.</p>
+<p>A named task&#8217;s implementation lives at <code>src/main/resources/tasks/&lt;taskname&gt;/&lt;taskname&gt;.ts</code> and must export a <code>run</code> function. The task engine invokes <code>run</code> with the task parameters as the first argument and the assigned <code>taskId</code> as the second.</p>
 </div>
 <div class="listingblock">
-<div class="title">Example task controller</div>
+<div class="title">Example task implementation</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var taskLib = require('/lib/xp/task');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const taskLib = require('/lib/xp/task');
 
-exports.run = function (params, taskId) {
+exports.run = (params, taskId) =&gt; {
+    const count = params.count || 42;
+    taskLib.progress({ info: `Initializing task ${taskId}` });
 
-    var count = params.count || 42;
-    taskLib.progress({info: 'Initializing task ' + taskId});
-
-    for (var i = 0; i &lt; count; i++) {
+    for (let i = 0; i &lt; count; i++) {
         taskLib.progress({
-            info: 'Processing item ' + (i + 1),
+            info: `Processing item ${i + 1}`,
             current: i,
             total: count
         });
         processItem(i);
     }
 
-    taskLib.progress({info: 'Task completed ' + taskId});
+    taskLib.progress({ info: `Task completed ${taskId}` });
 };</code></pre>
 </div>
 </div>
@@ -541,23 +528,19 @@ exports.run = function (params, taskId) {
 <h2 id="execution"><a class="link" href="#execution">Execution</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Named tasks may be executed by any controller in the system. Applications may even run tasks in other applications.</p>
-</div>
-<div class="paragraph">
-<p>Below is an example of how to run a specific task.</p>
+<p>Named tasks may be submitted from any module in the app. Applications may even run tasks defined in other applications.</p>
 </div>
 <div class="listingblock">
-<div class="title">Sample execution of named task</div>
+<div class="title">Sample execution of a named task</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var taskLib = require('/lib/xp/task');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const taskLib = require('/lib/xp/task');
 
-var taskId = taskLib.submitTask({
-        descriptor: `mytask`,
-        config: {
-            count: 10
-        }
+const taskId = taskLib.submitTask({
+    descriptor: 'mytask',
+    config: {
+        count: 10
     }
-);</code></pre>
+});</code></pre>
 </div>
 </div>
 </div>
@@ -630,7 +613,7 @@ For fine-grained control which nodes should be capable to execute distributable 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

@@ -513,7 +513,7 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1232,7 +1232,7 @@ const pwd = generatePassword();</code></pre>
 <div class="sect2">
 <h3 id="getidproviderconfig"><a class="link" href="#getidproviderconfig">getIdProviderConfig</a></h3>
 <div class="paragraph">
-<p>This function returns the ID provider configuration. It is meant to be called from an ID provider controller.</p>
+<p>Returns the ID provider configuration. Meant to be called from an ID provider implementation.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -2279,7 +2279,7 @@ const theUser = modifyUser({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

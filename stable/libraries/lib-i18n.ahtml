@@ -486,7 +486,7 @@ This API uses standard framework functionality. Please read the <a href="../fram
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -724,7 +724,7 @@ const message2 = localize({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

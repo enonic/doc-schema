@@ -479,7 +479,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -584,7 +584,7 @@ Unlike <code>lib-websocket</code>, every function in this library takes a single
 <td class="tableblock halign-left valign-top"><p class="tableblock">params.clientId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Client id, captured from the <code>open</code> event in the controller&#8217;s <code>sseEvent</code> handler.</p>
+<p>Client id, captured from the <code>open</code> event in the implementation&#8217;s <code>sseEvent</code> function.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -941,7 +941,7 @@ const count = getGroupSize({group: 'live'});</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

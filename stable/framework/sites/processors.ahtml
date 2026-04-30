@@ -496,24 +496,20 @@ Response processors are only available in the <a href="../runtime/engines/site-e
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Create a response processor by placing a controller file in your project folder under <code>src/main/resources/cms/processors/</code> i.e. <code>src/main/resources/cms/processors/myprocessor.js</code>.</p>
+<p>Create a response processor by placing an implementation under <code>src/main/resources/cms/processors/</code>, for example <code>cms/processors/tracker.ts</code>.</p>
 </div>
 <div class="paragraph">
-<p>The controller must export a <code>responseProcessor</code>. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a <code>bodyEnd</code> <a href="contributions.ahtml">page contribution</a> to the response.</p>
+<p>The implementation must export a <code>responseProcessor</code> function. It receives a request and a response object. The example below dynamically adds a <code>bodyEnd</code> <a href="contributions.ahtml">page contribution</a> to the response.</p>
 </div>
 <div class="listingblock">
-<div class="title">processors/tracker.js</div>
+<div class="title">cms/processors/tracker.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">exports.responseProcessor = function (req, res) {
-    var trackingScript = '&lt;script src="http://some.cdn/js/tracker.js"&gt;&lt;/script&gt;';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.responseProcessor = (req, res) =&gt; {
+    const trackingScript = '&lt;script src="http://some.cdn/js/tracker.js"&gt;&lt;/script&gt;';
 
-    // Check if contribution field exists, if not create it
-    var bodyEnd = res.pageContributions.bodyEnd;
-    if (!bodyEnd) {
+    if (!res.pageContributions.bodyEnd) {
         res.pageContributions.bodyEnd = [];
     }
-
-    // Add contribution
     res.pageContributions.bodyEnd.push(trackingScript);
 
     return res;
@@ -526,7 +522,7 @@ Response processors are only available in the <a href="../runtime/engines/site-e
 <h2 id="triggering"><a class="link" href="#triggering">Triggering</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To wire a processor into the execution pipeline, it must be declared in the app&#8217;s <a href="../cms/sites.ahtml#site_xml">site descriptor</a>, and the application must be added to the respective site.</p>
+<p>To wire a processor into the execution pipeline, declare it in the app&#8217;s <a href="../cms/sites.ahtml#site_xml">site descriptor</a>, and add the application to the site.</p>
 </div>
 <div class="listingblock">
 <div class="title">cms/site.yaml</div>
@@ -541,11 +537,11 @@ processors:
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>name</strong> indicates the name of the controller file (without the <code>.js</code> extension).</td>
+<td><strong>name</strong> is the filename of the processor (without extension).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>order</strong> indicates execution order; lower value means higher priority.</td>
+<td><strong>order</strong> sets execution order; lower runs first.</td>
 </tr>
 </table>
 </div>
@@ -589,7 +585,7 @@ If <code>applyFilters</code> is set to <code>false</code> in the <a href="../fra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

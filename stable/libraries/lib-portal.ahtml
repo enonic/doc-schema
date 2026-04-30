@@ -494,7 +494,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -889,7 +889,7 @@ const url = componentUrl({
 <div class="sect2">
 <h3 id="getcomponent"><a class="link" href="#getcomponent">getComponent</a></h3>
 <div class="paragraph">
-<p>Returns component in the current execution context. It is meant to be called from a layout or a part controller.</p>
+<p>Returns the component in the current execution context. Meant to be called from a layout or part.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
@@ -941,7 +941,7 @@ log.info('Current component name = %s', result.name);</code></pre>
 <div class="sect2">
 <h3 id="getcontent"><a class="link" href="#getcontent">getContent</a></h3>
 <div class="paragraph">
-<p>Returns content in the current execution context. It is meant to be called from a page, a layout or a part controller.</p>
+<p>Returns the content in the current execution context. Meant to be called from a page, layout, or part.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
@@ -1266,7 +1266,7 @@ const text = getMultipartText('item1');</code></pre>
 <div class="sect2">
 <h3 id="getsite"><a class="link" href="#getsite">getSite</a></h3>
 <div class="paragraph">
-<p>Returns the parent site of a content in the current execution context. It is meant to be called from a page, a layout or a part controller.</p>
+<p>Returns the parent site of the content in the current execution context. Meant to be called from a page, layout, or part.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
@@ -1315,7 +1315,7 @@ log.info('Current site name = %s', result._name);</code></pre>
 <div class="sect2">
 <h3 id="getsiteconfig"><a class="link" href="#getsiteconfig">getSiteConfig</a></h3>
 <div class="paragraph">
-<p>Returns configuration of the parent site for a content in the current execution context. It is meant to be called from a page, a layout or a part controller.</p>
+<p>Returns the configuration of the parent site for the content in the current execution context. Meant to be called from a page, layout, or part.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
@@ -2200,7 +2200,7 @@ const sanitizedHtml = sanitizeHtml(unsafeHtml);</code></pre>
 <div class="sect2">
 <h3 id="apiurl"><a class="link" href="#apiurl">apiUrl</a></h3>
 <div class="paragraph">
-<p>Generates a URL pointing to a <a href="../framework/universal-api.ahtml">Universal API</a>. Picks the right URL form based on the current controller&#8217;s context — service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
+<p>Generates a URL pointing to a <a href="../framework/universal-api.ahtml">Universal API</a>. Picks the right URL form based on the calling context — a service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -2547,7 +2547,7 @@ const url = buildUrl({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

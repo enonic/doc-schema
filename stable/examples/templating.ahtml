@@ -451,7 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Templates engines may be used to simplify output generation from controllers.</p>
+<p>Use a template engine to simplify HTML generation from your implementations.</p>
 </div>
 </div>
 </div>
@@ -459,7 +459,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic XP does ship with a standard templating engine, but supports use of 3rd party engines. In this section we give examples of how you may use templating engines with your controllers.</p>
+<p>Enonic XP does not ship with a standard template engine, but supports any 3rd party engine. This section gives examples of how to use template engines from your implementations.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -542,47 +542,44 @@ Replace &lt;version&gt; with the version of the library you want to use.
 </div>
 </div>
 <div class="paragraph">
-<p>Your controller must then be updated to use the template:</p>
+<p>Update the implementation to use the template:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example controller using Thymeleaf</div>
+<div class="title">Example using Thymeleaf</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var thymeleaf = require('/lib/thymeleaf');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const thymeleaf = require('/lib/thymeleaf');
 
-exports.GET = function(req) {
-
+exports.GET = (req) =&gt; {
   // Resolve the view
-  var view = resolve('/view/my-template.html');
+  const view = resolve('/view/my-template.html');
 
   // Define a model
-  var model = {
+  const model = {
     name: "John Doe"
   };
 
-  // Render a thymeleaf template
-  var body = thymeleaf.render(view, model);
+  // Render the template
+  const body = thymeleaf.render(view, model);
 
-  // Return the result
   return {
-    body: body,
+    body,
     contentType: 'text/html'
   };
-
 };</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Unlike some controller files, templates may reside anywhere within the <code>src/main/resources</code> structure of your project.</p>
+<p>Unlike implementation files, templates may reside anywhere within <code>src/main/resources/</code>.</p>
 </div>
 <div class="paragraph">
-<p>If the view file is in the same folder as your controller, it can be resolved with only the file name <code>resolve('my-template.html')</code>. Otherwise, the full or relative path should be used.</p>
+<p>If the view file sits next to the implementation, it can be resolved by file name alone — <code>resolve('my-template.html')</code>. Otherwise, use the full or relative path.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

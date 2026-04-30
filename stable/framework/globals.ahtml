@@ -703,8 +703,7 @@ The file extension .js is not required.</p>
 <h2 id="exports"><a class="link" href="#exports">Exports</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The globally available <code>exports</code> keyword is used to expose functionality from a given JavaScript file (controllers, libraries etc).
-This is part of the require.js spec.</p>
+<p>The globally available <code>exports</code> keyword is used to expose functionality from a given module (implementations, libraries, etc.). This is part of the CommonJS module spec.</p>
 </div>
 <div class="paragraph">
 <p>Simply use the <code>exports</code> keyword to expose functionality from any JavaScript file.</p>
@@ -723,7 +722,7 @@ more about the <a href="java-bridge.ahtml">Java bridge</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

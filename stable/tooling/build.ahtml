@@ -771,7 +771,7 @@ Using dev mode is generally recommended, as it saves time by providing real-time
 </table>
 </div>
 <div class="paragraph">
-<p>By running your sandbox in <code>dev</code> mode, it will automatically detect and load changes to your application source files, including JavaScript controllers and schemas. It does this by reading the files directly from the application project folder instead of using the compiled application file.</p>
+<p>By running your sandbox in <code>dev</code> mode, it will automatically detect and load changes to your application source files, including JavaScript modules and schemas. It does this by reading the files directly from the application project folder instead of using the compiled application file.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -852,7 +852,7 @@ XP 7.x defaults to the Nashorn JavaScript engine for executing JavaScript. For a
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

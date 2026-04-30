@@ -518,15 +518,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To create an API, place an HTTP controller file under <code>src/main/resources/apis/</code> in your project. Each controller must live in a folder matching its name, e.g. <code>src/main/resources/apis/myapi/myapi.js</code>.</p>
+<p>To create an API, place an implementation under <code>src/main/resources/apis/</code> in a folder matching its name, e.g. <code>src/main/resources/apis/myapi/myapi.ts</code>.</p>
 </div>
 <div class="paragraph">
-<p>Example controller:</p>
+<p>Example:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.js</div>
+<div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">exports.GET = function(req) {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.GET = (req) =&gt; {
   return {
     body: {
       time: new Date()
@@ -539,13 +539,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="subpath_routing"><a class="link" href="#subpath_routing">Subpath routing</a></h3>
 <div class="paragraph">
-<p>A request to <code>/api/&lt;app&gt;:&lt;api&gt;/foo/bar</code> (or the equivalent service-point URL) reaches the same controller; everything after the descriptor segment arrives as <code>req.path</code>. The controller is free to dispatch on these any way it wants, but for anything beyond a couple of static endpoints, it is recommended to use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
+<p>A request to <code>/api/&lt;app&gt;:&lt;api&gt;/foo/bar</code> (or the equivalent service-point URL) reaches the same implementation; everything after the descriptor segment arrives as <code>req.path</code>. The implementation is free to dispatch on <code>req.path</code> any way it likes, but for anything beyond a couple of static endpoints, use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h3>
 <div class="paragraph">
-<p>A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="websocket.ahtml">WebSocket</a> and <a href="sse.ahtml">SSE</a> for the controller-side details.</p>
+<p>A custom API can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="websocket.ahtml">WebSocket</a> and <a href="sse.ahtml">SSE</a> for the details.</p>
 </div>
 </div>
 </div>
@@ -838,11 +838,11 @@ Discovery is intended for development. By default it is enabled only when XP run
 <h2 id="apiurl"><a class="link" href="#apiurl">apiUrl()</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To safely generate an API URL, use the <code>apiUrl()</code> function from the <a href="../libraries/lib-portal.ahtml">Portal library</a>. It picks the right URL form based on the current controller&#8217;s context — service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
+<p>To safely generate an API URL, use the <code>apiUrl()</code> function from the <a href="../libraries/lib-portal.ahtml">Portal library</a>. It picks the right URL form based on the calling context — a service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">const portalLib = require('/lib/xp/portal');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const portalLib = require('/lib/xp/portal');
 
 const url = portalLib.apiUrl({
     api: 'com.example.myapp:myapi', <i class="conum" data-value="1"></i><b>(1)</b>
@@ -920,7 +920,7 @@ This list includes but is not limited to:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

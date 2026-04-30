@@ -468,36 +468,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="title">Exports</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">// Handles a GET request
-exports.GET = function(req) {}
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">// Handles a GET request
+exports.GET = (req) =&gt; {};
 
 // Handles a POST request
-exports.POST = function(req) {}
+exports.POST = (req) =&gt; {};
 
 // Handles all requests, other than GET or POST which are handled by the functions above
-exports.all = function(req) {}</code></pre>
+exports.all = (req) =&gt; {};</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Every handler receives a <a href="#request">Request</a> object and returns a <a href="#response">Response</a> object.</p>
+<p>Every function receives a <a href="#request">Request</a> object and returns a <a href="#response">Response</a> object.</p>
 </div>
 <div class="listingblock">
-<div class="title">Example handler</div>
+<div class="title">Example</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.GET = function(request) {
-
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.GET = (request) =&gt; {
   if (request.mode === 'edit') {
     // do something...
   }
 
-  var name = request.params.name;
+  const name = request.params.name;
   log.info('Name = %s', name);
 
   return {
-    body: 'Hello ' + name,
+    body: `Hello ${name}`,
     contentType: 'text/plain'
   };
-
 };</code></pre>
 </div>
 </div>
@@ -764,7 +762,7 @@ Modifications to the <code>headers</code> object do not affect the result of <co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

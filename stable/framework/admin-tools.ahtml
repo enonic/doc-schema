@@ -444,7 +444,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#descriptor">Descriptor</a></li>
-<li><a href="#controller">Controller</a></li>
+<li><a href="#implementation">Implementation</a></li>
 <li><a href="#url">URL</a></li>
 <li><a href="#access_control">Access control</a></li>
 <li><a href="#mounting_universal_apis">Mounting Universal APIs</a></li>
@@ -457,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Admin tools are app-provided UIs that appear in the XP admin Launcher and run inside the admin engine. Content Studio is itself an admin tool.</p>
+<p>Admin tools are app-provided UIs that appear in the XP admin Launcher and run inside the admin service. Content Studio is itself an admin tool.</p>
 </div>
 </div>
 </div>
@@ -470,7 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Mounts at <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> — one URL per declared tool, served by the admin engine.</p>
+<p>Mounts at <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> — one URL per declared tool, served by the admin service.</p>
 </li>
 <li>
 <p>Appears in the admin Launcher menu, picking up its title, description, and SVG icon from the descriptor.</p>
@@ -492,14 +492,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To declare a tool, place a descriptor and a controller under <code>src/main/resources/admin/tools/&lt;tool-name&gt;/</code>:</p>
+<p>To declare a tool, place a descriptor and an implementation under <code>src/main/resources/admin/tools/&lt;tool-name&gt;/</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-files" data-lang="files">src/main/resources/admin/tools/
   my-tool/
     my-tool.yaml   <i class="conum" data-value="1"></i><b>(1)</b>
-    my-tool.js     <i class="conum" data-value="2"></i><b>(2)</b>
+    my-tool.ts     <i class="conum" data-value="2"></i><b>(2)</b>
     my-tool.svg    <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
@@ -511,7 +511,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>HTTP controller for the tool URL.</td>
+<td>HTTP function implementation for the tool URL.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -520,7 +520,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="paragraph">
-<p>The folder name, descriptor base name, and controller base name must all match <code>&lt;tool-name&gt;</code>.</p>
+<p>The folder name, descriptor base name, and implementation base name must all match <code>&lt;tool-name&gt;</code>.</p>
 </div>
 </div>
 </div>
@@ -572,7 +572,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>config</strong> — free-form key/value map readable from the controller.</td>
+<td><strong>config</strong> — free-form key/value map readable from the implementation.</td>
 </tr>
 </table>
 </div>
@@ -587,15 +587,15 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 </div>
 <div class="sect1">
-<h2 id="controller"><a class="link" href="#controller">Controller</a></h2>
+<h2 id="implementation"><a class="link" href="#implementation">Implementation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The controller is a standard <a href="http.ahtml">HTTP controller</a> at <code>src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.js</code>. Export a function for each HTTP method the tool should respond to.</p>
+<p>The implementation lives at <code>src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.ts</code> and exports an <a href="http.ahtml">HTTP function</a> for each method the tool should respond to.</p>
 </div>
 <div class="listingblock">
-<div class="title">Sample my-tool.js</div>
+<div class="title">Sample my-tool.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">exports.GET = function (req) {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">exports.GET = (req) =&gt; {
     const view = resolve('my-tool.html');
     return {
         body: render(view, { user: req.user }),
@@ -605,7 +605,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 </div>
 <div class="paragraph">
-<p>The controller is the entry point for <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, it is recommended to use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
+<p>The implementation is the entry point for <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
 </div>
 </div>
 </div>
@@ -626,7 +626,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </ul>
 </div>
 <div class="paragraph">
-<p>Generate URLs from the controller with the <a href="libraries/lib-portal.ahtml">Portal library</a>: <code>adminUrl()</code> for the tool itself, <code>apiUrl()</code> for mounted APIs.</p>
+<p>Generate URLs from the implementation with the <a href="../libraries/lib-portal.ahtml">Portal library</a>: <code>adminUrl()</code> for the tool itself, <code>apiUrl()</code> for mounted APIs.</p>
 </div>
 </div>
 </div>
@@ -678,7 +678,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

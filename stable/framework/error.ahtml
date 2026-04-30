@@ -503,7 +503,7 @@ Should an error occur inside an error handler, the framework will take over and 
 </table>
 </div>
 <div class="paragraph">
-<p>Rather than exporting HTTP methods like controllers and filters, the error handler exports "error code handlers".</p>
+<p>Rather than exporting HTTP methods like regular HTTP functions and filters, the error handler exports "error code handlers".</p>
 </div>
 <div class="paragraph">
 <p>For instance, if the current error is a 404, the framework will first attempt to execute the export <code>handle404</code>.
@@ -580,7 +580,7 @@ The object contains the status code, error message, Exception object, and the or
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

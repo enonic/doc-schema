@@ -530,14 +530,14 @@ Page contributions will only be triggered if the response type is <code>text/htm
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The component or controller must add a <code>pageContributions</code> property in the <a href="../framework/http.ahtml#response">HTTP response object</a>.</p>
+<p>The component or HTTP function must add a <code>pageContributions</code> property to the <a href="../http.ahtml#response">HTTP response object</a>.</p>
 </div>
 <div class="paragraph">
-<p>Sample controller return adding a script element to <code>headEnd</code>.</p>
+<p>Example response adding a script element to <code>headEnd</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">return {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">return {
   body: '&lt;p&gt;Some markup&lt;/p&gt;',
   pageContributions: {
     headEnd: [
@@ -553,7 +553,7 @@ Page contributions will only be triggered if the response type is <code>text/htm
 <div class="listingblock">
 <div class="title">Sample with multiple contributions</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">return {
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">return {
   "body": "&lt;div&gt;...&lt;/div&gt;",
   "pageContributions": {
     "headEnd": "value",
@@ -608,7 +608,7 @@ Duplicate page contributions will automatically be removed, so developers do not
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

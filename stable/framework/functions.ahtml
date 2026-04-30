@@ -442,6 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#modules_and_the_bundle">Modules and the bundle</a></li>
+<li><a href="#loading_and_caching">Loading and caching</a></li>
 <li><a href="#framework_contracts">Framework contracts</a></li>
 <li><a href="#types_of_contracts">Types of contracts</a></li>
 </ul>
@@ -497,6 +498,30 @@ exports.GET = () =&gt; ({
 </div>
 <div class="paragraph">
 <p>The bundle is also the boundary: modules in one app cannot require modules in another app directly. Cross-app integration goes through XP&#8217;s explicit mechanisms — events, services, or shared content.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="loading_and_caching"><a class="link" href="#loading_and_caching">Loading and caching</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>XP loads each module once per app deploy and caches it. Subsequent <code>require</code> / <code>import</code> calls and subsequent triggers reuse the cached module — the file is not re-read or re-parsed.</p>
+</div>
+<div class="paragraph">
+<p>Two consequences worth knowing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Top-level code runs exactly once per app deploy.</strong> Use it for one-time setup — requiring libraries, building lookup tables, computing constants. Code outside a function body will not execute again until the app is redeployed.</p>
+</li>
+<li>
+<p><strong>Top-level state is immutable once cached.</strong> Assigning to a top-level variable from inside a function is <strong>not supported</strong>. XP makes no guarantees about consistency across requests, threads, or cluster nodes — treat anything declared outside a function as read-only after load.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This applies to every module in the app, but it surfaces most visibly in implementation files: their top-level runs lazily at first trigger, so any setup work happens then. For state that must survive between invocations, use a repo node, the <code>cache</code> library, or another explicit persistence mechanism — never the module&#8217;s own top-level.</p>
 </div>
 </div>
 </div>
@@ -567,14 +592,14 @@ exports.GET = () =&gt; ({
 </dl>
 </div>
 <div class="paragraph">
-<p>Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <a href="sites/components.ahtml">components</a>.</p>
+<p>Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <a href="sites/components.ahtml">components</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

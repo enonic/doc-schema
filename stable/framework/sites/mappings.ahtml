@@ -457,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
+<p>Bind HTTP functions and filters to specific content types, site-relative URLs, or system services.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+Mappings are only available when using the <a href="site-engine.ahtml">Site Engine</a>.
 </td>
 </tr>
 </table>
@@ -477,7 +477,7 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>Mappings are the first processing step in the <a href="site-engine.ahtml">site engine</a> — they run before page rendering starts. You may define mappings for both <a href="../http.ahtml">HTTP functions</a> and <a href="../filters.ahtml">filters</a>. The use cases are vast.</p>
 </div>
 </div>
 </div>
@@ -485,18 +485,18 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../sites.ahtml">site descriptor</a> (<code>cms/site.yaml</code>). Examples of use cases are:</p>
+<p>Mappings are defined in the <a href="../sites.ahtml">site descriptor</a> (<code>cms/site.yaml</code>). Examples of use cases:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Map a controller to a specific URL pattern i.e. <code>/mypath</code></p>
+<p>Bind an HTTP function to a specific URL pattern (e.g. <code>/mypath</code>).</p>
 </li>
 <li>
-<p>Map a controller to a specific set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
+<p>Bind an HTTP function to a specific set of content via content matches (e.g. only the <code>portal:fragment</code> content type).</p>
 </li>
 <li>
-<p>Map a filter to parts of or the entire site structure</p>
+<p>Bind a filter to part or all of the site structure.</p>
 </li>
 </ul>
 </div>
@@ -505,16 +505,16 @@ Mappings are only available when using the <a href="../runtime/engines/site-engi
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
 mappings:
-- controller: "/cms/foobar/api.js" <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
+- controller: "/cms/foobar/api.ts" <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
   pattern: '/api/v\d+/.*'          <i class="conum" data-value="3"></i><b>(3)</b>
   order: 10
-- controller: "/cms/pages/default/default.js"
+- controller: "/cms/pages/default/default.ts"
   match: "type:'portal:fragment'"  <i class="conum" data-value="4"></i><b>(4)</b>
-- filter: "/cms/foobar/filter.js"  <i class="conum" data-value="5"></i><b>(5)</b>
+- filter: "/cms/foobar/filter.ts"  <i class="conum" data-value="5"></i><b>(5)</b>
   pattern: '/dont-match-me/.*'
   invertPattern: true
   order: 10
-- filter: "/cms/services/image.js" <i class="conum" data-value="6"></i><b>(6)</b>
+- filter: "/cms/services/image.ts" <i class="conum" data-value="6"></i><b>(6)</b>
   service: "image"</code></pre>
 </div>
 </div>
@@ -522,27 +522,27 @@ mappings:
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a>.</td>
+<td><strong>controller</strong> — path to an <a href="../http.ahtml">HTTP function</a> implementation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
+<td><strong>order</strong> — execution order across apps. Default <code>50</code>. Lower means higher priority. See <a href="#execution_order">Execution order</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>pattern</strong> specifies a regular expression based site contextual URL — see <a href="#pattern_mappings">Pattern mappings</a>. Default is <code>/.*</code>.</td>
+<td><strong>pattern</strong> — regular expression matched against the site-relative URL. Default <code>/.*</code>. See <a href="#pattern_mappings">Pattern mappings</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>match</strong> is a property condition evaluated against the contextual content — see <a href="#match_mappings">Match mappings</a>.</td>
+<td><strong>match</strong> — property condition evaluated against the contextual content. See <a href="#match_mappings">Match mappings</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a>.</td>
+<td><strong>filter</strong> — path to an <a href="../filters.ahtml">HTTP filter</a> implementation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>service</strong> specifies a system service handled by the filter or controller (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a>.</td>
+<td><strong>service</strong> — system service handled by this mapping (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a>.</td>
 </tr>
 </table>
 </div>
@@ -553,7 +553,7 @@ mappings:
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
+Each mapping must specify either <code>filter:</code> or <code>controller:</code> — never both — and at least one of <code>pattern:</code> or <code>match:</code>.
 </td>
 </tr>
 </table>
@@ -564,11 +564,10 @@ Each mapping may exclusively specify a filter OR a controller, and it must defin
 <p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
 </div>
 <div class="paragraph">
-<p>If two different apps within a site has the same mapping path or match expression,
-the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
+<p>If two apps within a site share the same mapping path or match expression, the mapping with the <strong>lower</strong> <code>order</code> value wins.</p>
 </div>
 <div class="paragraph">
-<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
+<p>If several mappings have the same <code>order</code> value, the sort order of the applications on the site determines which mapping is used.</p>
 </div>
 </div>
 </div>
@@ -577,20 +576,16 @@ the mapping with the <strong>lower</strong> <code>order</code> value is used.</p
 <h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Pattern-based mappings can, for instance, be used to take over the request for a specific URL before it reaches the content rendering.
-An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+<p>Pattern-based mappings can be used to take over the request for a specific URL before content rendering. Common cases include exposing an API endpoint on a contextual URL like <code>/api</code>, or triggering a filter for every request within the site.</p>
 </div>
 <div class="paragraph">
-<p>The <code>pattern</code> property specifies a regular expression to be matched against the request URL.</p>
+<p>The <code>pattern</code> property specifies a regular expression matched against the request URL.</p>
 </div>
 <div class="paragraph">
-<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
-For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then <code>pattern: '/api/.*'</code> will match requests with URL ending in <code>example.com/mysite/api/.*</code>.
-The protocol, host and port are not involved in the pattern matching.</p>
+<p>The part of the URL involved is the path relative to the site where the application is configured. For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then <code>pattern: '/api/.*'</code> matches requests with URL ending in <code>example.com/mysite/api/.*</code>. Protocol, host, and port are not involved in the pattern matching.</p>
 </div>
 <div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
-The query parameters will be normalized, so they are always in alphabetical order.</p>
+<p>If the pattern contains the question mark <code>?</code> character, the URL to match also includes query parameters. The query parameters are normalized, so they are always in alphabetical order.</p>
 </div>
 <div class="paragraph">
 <p>For example, the pattern <code>pattern: '/api\?category=foo&amp;key=\d'+</code> matches both:</p>
@@ -649,7 +644,7 @@ The question mark <code>?</code> is escaped with a backslash in the pattern beca
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map an HTTP function or filter to the site itself.
 </td>
 </tr>
 </table>
@@ -660,8 +655,7 @@ Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not p
 <h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
-An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
+<p>Match-based mappings can be used to automatically render content types without using page templates or associating content with an implementation directly. A common case is automatic handling of the content type <code>portal:fragment</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>match</code> property specifies a condition related to the content corresponding with the requested URL path.</p>
@@ -698,7 +692,7 @@ An example use case is automatic handling of the content type <code>portal:fragm
 </ul>
 </div>
 <div class="paragraph">
-<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
+<p>The expected value can be either a regular expression matched against the property value, or simply a string, number, or boolean (<code>true</code> | <code>false</code>).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -707,7 +701,7 @@ An example use case is automatic handling of the content type <code>portal:fragm
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Missing/unavailable content does not match any condition. Omit <code>match</code> if you need to map a controller or filter to a URL that does not correspond to any content.
+Missing/unavailable content does not match any condition. Omit <code>match</code> if you need to map an HTTP function or filter to a URL that does not correspond to any content.
 </td>
 </tr>
 </table>
@@ -718,7 +712,7 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 <h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
+<p>Service-based mappings bind service requests directly to HTTP functions or filters.</p>
 </div>
 <div class="paragraph">
 <p>Supported services:</p>
@@ -746,7 +740,7 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<a href="../framework/universal-api.ahtml">Universal APIs</a> mounted as service points (<code>/_/&lt;app&gt;:&lt;api&gt;/</code>) cannot be remapped through site mappings — they are routed before the site engine processes mappings. If you need custom behavior on a service-point URL, implement a custom Universal API instead.
+<a href="../universal-api.ahtml">Universal APIs</a> mounted as service points (<code>/_/&lt;app&gt;:&lt;api&gt;/</code>) cannot be remapped through site mappings — they are routed before the site engine processes mappings. If you need custom behavior on a service-point URL, implement a custom Universal API instead.
 </td>
 </tr>
 </table>
@@ -756,7 +750,7 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

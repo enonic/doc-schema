@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#basic_controller">Basic controller</a></li>
+<li><a href="#minimal_webapp">Minimal webapp</a></li>
 <li><a href="#static_website">Static website</a></li>
 </ul>
 </div>
@@ -455,21 +455,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="basic_controller"><a class="link" href="#basic_controller">Basic controller</a></h2>
+<h2 id="minimal_webapp"><a class="link" href="#minimal_webapp">Minimal webapp</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A webapp controller exporting one function per HTTP method:</p>
+<p>A webapp implementation exporting one function per HTTP method:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/webapp/webapp.js</div>
+<div class="title">src/main/resources/webapp/webapp.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">var mustache = require('/lib/xp/mustache');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const mustache = require('/lib/xp/mustache');
 
 // Handles a GET request
-exports.GET = function (req) {
-
-    var view = resolve('my-page.html');
-    var params = {
+exports.GET = (req) =&gt; {
+    const view = resolve('my-page.html');
+    const params = {
         appId: app.name,
         title: 'Hello world'
     };
@@ -481,26 +480,25 @@ exports.GET = function (req) {
 };
 
 // Handles a POST request
-exports.POST = function (req) {
-    var name = req.params.name;
+exports.POST = (req) =&gt; {
+    const name = req.params.name;
 
     return {
-        body: {'Hello': name},
+        body: { Hello: name },
         contentType: 'application/json'
     };
 };
 
-// Handles all other method requests
-exports.all = function (req) {
+// Handles all other methods
+exports.all = (req) =&gt; {
     if (req.method === 'DELETE') {
         handleDelete(req);
-
     } else if (req.method === 'PUT') {
         handlePut(req);
     }
 
     return {
-        body: {'Method': req.method},
+        body: { Method: req.method },
         contentType: 'application/json'
     };
 };</code></pre>
@@ -522,7 +520,7 @@ exports.all = function (req) {
 │   └── _static/
 │       └── styles.css
 └── webapp/
-    └── webapp.js</code></pre>
+    └── webapp.ts</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -544,14 +542,14 @@ exports.all = function (req) {
 </div>
 </div>
 <div class="paragraph">
-<p>The controller hands every request off to <code>lib-static</code>:</p>
+<p>The implementation hands every request off to <code>lib-static</code>:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/resources/webapp/webapp.js</div>
+<div class="title">src/main/resources/webapp/webapp.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-JavaScript" data-lang="JavaScript">var staticLib = require('/lib/enonic/static');
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const staticLib = require('/lib/enonic/static');
 
-exports.all = function (req) {
+exports.all = (req) =&gt; {
     return staticLib.requestHandler(req);
 };</code></pre>
 </div>
@@ -564,7 +562,7 @@ exports.all = function (req) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>

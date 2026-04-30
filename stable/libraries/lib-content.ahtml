@@ -520,7 +520,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Add the <code>import</code> statement to your controller:</p>
+<p>Add the <code>import</code> statement to your code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4507,7 +4507,7 @@ const expected = [
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The <code>DescriptorKey</code> (e.g., <code>com.myapp:my-page</code>) of the page controller.</p>
+<p>The <code>DescriptorKey</code> (e.g., <code>com.myapp:my-page</code>) of the page component.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -4774,7 +4774,7 @@ const expected = [
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:59:01 UTC
+Last updated 2026-04-30 15:21:21 UTC
 </div>
 </div>
 </body>
