@@ -111,8 +111,30 @@
           "document": "framework/webapps"
         },
         {
-          "title": "Custom APIs",
+          "title": "APIs",
           "document": "framework/universal-api"
+        },
+        {
+          "title": "Sites",
+          "document": "framework/sites",
+          "menuItems": [
+            {
+              "title": "Mappings",
+              "document": "framework/sites/mappings"
+            },
+            {
+              "title": "Processors",
+              "document": "framework/sites/processors"
+            },
+            {
+              "title": "Contributions",
+              "document": "framework/sites/contributions"
+            },
+            {
+              "title": "Components",
+              "document": "framework/sites/components"
+            }
+          ]
         }
       ]
     },
@@ -241,28 +263,6 @@
         {
           "title": "Templating",
           "document": "examples/templating"
-        },
-        {
-          "title": "Sites",
-          "document": "sites",
-          "menuItems": [
-            {
-              "title": "Mappings",
-              "document": "sites/mappings"
-            },
-            {
-              "title": "Processors",
-              "document": "sites/processors"
-            },
-            {
-              "title": "Contributions",
-              "document": "sites/contributions"
-            },
-            {
-              "title": "Components",
-              "document": "sites/components"
-            }
-          ]
         },
         {
           "title": "Metrics",

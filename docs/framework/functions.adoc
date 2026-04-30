@@ -55,4 +55,4 @@ The <<globals#, framework globals>> (`app`, `log`, `require`, etc.) are availabl
 <<websocket#, Websocket handlers>>:: React to websocket lifecycle events (open, message, close, error).
 <<main#, Main lifecycle>>:: `main.js` hooks that run when your app starts and stops.
 
-Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <<../sites/components#, components>>.
+Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <<sites/components#, components>>.

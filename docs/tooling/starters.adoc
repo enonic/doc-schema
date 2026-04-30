@@ -104,7 +104,7 @@ cms/cms.yaml:: Site form and mixin references.
 
 cms/content-types/:: <<../cms/content-types#, Content type>> definitions.
 
-cms/processors/:: <<../sites/processors#, Response processors>> for post-processing the HTML response from sites.
+cms/processors/:: <<../framework/sites/processors#, Response processors>> for post-processing the HTML response from sites.
 
 cms/layouts/:: <<../cms/pages/layouts#, Layout components>>.
 
