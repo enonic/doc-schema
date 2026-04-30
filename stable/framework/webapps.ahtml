@@ -444,7 +444,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#request_pipeline">Request pipeline</a></li>
 <li><a href="#webapp_controller">WebApp controller</a></li>
+<li><a href="#websocket_and_sse">WebSocket and SSE</a></li>
 <li><a href="#descriptor">Descriptor</a></li>
+<li><a href="#tracing">Tracing</a></li>
 <li><a href="#see_also">See also</a></li>
 </ul>
 </div>
@@ -513,6 +515,14 @@ For anything beyond a couple of static endpoints, it is recommended to use the <
 </div>
 </div>
 <div class="sect1">
+<h2 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A webapp can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="websocket.ahtml">WebSocket</a> and <a href="sse.ahtml">SSE</a> for the controller-side details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -536,6 +546,14 @@ apis:
 </div>
 </div>
 <div class="sect1">
+<h2 id="tracing"><a class="link" href="#tracing">Tracing</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each webapp request emits a <code>renderApp</code> trace event with the application key and request path, observable through XP&#8217;s standard tracing infrastructure.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="see_also"><a class="link" href="#see_also">See also</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -546,7 +564,7 @@ apis:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:38:04 UTC
+Last updated 2026-04-30 07:53:22 UTC
 </div>
 </div>
 </body>
