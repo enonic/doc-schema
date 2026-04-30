@@ -46,7 +46,7 @@ mappings:
 
 <5> *filter* defines the path to the <<../framework/filters#, HTTP filter>>.
 
-<6> *service* specifies a system service handled by the filter (e.g. the `+.../_/image/...+` endpoint). See <<Service mappings>> — this feature is *deprecated* in XP 8.
+<6> *service* specifies a system service handled by the filter (e.g. the `+.../_/image/...+` endpoint). See <<Service mappings>>.
 
 NOTE: Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
 
@@ -123,10 +123,6 @@ NOTE: Missing/unavailable content does not match any condition. Omit `match` if 
 Service-based mappings can be used to associate service requests with controllers or filters directly.
 
 Supported services: `image` (deprecated), `attachment` (deprecated), and `component`.
-
-Examples:
-
-* `service: "component"`
 
 Allows filtering or redirecting to a controller for contextual page components on URLs like `+<host>:<port>/site/<repo>/<branch>/<path-to-page>/_/component/<component-path>+`.
 
