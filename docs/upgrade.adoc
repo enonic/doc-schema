@@ -87,6 +87,8 @@ dependencies {
 
 NOTE: The default `dev` task is now registered automatically by the plugin. If your project defines its own `dev` task, either remove it to use the default, or set `createDefaultDevTask = false` in the `app {}` section to keep your custom task.
 
+NOTE: Remove any `java.toolchain.languageVersion` (and `sourceCompatibility` / `targetCompatibility`) configuration from your `build.gradle`. The XP Gradle plugin sets the correct Java toolchain automatically — manual settings can conflict with what the plugin expects.
+
 === gradle.properties
 
 The new plugin only `appName` and `xpVersion` properties. 
@@ -117,7 +119,7 @@ For the plugin to work, you must add the following to your _settings.gradle_:
 [source,groovy]
 ----
 plugins {
-    id("com.enonic.xp.settings") version "4.0.0-A3"
+    id("com.enonic.xp.settings") version "4.0.0-B1"
 }
 ----
 
