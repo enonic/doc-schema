@@ -588,7 +588,7 @@ config:                               <i class="conum" data-value="5"></i><b>(5)
 </div>
 </div>
 <div class="paragraph">
-<p>For anything beyond a couple of static endpoints, dispatch on subpaths with the <code>lib-router</code> library rather than branching on <code>req.path</code> by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.</p>
+<p>For anything beyond a couple of static endpoints, it is recommended to use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
 </div>
 </div>
 </div>
@@ -685,7 +685,7 @@ const url = adminLib.extensionUrl({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 10:46:18 UTC
+Last updated 2026-04-30 07:38:04 UTC
 </div>
 </div>
 </body>

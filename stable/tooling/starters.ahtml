@@ -580,7 +580,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">apis/</dt>
 <dd>
-<p><a href="../universal-api.ahtml">Universal API</a> controllers and descriptors.</p>
+<p><a href="../framework/universal-api.ahtml">Universal API</a> controllers and descriptors.</p>
 </dd>
 <dt class="hdlist1">application.svg</dt>
 <dd>
@@ -616,7 +616,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">webapp/</dt>
 <dd>
-<p>Optional <a href="../webapps.ahtml">webapp</a> entry point. Contains <code>webapp.js</code> (controller) and <code>webapp.yaml</code> (descriptor).</p>
+<p>Optional <a href="../framework/webapps.ahtml">webapp</a> entry point. Contains <code>webapp.js</code> (controller) and <code>webapp.yaml</code> (descriptor).</p>
 </dd>
 <dt class="hdlist1">cms/site.yaml</dt>
 <dd>
@@ -710,7 +710,7 @@ Check out <a href="https://market.enonic.com/starters/library-starter">the libra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 10:46:18 UTC
+Last updated 2026-04-30 07:38:04 UTC
 </div>
 </div>
 </body>

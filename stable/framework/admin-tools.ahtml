@@ -605,7 +605,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 </div>
 <div class="paragraph">
-<p>The controller is the entry point for <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, dispatch on subpaths with the <code>lib-router</code> library rather than branching on <code>req.path</code> by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.</p>
+<p>The controller is the entry point for <code>/admin/&lt;app-key&gt;/&lt;tool-name&gt;</code> and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, it is recommended to use the <a href="https://market.enonic.com/vendors/enonic/router-lib">router library</a> for method dispatch, parameter extraction, and pattern matching.</p>
 </div>
 </div>
 </div>
@@ -678,7 +678,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-29 10:46:18 UTC
+Last updated 2026-04-30 07:38:04 UTC
 </div>
 </div>
 </body>
