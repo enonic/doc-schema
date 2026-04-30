@@ -88,7 +88,7 @@ exports.GET = function (req) {
 };
 ----
 
-The controller is the entry point for `+/admin/<app-key>/<tool-name>+` and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, dispatch on subpaths with the `lib-router` library rather than branching on `req.path` by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.
+The controller is the entry point for `+/admin/<app-key>/<tool-name>+` and any deeper path that does not match a service-point URL. For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
 == URL
 

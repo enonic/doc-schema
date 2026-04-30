@@ -78,7 +78,7 @@ admin/tools/:: Admin tools are defined here. Tools are administrative apps liste
 
 admin/extensions/:: Admin extensions are user interface components that can be embedded within admin tools (formerly known as widgets).
 
-apis/:: <<../universal-api#, Universal API>> controllers and descriptors.
+apis/:: <<../framework/universal-api#, Universal API>> controllers and descriptors.
 
 application.svg:: Application icon in SVG format. Should be in a square format.
 
@@ -96,7 +96,7 @@ idprovider/:: The application may implement an <<../framework/id-providers#,ID P
 
 tasks/:: May contain <<../libraries/lib-task#, task controllers>> for asynchronous and background processing.
 
-webapp/:: Optional <<../webapps#, webapp>> entry point. Contains `webapp.js` (controller) and `webapp.yaml` (descriptor).
+webapp/:: Optional <<../framework/webapps#, webapp>> entry point. Contains `webapp.js` (controller) and `webapp.yaml` (descriptor).
 
 cms/site.yaml:: Site configuration — API mounts, processors, and mappings.
 

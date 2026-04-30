@@ -1,0 +1,48 @@
+= WebApps
+:toc: right
+:imagesdir: media
+
+The webapp engine handles requests on the endpoint `+<server>:<port>/webapp/<app-name>/*+`.
+
+== Introduction
+
+Enonic is capable of delivering web applications natively, without the need for a 3rd party front-end framework. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.
+
+== Request pipeline
+
+The webapp pipeline is executed as a subset of the <<pipeline#common_request_pipeline,common pipeline>>:
+
+image::webapp-pipeline.svg[Webapp rendering pipeline, 768px]
+
+Web app controller:: Invokes the webapp controller of the contextual application.
+
+== WebApp controller
+
+To turn an application into a webapp, place an HTTP controller at `+/src/main/resources/webapp/webapp.js+`.
+
+Once deployed, the controller is reachable at `+<server>:<port>/webapp/<app-name>/+` (e.g. `+localhost:8080/webapp/my.webapp/+`).
+
+`+webapp.js+` acts as an <<http#http-controller,HTTP controller>> and may export one function per HTTP method it handles (`GET`, `POST`, etc.).
+
+NOTE: For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
+
+== Descriptor
+
+A webapp descriptor is *optional*. A webapp consisting of just `+webapp.js+` runs without any descriptor file.
+
+The descriptor *can be used to mount <<universal-api#,Universal APIs>> as service points*. To do so, place a `+webapp.yaml+` next to the controller and list the APIs in its `apis:` field:
+
+.src/main/resources/webapp/webapp.yaml
+[source,yaml]
+----
+kind: "WebApp"
+apis:
+  - "ws"
+  - "app:graphql"
+----
+
+Each listed API becomes reachable as a service point at `+<server>:<port>/webapp/<app-name>/_/<app>:<api>/+`. See <<universal-api#service-point,Universal API: Service point>> for the full mounting rules.
+
+== See also
+
+For a worked example, see <<../examples/webapps#, Webapp examples>>.

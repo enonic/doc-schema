@@ -76,7 +76,7 @@ exports.GET = function (req) {
 };
 ----
 
-For anything beyond a couple of static endpoints, dispatch on subpaths with the `lib-router` library rather than branching on `req.path` by hand — it handles method dispatch, parameter extraction, and pattern matching idiomatically.
+For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
 == URL
 

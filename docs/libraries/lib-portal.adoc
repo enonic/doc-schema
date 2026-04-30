@@ -901,7 +901,7 @@ const expected = '<p><a href="https://example.com/">Link</a></p>';
 
 === apiUrl
 
-Generates a URL pointing to a <<../universal-api#, Universal API>>. Picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
+Generates a URL pointing to a <<../framework/universal-api#, Universal API>>. Picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
 
 [.lead]
 Parameters
@@ -952,7 +952,7 @@ const url = apiUrl({
 
 === serviceUrl
 
-WARNING: HTTP services are deprecated in XP 8 in favor of <<../universal-api#, Universal APIs>>. Use <<apiUrl>> for new code; `serviceUrl()` is retained for backward compatibility with legacy services in `src/main/resources/services/`.
+WARNING: HTTP services are deprecated in XP 8 in favor of <<../framework/universal-api#, Universal APIs>>. Use <<apiUrl>> for new code; `serviceUrl()` is retained for backward compatibility with legacy services in `src/main/resources/services/`.
 
 Generates URL to a service.
 

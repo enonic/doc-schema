@@ -39,11 +39,11 @@ exports.GET = function(req) {
 
 === Subpath routing
 
-A request to `+/api/<app>:<api>/foo/bar+` (or the equivalent service-point URL) reaches the same controller; everything after the descriptor segment arrives as `req.path`. The controller is free to dispatch on these any way it wants, but for anything beyond a couple of branches the `lib-router` library handles method dispatch, parameter extraction, and pattern matching idiomatically.
+A request to `+/api/<app>:<api>/foo/bar+` (or the equivalent service-point URL) reaches the same controller; everything after the descriptor segment arrives as `req.path`. The controller is free to dispatch on these any way it wants, but for anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
 === WebSocket and SSE
 
-A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<framework/websocket#,WebSocket>> and <<framework/sse#,SSE>> for the controller-side details.
+A custom API can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<websocket#,WebSocket>> and <<sse#,SSE>> for the controller-side details.
 
 [#descriptor]
 == Descriptor
@@ -199,7 +199,7 @@ NOTE: Discovery is intended for development. By default it is enabled only when 
 
 == apiUrl()
 
-To safely generate an API URL, use the `apiUrl()` function from the <<libraries/lib-portal#,Portal library>>. It picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
+To safely generate an API URL, use the `apiUrl()` function from the <<../libraries/lib-portal#,Portal library>>. It picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
 
 [source,javascript]
 ----

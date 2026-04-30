@@ -63,10 +63,6 @@
           "document": "framework/error"
         },
         {
-          "title": "Templating",
-          "document": "framework/templating"
-        },
-        {
           "title": "Websocket",
           "document": "framework/websocket"
         },
@@ -109,6 +105,10 @@
         {
           "title": "Admin extensions",
           "document": "framework/admin-extensions"
+        },
+        {
+          "title": "Webapps",
+          "document": "framework/webapps"
         }
       ]
     },
@@ -228,11 +228,19 @@
       "menuItems": [
         {
           "title": "Custom APIs",
-          "document": "universal-api"
+          "document": "framework/universal-api"
         },
         {
           "title": "Asset serving",
           "document": "static-assets"
+        },
+        {
+          "title": "Webapps",
+          "document": "examples/webapps"
+        },
+        {
+          "title": "Templating",
+          "document": "examples/templating"
         },
         {
           "title": "Sites",
@@ -255,10 +263,6 @@
               "document": "sites/components"
             }
           ]
-        },
-        {
-          "title": "Webapps",
-          "document": "webapps"
         },
         {
           "title": "Metrics",
