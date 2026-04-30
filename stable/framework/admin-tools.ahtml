@@ -655,7 +655,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 <h2 id="mounting_universal_apis"><a class="link" href="#mounting_universal_apis">Mounting Universal APIs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Any API listed in <code>apis:</code> is mounted as a service point under the tool&#8217;s URL. The same API can simultaneously be mounted on the public web connector (<code>mount: ["web"]</code> in the API descriptor) — the two mounts are independent. See <a href="universal-api.ahtml#service-point">Universal API: Service point</a>.</p>
+<p>Any API listed in <code>apis:</code> is mounted as a service point under the tool&#8217;s URL. The same API can simultaneously be mounted on the Portal endpoint (<code>mount: ["web"]</code> in the API descriptor) — the two mounts are independent. See <a href="universal-api.ahtml#service-point">Universal API: Service point</a>.</p>
 </div>
 </div>
 </div>
@@ -678,7 +678,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:53:22 UTC
+Last updated 2026-04-30 08:30:57 UTC
 </div>
 </div>
 </body>

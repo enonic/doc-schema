@@ -609,7 +609,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#source">Source</a></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>object with paramters</p>
+<p>object with parameters</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3302,7 +3302,7 @@ const result = repo.setActiveVersion({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:53:22 UTC
+Last updated 2026-04-30 08:30:57 UTC
 </div>
 </div>
 </body>

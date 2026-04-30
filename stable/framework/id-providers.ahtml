@@ -659,7 +659,7 @@ Communication with the controller is handled via the <a href="../runtime/engines
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">var authLib = require('/lib/xp/auth');
 
-// Filter every reqeust
+// Filter every request
 exports.autoLogin = function (req) {
     log.info('Invoked only unless user is already authenticated');
 };
@@ -713,7 +713,7 @@ exports.logout = function (req) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:53:22 UTC
+Last updated 2026-04-30 08:30:57 UTC
 </div>
 </div>
 </body>

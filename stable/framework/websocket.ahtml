@@ -500,7 +500,7 @@ exports.webSocketEvent = function (event) {
   }
 
   if (event.type == 'message') {
-    // Do something on message recieved
+    // Do something on message received
   }
 
   if (event.type == 'close') {
@@ -603,7 +603,7 @@ exports.webSocketEvent = function (event) {
   }
 
   if (event.type == 'message') {
-    // Propegate message to group
+    // Propagate message to group
     webSocketLib.sendToGroup('chat', event.message);
   }
 
@@ -619,7 +619,7 @@ exports.webSocketEvent = function (event) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:53:22 UTC
+Last updated 2026-04-30 08:30:57 UTC
 </div>
 </div>
 </body>

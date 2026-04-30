@@ -452,8 +452,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#descriptor">Descriptor</a></li>
 <li><a href="#where_apis_are_reachable">Where APIs are reachable</a></li>
 <li><a href="#service-point">Service point</a></li>
-<li><a href="#web-api">Web API</a></li>
-<li><a href="#management-api">Management API</a></li>
+<li><a href="#portal-endpoint">Portal (aka Web) Endpoint</a></li>
+<li><a href="#management-endpoint">Management Endpoint</a></li>
 <li><a href="#api_discovery">API discovery</a></li>
 <li><a href="#apiurl">apiUrl()</a></li>
 <li><a href="#tracing">Tracing</a></li>
@@ -554,7 +554,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="descriptor"><a class="link" href="#descriptor">Descriptor</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>An API descriptor is required. It defines the API&#8217;s access control, the connectors it is mounted on, and metadata such as title, description, and documentation URL.</p>
+<p>An API descriptor is required. It defines the API&#8217;s access control, the endpoints it is mounted on, and metadata such as title, description, and documentation URL.</p>
 </div>
 <div class="paragraph">
 <p>Example of a full API descriptor:</p>
@@ -588,7 +588,7 @@ allow: <i class="conum" data-value="5"></i><b>(5)</b>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>By default, APIs are not mounted on the <a href="#web-api">Generic API endpoint</a>.
+<td>By default, APIs are not mounted on the <a href="#portal-endpoint">Portal endpoint</a>.
 To enable it, add <code>"web"</code> to the <code>mount</code> list.</td>
 </tr>
 <tr>
@@ -623,15 +623,15 @@ A request to an API that is not mounted on the matched URL returns <strong>404 N
 <p><strong>Service point</strong> — the API is mounted into a <code>site</code>, <code>webapp</code>, or <code>admin tool</code> engine via that engine&#8217;s descriptor.</p>
 </li>
 <li>
-<p><strong>Web API</strong> — the API opts in with <code>mount: "web"</code> and becomes reachable on the public XP connector under <code>/api/</code>.</p>
+<p><strong>Portal endpoint</strong> — the API opts in with <code>mount: "web"</code> and becomes reachable on the <strong>Portal</strong> endpoint (the public XP port, aka Web) under <code>/api/</code>.</p>
 </li>
 <li>
-<p><strong>Management API</strong> — the API opts in with <code>mount: "management"</code> and becomes reachable on the <strong>management connector</strong>, which listens on its own port.</p>
+<p><strong>Management endpoint</strong> — the API opts in with <code>mount: "management"</code> and becomes reachable on the <strong>Management</strong> endpoint, which listens on its own port.</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>The <code>/api/</code> URL prefix is the same for both Web API and Management API, but the two are served by <strong>different network connectors on different ports</strong>. The management connector is not reachable through the public connector and vice versa.</p>
+<p>The <code>/api/</code> URL prefix is the same on both endpoints, but the two are served on <strong>different ports</strong>. The Management endpoint is not reachable through the Portal endpoint and vice versa.</p>
 </div>
 </div>
 </div>
@@ -730,10 +730,10 @@ Wildcards and "expose all APIs from app X" rules are intentionally not supported
 </div>
 </div>
 <div class="sect1">
-<h2 id="web-api"><a class="link" href="#web-api">Web API</a></h2>
+<h2 id="portal-endpoint"><a class="link" href="#portal-endpoint">Portal (aka Web) Endpoint</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The dedicated <code>/api</code> endpoint exposes APIs independently of any engine, so they can be consumed by any HTTP client:</p>
+<p>The dedicated <code>/api</code> URL on the <strong>Portal</strong> endpoint (the public XP port) exposes APIs independently of any engine, so they can be consumed by any HTTP client:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -748,10 +748,22 @@ Wildcards and "expose all APIs from app X" rules are intentionally not supported
 </div>
 </div>
 <div class="sect1">
-<h2 id="management-api"><a class="link" href="#management-api">Management API</a></h2>
+<h2 id="management-endpoint"><a class="link" href="#management-endpoint">Management Endpoint</a></h2>
 <div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Management endpoint is for <strong>advanced use only</strong>. It is intended for extending XP&#8217;s management capabilities (cluster operations, internal tooling, infrastructure integrations) — not for regular application APIs.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>An API can also be exposed on the <strong>management connector</strong> by adding <code>"management"</code> to its <code>mount</code> list. The management connector is a separate listener on its own port, distinct from the public web connector — use it for internal or operational APIs that should not be reachable from the public network.</p>
+<p>An API can also be exposed on the <strong>Management</strong> endpoint by adding <code>"management"</code> to its <code>mount</code> list. The Management endpoint is a separate listener on its own port, distinct from the Portal endpoint — use it for internal or operational APIs that should not be reachable from the public network.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/apis/&lt;api-name&gt;/&lt;api-name&gt;.yaml</div>
@@ -764,7 +776,7 @@ allow:
 </div>
 </div>
 <div class="paragraph">
-<p>Both mounts can be combined: <code>mount: ["web", "management"]</code> makes the API reachable on both connectors. The <code>allow</code> principal list is enforced on every request regardless of which connector served it.</p>
+<p>Both mounts can be combined: <code>mount: ["web", "management"]</code> makes the API reachable on both endpoints. The <code>allow</code> principal list is enforced on every request regardless of which endpoint served it.</p>
 </div>
 </div>
 </div>
@@ -772,7 +784,7 @@ allow:
 <h2 id="api_discovery"><a class="link" href="#api_discovery">API discovery</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>GET /api</code> (or <code>GET /api/</code>) returns a JSON index of every API that opts in to the Web API mount. The response is a <code>resources</code> array, one entry per API:</p>
+<p><code>GET /api</code> (or <code>GET /api/</code>) returns a JSON index of every API mounted on the <strong>endpoint that received the request</strong>. Calling it on the Portal endpoint lists APIs with <code>"web"</code> in <code>mount</code>; calling it on the Management endpoint lists APIs with <code>"management"</code> in <code>mount</code>. The response is a <code>resources</code> array, one entry per API:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -798,13 +810,13 @@ allow:
 <div class="ulist">
 <ul>
 <li>
-<p>Only APIs whose descriptor includes <code>"web"</code> in <code>mount</code> are listed. APIs that are mounted only on the management connector or exclusively as service points under sites, webapps, or admin tools do not appear here.</p>
+<p>Service points (APIs mounted only under sites, webapps, or admin tools) do not appear in either listing.</p>
 </li>
 <li>
 <p>Both YAML-declared APIs and dynamically registered Java handlers are included.</p>
 </li>
 <li>
-<p>The listing is <strong>not</strong> filtered by the caller&#8217;s principals — clients see every web-mounted API and are expected to compare against the <code>allowedPrincipals</code> field themselves before invoking.</p>
+<p>The listing is <strong>not</strong> filtered by the caller&#8217;s principals — clients see every API mounted on the endpoint and are expected to compare against the <code>allowedPrincipals</code> field themselves before invoking.</p>
 </li>
 </ul>
 </div>
@@ -908,7 +920,7 @@ This list includes but is not limited to:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 07:53:22 UTC
+Last updated 2026-04-30 08:30:57 UTC
 </div>
 </div>
 </body>

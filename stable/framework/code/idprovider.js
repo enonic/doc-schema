@@ -1,6 +1,6 @@
 var authLib = require('/lib/xp/auth');
 
-// Filter every reqeust
+// Filter every request
 exports.autoLogin = function (req) {
     log.info('Invoked only unless user is already authenticated');
 };
