@@ -1,15 +1,13 @@
-exports.GET = function(request) {
-
+exports.GET = (request) => {
   if (request.mode === 'edit') {
     // do something...
   }
 
-  var name = request.params.name;
+  const name = request.params.name;
   log.info('Name = %s', name);
 
   return {
-    body: 'Hello ' + name,
+    body: `Hello ${name}`,
     contentType: 'text/plain'
   };
-
 };

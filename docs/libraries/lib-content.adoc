@@ -15,7 +15,7 @@ dependencies {
 }
 ----
 
-Add the `import` statement to your controller:
+Add the `import` statement to your code:
 
 [source,typescript]
 ----
@@ -2349,7 +2349,7 @@ Fields
 [grid="none"]
 |===
 | Name | Type | Attributes| Description
-| descriptor | string |  | The `DescriptorKey` (e.g., `com.myapp:my-page`) of the page controller.
+| descriptor | string |  | The `DescriptorKey` (e.g., `com.myapp:my-page`) of the page component.
 | template | string | <optional> | The `PageTemplateKey` of the page template to use.
 | config | object | <optional> | A JSON object (PropertyTree) for the page's configuration.
 | regions | object | <optional> | An object mapping region names (string) to <<RegionType, RegionType objects>>.

@@ -32,6 +32,18 @@ Paths are rooted at the app bundle — not the filesystem and not the running se
 
 The bundle is also the boundary: modules in one app cannot require modules in another app directly. Cross-app integration goes through XP's explicit mechanisms — events, services, or shared content.
 
+== Loading and caching
+
+XP loads each module once per app deploy and caches it. Subsequent `require` / `import` calls and subsequent triggers reuse the cached module — the file is not re-read or re-parsed.
+
+Two consequences worth knowing:
+
+* *Top-level code runs exactly once per app deploy.* Use it for one-time setup — requiring libraries, building lookup tables, computing constants. Code outside a function body will not execute again until the app is redeployed.
+
+* *Top-level state is immutable once cached.* Assigning to a top-level variable from inside a function is *not supported*. XP makes no guarantees about consistency across requests, threads, or cluster nodes — treat anything declared outside a function as read-only after load.
+
+This applies to every module in the app, but it surfaces most visibly in implementation files: their top-level runs lazily at first trigger, so any setup work happens then. For state that must survive between invocations, use a repo node, the `cache` library, or another explicit persistence mechanism — never the module's own top-level.
+
 == Framework contracts
 
 Most of what you write is regular module code your own files require and orchestrate. A smaller subset of files follow a *contract* the framework enforces: the file sits at a conventional location (or is pointed to by a descriptor), and the framework looks for specific named exports and invokes them when its trigger fires.
@@ -55,4 +67,4 @@ The <<globals#, framework globals>> (`app`, `log`, `require`, etc.) are availabl
 <<websocket#, Websocket handlers>>:: React to websocket lifecycle events (open, message, close, error).
 <<main#, Main lifecycle>>:: `main.js` hooks that run when your app starts and stops.
 
-Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <<sites/components#, components>>.
+Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <<sites/components#, components>>.

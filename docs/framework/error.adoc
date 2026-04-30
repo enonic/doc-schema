@@ -22,7 +22,7 @@ If the error is not properly handled, it will fallback to the default XP error h
 
 NOTE: Should an error occur inside an error handler, the framework will take over and fallback to the default error handler.
 
-Rather than exporting HTTP methods like controllers and filters, the error handler exports "error code handlers".
+Rather than exporting HTTP methods like regular HTTP functions and filters, the error handler exports "error code handlers".
 
 For instance, if the current error is a 404, the framework will first attempt to execute the export `handle404`.
 If not found, it will attempt to execute the fallback export `handleError`.

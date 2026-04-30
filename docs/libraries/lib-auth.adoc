@@ -19,7 +19,7 @@ dependencies {
 }
 ----
 
-Add the `import` statement to your controller:
+Add the `import` statement to your code:
 
 [source,typescript]
 ----
@@ -420,7 +420,7 @@ const pwd = generatePassword();
 
 === getIdProviderConfig
 
-This function returns the ID provider configuration. It is meant to be called from an ID provider controller.
+Returns the ID provider configuration. Meant to be called from an ID provider implementation.
 
 [.lead]
 Parameters

@@ -156,7 +156,7 @@ NOTE: XP apps deployed via file are presented with a small blue icon in the `App
 
 TIP: Using dev mode is generally recommended, as it saves time by providing real-time updates of your app
 
-By running your sandbox in `dev` mode, it will automatically detect and load changes to your application source files, including JavaScript controllers and schemas. It does this by reading the files directly from the application project folder instead of using the compiled application file.
+By running your sandbox in `dev` mode, it will automatically detect and load changes to your application source files, including JavaScript modules and schemas. It does this by reading the files directly from the application project folder instead of using the compiled application file.
 
 Enonic CLI:: `enonic sandbox start --dev`
 

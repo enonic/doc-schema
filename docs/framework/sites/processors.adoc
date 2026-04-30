@@ -19,23 +19,19 @@ Consider using regular <<filters#, HTTP Filters>> for other use-cases.
 
 == Usage
 
-Create a response processor by placing a controller file in your project folder under `src/main/resources/cms/processors/` i.e. `src/main/resources/cms/processors/myprocessor.js`.
+Create a response processor by placing an implementation under `src/main/resources/cms/processors/`, for example `cms/processors/tracker.ts`.
 
-The controller must export a `responseProcessor`. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a `bodyEnd` <<contributions#, page contribution>> to the response.
+The implementation must export a `responseProcessor` function. It receives a request and a response object. The example below dynamically adds a `bodyEnd` <<contributions#, page contribution>> to the response.
 
-.processors/tracker.js
-[source,js]
+.cms/processors/tracker.ts
+[source,typescript]
 ----
-exports.responseProcessor = function (req, res) {
-    var trackingScript = '<script src="http://some.cdn/js/tracker.js"></script>';
+exports.responseProcessor = (req, res) => {
+    const trackingScript = '<script src="http://some.cdn/js/tracker.js"></script>';
 
-    // Check if contribution field exists, if not create it
-    var bodyEnd = res.pageContributions.bodyEnd;
-    if (!bodyEnd) {
+    if (!res.pageContributions.bodyEnd) {
         res.pageContributions.bodyEnd = [];
     }
-
-    // Add contribution
     res.pageContributions.bodyEnd.push(trackingScript);
 
     return res;
@@ -44,7 +40,7 @@ exports.responseProcessor = function (req, res) {
 
 == Triggering
 
-To wire a processor into the execution pipeline, it must be declared in the app's <<../cms/sites#site_xml, site descriptor>>, and the application must be added to the respective site.
+To wire a processor into the execution pipeline, declare it in the app's <<../cms/sites#site_xml, site descriptor>>, and add the application to the site.
 
 .cms/site.yaml
 [source,yaml]
@@ -55,9 +51,9 @@ processors:
   order: 10       # <2>
 ----
 
-<1> *name* indicates the name of the controller file (without the `.js` extension).
+<1> *name* is the filename of the processor (without extension).
 
-<2> *order* indicates execution order; lower value means higher priority.
+<2> *order* sets execution order; lower runs first.
 
 Response processors may change any of the values of the response object, including: HTTP status code, response body, HTTP headers, cookies and page contributions.
 It is also possible to return the response object received without any changes.

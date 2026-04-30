@@ -15,7 +15,7 @@ dependencies {
 }
 ----
 
-Add the `import` statement to your controller:
+Add the `import` statement to your code:
 
 [source,typescript]
 ----
@@ -55,7 +55,7 @@ Parameters
 [grid="none"]
 |===
 | Name             | Type   | Description
-| params.clientId  | string | Client id, captured from the `open` event in the controller's `sseEvent` handler.
+| params.clientId  | string | Client id, captured from the `open` event in the implementation's `sseEvent` function.
 | params.message   | object | Message to send. See <<#message-shape,Message shape>>.
 |===
 

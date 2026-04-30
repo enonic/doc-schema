@@ -9,11 +9,11 @@ WARNING: An SSE stream keeps an HTTP connection open for its entire lifetime. Ov
 [#http-sse]
 == SSE
 
-A controller becomes an SSE endpoint by returning an `sse` object from its `GET` method. Each connected client reuses the same controller instance; per-connection state lives in `attributes`.
+An implementation becomes an SSE endpoint by returning an `sse` object from its `GET` function. Each connected client reuses the same module instance; per-connection state lives in `attributes`.
 
-[source,javascript]
+[source,typescript]
 ----
-exports.GET = function (req) {
+exports.GET = (req) => {
     return {
         sse: {
             attributes: { startedAt: Date.now() }, // <1>
@@ -28,11 +28,11 @@ exports.GET = function (req) {
 <2> Client reconnect hint in milliseconds. Optional. Default: `-1`, which omits the hint and lets the browser pick its own.
 <3> Async context timeout in milliseconds. Optional. Default: `0`, which means no timeout.
 
-A controller can react to lifecycle events by exporting an `sseEvent` function:
+The implementation can react to lifecycle events by exporting an `sseEvent` function:
 
-[source,javascript]
+[source,typescript]
 ----
-exports.sseEvent = function (event) {
+exports.sseEvent = (event) => {
     if (event.type === 'open') {
         // send a message back using event.clientId, or add it to a group for later broadcasts
     } else if (event.type === 'close') {
@@ -60,13 +60,13 @@ Lifecycle event:
 
 == Sending messages
 
-A connection is identified by `event.clientId`, delivered to the controller's `sseEvent` handler when the connection opens. The example below sends a welcome message back to the client that just connected:
+A connection is identified by `event.clientId`, delivered to the `sseEvent` function when the connection opens. The example below sends a welcome message back to the client that just connected:
 
-[source,javascript]
+[source,typescript]
 ----
 const sseLib = require('/lib/xp/sse');
 
-exports.sseEvent = function (event) {
+exports.sseEvent = (event) => {
     if (event.type === 'open') {
         sseLib.send({
             clientId: event.clientId,
@@ -78,16 +78,16 @@ exports.sseEvent = function (event) {
 
 `message.id` updates the client's last-event-id buffer for reconnects. `message.comment` emits an SSE comment line — useful for keep-alive pings. A message with no `data` does not dispatch a client event but any `id` still updates the buffer.
 
-To address a client from outside the `sseEvent` handler, do not store `event.clientId` in module-scope state — controller code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:
+To address a client from outside the `sseEvent` function, do not store `event.clientId` in module-scope state — module code runs multi-threaded/multi-engine and ad-hoc shared collections of ids are not safe. Use one of the following instead:
 
 * For a *task* or other background job, capture the `clientId` when the task is started and hold it in the task's own local scope. Each task instance then targets exactly the connection it was started for.
 * For an *event listener*, use named groups: add the connection on `open`, then call `sendToGroup` from the listener.
 
-[source,javascript]
+[source,typescript]
 ----
 const sseLib = require('/lib/xp/sse');
 
-exports.sseEvent = function (event) {
+exports.sseEvent = (event) => {
     if (event.type === 'open') {
         sseLib.addToGroup({ group: 'live', clientId: event.clientId });
     }

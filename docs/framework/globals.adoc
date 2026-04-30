@@ -107,8 +107,7 @@ The file extension .js is not required.
 
 == Exports
 
-The globally available ``exports`` keyword is used to expose functionality from a given JavaScript file (controllers, libraries etc).
-This is part of the require.js spec.
+The globally available ``exports`` keyword is used to expose functionality from a given module (implementations, libraries, etc.). This is part of the CommonJS module spec.
 
 Simply use the ``exports`` keyword to expose functionality from any JavaScript file.
 

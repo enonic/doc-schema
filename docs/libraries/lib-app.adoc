@@ -16,7 +16,7 @@ dependencies {
 }
 ----
 
-Add the `import` statement to your controller:
+Add the `import` statement to your code:
 
 [source,typescript]
 ----

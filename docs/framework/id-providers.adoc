@@ -43,10 +43,9 @@ Forms are based on the <<../cms/schemas#, schema system>>
 +
 NOTE: This forms does not support CMS-specific input types, such as contentSelector and htmlArea.
 
-== idprovider.js
+== idprovider.ts
 
-You must add a specific idprovier JavaScript controller `src/main/resources/idprovider/idprovider.js` to the application.
-An application may only implement a single ID provider.
+Add an ID provider implementation at `src/main/resources/idprovider/idprovider.ts`. An application may only implement a single ID provider.
 
 To implement your ID provider, export one or more of the following functions: 
 
@@ -99,7 +98,7 @@ If no user already exists in the context, the autoLogin filter is executed early
 === GET/POST etc
 
 Additionally, an ID provider may also act as a regular <<http#, HTTP function>> — supporting any interaction as desired.
-Communication with the controller is handled via the <<../runtime/engines/idprovider-service#,ID provider endpoint>>.
+Communication with the implementation is handled via the ID provider endpoint.
 
 The URL to this endpoint can be generated using the <<../libraries/lib-portal#_idproviderurl, idProviderUrl() function in the portal library>>
 

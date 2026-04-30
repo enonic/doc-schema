@@ -13,7 +13,7 @@ NOTE: TUTORIALS HERE!
 
 == Usage
 
-Unlike <<framework/webapps#, XP webapps>>, XP sites do not have a default controller, but instead rely on resolving controllers based on the content being requested.
+Unlike <<webapps#, XP webapps>>, XP sites do not have a default implementation — they resolve a component implementation based on the content being requested.
 
 To implement a site, start by placing the site descriptors under `src/main/resources/cms/` of your project. The site descriptor is split into two files: `cms/site.yaml` (processors, mappings, and API mounts) and `cms/cms.yaml` (site form and mixin references).
 

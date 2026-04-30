@@ -6,7 +6,7 @@ The webapp engine handles requests on the endpoint `+<server>:<port>/webapp/<app
 
 == Introduction
 
-Enonic is capable of delivering web applications natively, without the need for a 3rd party front-end framework. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.
+Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.
 
 == Request pipeline
 
@@ -14,27 +14,25 @@ The webapp pipeline is executed as a subset of the <<pipeline#common_request_pip
 
 image::webapp-pipeline.svg[Webapp rendering pipeline, 768px]
 
-Web app controller:: Invokes the webapp controller of the contextual application.
+Webapp:: Invokes the webapp's HTTP function matching the request method.
 
-== WebApp controller
+== Implementation
 
-To turn an application into a webapp, place an HTTP controller at `+/src/main/resources/webapp/webapp.js+`.
+To turn an application into a webapp, place an implementation at `+/src/main/resources/webapp/webapp.ts+` that exports one function per HTTP method it handles (`GET`, `POST`, etc.) — see <<http#, HTTP functions>>.
 
-Once deployed, the controller is reachable at `+<server>:<port>/webapp/<app-name>/+` (e.g. `+localhost:8080/webapp/my.webapp/+`).
+Once deployed, the webapp is reachable at `+<server>:<port>/webapp/<app-name>/+` (e.g. `+localhost:8080/webapp/my.webapp/+`).
 
-`+webapp.js+` acts as an <<http#http-controller,HTTP controller>> and may export one function per HTTP method it handles (`GET`, `POST`, etc.).
-
-NOTE: For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
+NOTE: For anything beyond a couple of static endpoints, use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
 == WebSocket and SSE
 
-A webapp can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<websocket#,WebSocket>> and <<sse#,SSE>> for the controller-side details.
+A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a `webSocket` or `sse` object from the request handler. See <<websocket#,WebSocket>> and <<sse#,SSE>> for the details.
 
 == Descriptor
 
-A webapp descriptor is *optional*. A webapp consisting of just `+webapp.js+` runs without any descriptor file.
+A webapp descriptor is *optional*. A webapp consisting of just `+webapp.ts+` runs without one.
 
-The descriptor *can be used to mount <<universal-api#,Universal APIs>> as service points*. To do so, place a `+webapp.yaml+` next to the controller and list the APIs in its `apis:` field:
+The descriptor *can be used to mount <<universal-api#,Universal APIs>> as service points*. Place a `+webapp.yaml+` alongside `webapp.ts` and list the APIs in its `apis:` field:
 
 .src/main/resources/webapp/webapp.yaml
 [source,yaml]

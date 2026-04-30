@@ -3,20 +3,19 @@
 
 End-to-end webapp examples. For the reference documentation, see <<../framework/webapps#, Webapps>>.
 
-== Basic controller
+== Minimal webapp
 
-A webapp controller exporting one function per HTTP method:
+A webapp implementation exporting one function per HTTP method:
 
-.src/main/resources/webapp/webapp.js
-[source,JavaScript]
+.src/main/resources/webapp/webapp.ts
+[source,typescript]
 ----
-var mustache = require('/lib/xp/mustache');
+const mustache = require('/lib/xp/mustache');
 
 // Handles a GET request
-exports.GET = function (req) {
-
-    var view = resolve('my-page.html');
-    var params = {
+exports.GET = (req) => {
+    const view = resolve('my-page.html');
+    const params = {
         appId: app.name,
         title: 'Hello world'
     };
@@ -28,26 +27,25 @@ exports.GET = function (req) {
 };
 
 // Handles a POST request
-exports.POST = function (req) {
-    var name = req.params.name;
+exports.POST = (req) => {
+    const name = req.params.name;
 
     return {
-        body: {'Hello': name},
+        body: { Hello: name },
         contentType: 'application/json'
     };
 };
 
-// Handles all other method requests
-exports.all = function (req) {
+// Handles all other methods
+exports.all = (req) => {
     if (req.method === 'DELETE') {
         handleDelete(req);
-
     } else if (req.method === 'PUT') {
         handlePut(req);
     }
 
     return {
-        body: {'Method': req.method},
+        body: { Method: req.method },
         contentType: 'application/json'
     };
 };
@@ -65,7 +63,7 @@ src/main/resources/
 │   └── _static/
 │       └── styles.css
 └── webapp/
-    └── webapp.js
+    └── webapp.ts
 ----
 
 In `index.html`, reference the stylesheet relatively:
@@ -85,14 +83,14 @@ In `index.html`, reference the stylesheet relatively:
 </html>
 ----
 
-The controller hands every request off to `lib-static`:
+The implementation hands every request off to `lib-static`:
 
-.src/main/resources/webapp/webapp.js
-[source,JavaScript]
+.src/main/resources/webapp/webapp.ts
+[source,typescript]
 ----
-var staticLib = require('/lib/enonic/static');
+const staticLib = require('/lib/enonic/static');
 
-exports.all = function (req) {
+exports.all = (req) => {
     return staticLib.requestHandler(req);
 };
 ----

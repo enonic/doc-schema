@@ -19,6 +19,24 @@ This documentation should be highly useful for LLMs learning about Enonic and Co
 - **Self-contained pages.** Minimize "see external docs for details" without context. Summarize the key concept locally, then link out for the full reference. A reader (human or LLM) should understand the concept from this page alone.
 - **Consistent structure.** Use the same pattern across similar pages when appliccable.
 
+### Vocabulary
+Naming conventions for JS/TS code in an Enonic app:
+
+- **module** — any `.ts`/`.js` file. Foundational term; applies to helpers and entry-point files alike.
+- **implementation** (or **implementation file**) — a module bound to a framework contract: paired with a descriptor at a conventional location. Use this when contrasting with the descriptor or pointing at the file specifically.
+- **function** — exports from a module (`GET`, `POST`, `responseProcessor`, `run`, etc.).
+- **components** are pages, parts, and layouts — configurable building blocks of a site. Components are *not* functions; their *implementations* export HTTP functions invoked by the site engine.
+
+Avoid:
+
+- **controller** — MVC baggage; ambiguous between the file and its exports. Replace with "implementation" (file), "function" (export), or drop the noun and let the role carry it (*"the page exports `GET`"*, *"called from a page, layout, or part"*).
+- **handler** — HTTP-flavored; awkward for tasks, events, and schedulers.
+- **script** — conflicts with the runtime model (modules are loaded once and cached; "script" implies re-execution).
+
+Prefer flowing prose over mechanical substitution. *"The implementation must export `X`"* usually reads better than *"the implementation file must export `X`"*. Once a path is on the page, *"the file"* is fine for back-references. Drop the noun where the role already carries it: *"the webapp is reachable at..."*, *"the task receives a `params` object..."*.
+
+Code examples are TypeScript only — runtime transpilation makes raw JavaScript misleading.
+
 ### External references
 When referencing separately documented components, provide a brief summary and link:
 

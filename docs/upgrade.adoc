@@ -743,9 +743,9 @@ The XP 7 `DateTime` input type with `<timezone>true</timezone>` has been split i
   label: "Event date"
 ----
 
-=== HTTP Controllers
+=== HTTP functions
 
-HTTP controller method names have been changed to uppercase to avoid conflicts with JavaScript reserved words and imported library methods.
+HTTP function method names were changed to uppercase to avoid conflicts with JavaScript reserved words and imported library methods.
 
 The lowercase method names (`get`, `post`, `delete`, etc...) are deprecated but still supported for backward compatibility. It is recommended to migrate to the new uppercase names (`GET`, `POST`, `DELETE`, etc...).
 

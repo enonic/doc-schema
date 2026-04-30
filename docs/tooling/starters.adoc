@@ -32,7 +32,7 @@ sample-project/
         error/
         i18n/
         idprovider/
-        main.js
+        main.ts
         cms/
           cms.yaml
           site.yaml
@@ -78,7 +78,7 @@ admin/tools/:: Admin tools are defined here. Tools are administrative apps liste
 
 admin/extensions/:: Admin extensions are user interface components that can be embedded within admin tools (formerly known as widgets).
 
-apis/:: <<../framework/universal-api#, Universal API>> controllers and descriptors.
+apis/:: <<../framework/universal-api#, Universal API>> implementations and descriptors.
 
 application.svg:: Application icon in SVG format. Should be in a square format.
 
@@ -86,17 +86,17 @@ application.yaml:: Application descriptor (`kind: "Application"`).
 
 assets/:: Standard folder for serving static assets such as CSS and JavaScript. Assets are served by the <<../runtime/engines/asset-service#, asset service>>.
 
-error/error.js:: The <<../framework/error#, HTTP error handler>>.
+error/error.ts:: The <<../framework/error#, HTTP error handler>>.
 
-main.js:: The application's <<../framework/main#, main controller>>. Executed when an application starts and stops.
+main.ts:: The application's <<../framework/main#, main lifecycle>>. Runs when the application starts and stops.
 
 i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>.
 
 idprovider/:: The application may implement an <<../framework/id-providers#,ID Provider>> here.
 
-tasks/:: May contain <<../libraries/lib-task#, task controllers>> for asynchronous and background processing.
+tasks/:: May contain <<../framework/tasks#, task implementations>> for asynchronous and background processing.
 
-webapp/:: Optional <<../framework/webapps#, webapp>> entry point. Contains `webapp.js` (controller) and `webapp.yaml` (descriptor).
+webapp/:: Optional <<../framework/webapps#, webapp>> entry point. Contains `webapp.ts` (implementation) and an optional `webapp.yaml` (descriptor).
 
 cms/site.yaml:: Site configuration — API mounts, processors, and mappings.
 
@@ -132,7 +132,7 @@ Enonic libraries are similar to applications, the main difference being that a l
 
 TIP: Check out https://market.enonic.com/starters/library-starter[the library starter] if you are planning to build your own library.
 
-A library may consist of the same files and functionality you would find in an application - such as Assets, Content Types and JS controllers.
+A library may consist of the same files and functionality you would find in an application — such as assets, content types, and JS modules.
 
 Enonic libraries are added to your application by declaring a dependency in the <<build#build.gradle, build file>>.
 

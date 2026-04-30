@@ -11,17 +11,17 @@ An HTTP function is a <<functions#, function>> that responds to an HTTP request.
 Declare one export per HTTP method the function handles: `GET`, `POST`, `DELETE`, `PATCH`, `PUT`, `HEAD`, `OPTIONS`. A special `all` export catches any method that doesn't have a specific handler.
 
 .Exports
-[source,javascript]
+[source,typescript]
 ----
-include::code/controller-1.js[]
+include::code/function-1.ts[]
 ----
 
-Every handler receives a <<#request, Request>> object and returns a <<#response, Response>> object.
+Every function receives a <<#request, Request>> object and returns a <<#response, Response>> object.
 
-.Example handler
-[source,javascript]
+.Example
+[source,typescript]
 ----
-include::code/controller-2.js[]
+include::code/function-2.ts[]
 ----
 
 [#request]

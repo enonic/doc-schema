@@ -1,45 +1,42 @@
-= Component controllers
+= Components
 :toc: right
 :imagesdir: ../images
 
-Special controllers used to render page components.
+How to implement page, part, and layout components rendered by the site engine.
 
-NOTE: Component controllers are only used in context of the <<../runtime/engines/site-engine#, Site Engine>>
+NOTE: Component implementations are only invoked by the <<../runtime/engines/site-engine#, Site Engine>>.
 
 == Introduction
 
-TIP: For a hands on introduction to rendering pages with the Enonic framework, visit the https://developer.enonic.com/docs/my-first-site[My first site tutorial].
+TIP: For a hands-on introduction to rendering pages with the Enonic framework, visit the https://developer.enonic.com/docs/my-first-site[My first site tutorial].
 
-Component controllers are 1:1 aligned with their respective <<../cms/pages#, page component definitions>> and must also be placed in specific locations within the code structure.
+A component implementation is paired 1:1 with its <<../cms/pages#, page component descriptor>> and lives at a conventional location in the project. It exports the same HTTP functions as any other endpoint, but always runs in the context of a content item and may use <<contributions#, page contributions>>.
 
-They have the same capabilities as regular <<../framework/http#, HTTP functions>>, you may take advantage of <<contributions#, page contributions>>, and the fact that they are always executed in the context of a content item.
-
-IMPORTANT: Markup response from a component must have a single root element.
+IMPORTANT: Markup returned by a component must have a single root element.
 
 
 == Context
 
-Component rendering is initiated by the <<../runtime/engines/site-engine#, Site Engine>>. The controllers are derived when a client requests a specific page via the site engine:
+Component rendering is initiated by the <<../runtime/engines/site-engine#, Site Engine>>. The implementation is resolved when a client requests a specific page:
 
-`HTTP request` -> `/site/<project>/<branch>/path/to/content` -> `resolve component` -> `execute controller`.
+`HTTP request` -> `/site/<project>/<branch>/path/to/content` -> `resolve component` -> `invoke implementation`.
 
-This means you will always have a specific content item in your context.
+A content item is always available in your context.
 
-API functions such as <<../libraries/lib-portal#getContent, portalLib.getContent()>>, and <<../libraries/lib-portal#getComponent, portalLib.getComponent()>> will automatically return values based on the context.
+API functions such as <<../libraries/lib-portal#getContent, portalLib.getContent()>> and <<../libraries/lib-portal#getComponent, portalLib.getComponent()>> automatically return values based on that context.
 
-TIP: Thanks to the site engine's built-in access control you are also guaranteed that the current user has read permissions to the contextual content item.
+TIP: Thanks to the site engine's built-in access control, the current user is also guaranteed to have read permissions to the contextual content item.
 
-== Page controllers
+== Pages
 
-Page controllers must be placed next to your <<../cms/pages#, page descriptor>> i.e. `src/main/resources/cms/pages/<page-name>/<page-name>.js`.
+The page implementation lives next to its <<../cms/pages#, descriptor>> at `src/main/resources/cms/pages/<page-name>/<page-name>.ts`.
 
-.Sample page controller using the context
-[source,javascript]
+.Sample page implementation using the context
+[source,typescript]
 ----
 const portal = require('/lib/xp/portal');
 
-exports.GET = function(req) {
-
+exports.GET = (req) => {
   const content = portal.getContent();
   return {
     body: `<html>
@@ -51,17 +48,16 @@ exports.GET = function(req) {
 };
 ----
 
-== Part controllers
+== Parts
 
-Part controllers must be placed next to your <<../cms/pages/parts#, part descriptor>> i.e. `src/main/resources/cms/parts/<part-name>/<part-name>.js`.
+The part implementation lives next to its <<../cms/pages/parts#, descriptor>> at `src/main/resources/cms/parts/<part-name>/<part-name>.ts`.
 
-.Sample part controller using the form value
-[source,javascript]
+.Sample part implementation using the form value
+[source,typescript]
 ----
 const portal = require('/lib/xp/portal');
 
-exports.GET = function(req) {
-
+exports.GET = (req) => {
   const config = portal.getComponent();
   return {
     body: `<div>
@@ -71,19 +67,18 @@ exports.GET = function(req) {
 };
 ----
 
-== Layout controllers
+== Layouts
 
-Layout controllers must be placed next to your <<../cms/pages/layouts#, layout descriptor>> i.e. `src/main/resources/cms/layouts/<layout-name>/<layout-name>.js`.
-
+The layout implementation lives next to its <<../cms/pages/layouts#, descriptor>> at `src/main/resources/cms/layouts/<layout-name>/<layout-name>.ts`.
 
 .Sample layout using Thymeleaf to render two regions
-[source,js]
+[source,typescript]
 ----
-var portal = require('/lib/xp/portal');
-var thymeleaf = require('/lib/thymeleaf');
+const portal = require('/lib/xp/portal');
+const thymeleaf = require('/lib/thymeleaf');
 
-exports.GET = function (req) {
-    var component = portal.getComponent();
+exports.GET = (req) => {
+    const component = portal.getComponent();
 
     return {
         body: thymeleaf.render(resolve('./layout-two-column.html'), {
@@ -91,12 +86,11 @@ exports.GET = function (req) {
             rightRegion: component.regions["right"],
         })
     };
-
 };
 ----
 
 .Thymeleaf view to render layout
-[source,HTML]
+[source,html]
 ----
 <div class="row">
   <div data-portal-region="left">
@@ -115,32 +109,31 @@ exports.GET = function (req) {
 
 == Regions
 
-Component hierarcies are created via <<../cms/pages/regions#, regions>>. Rendering a region essentially boils down to rendering the components of that region.
+Component hierarchies are created via <<../cms/pages/regions#, regions>>. Rendering a region essentially boils down to rendering the components of that region.
 
-To render a component, simply leave a component placeholder in your page or layout's response markup. Component placeholders are then identified and rendered by the <<../runtime/engines/site-engine#, component rendering>> step of the site engine.
+To render a component, leave a component placeholder in the page or layout's response markup. Placeholders are then identified and rendered by the <<../runtime/engines/site-engine#, component rendering>> step of the site engine.
 
-As components may contain new regions, with new placeholders, this process will be repeated until there are no more placeholders left in the response.
+Components may contain new regions with new placeholders, so the process repeats until no placeholders remain in the response.
 
-=== Component Placeholders
+=== Component placeholders
 
-Placeholders are formatted as HTML comments - and includes the component path. Like this example:
+Placeholders are formatted as HTML comments and include the component path. For example:
 
 `<!--# COMPONENT /main/0/left/1 -\->`
 
-For `text/html` responses, the site engine will look for component placeholders. For each placeholder, the component's controller is executed and the output merged into the response.
+For `text/html` responses, the site engine looks for component placeholders. For each placeholder, the component's implementation is invoked and the output merged into the response.
 
 
 === JavaScript example
 
-A basic approach to rendering the main region of a page might look something like this:
+A basic approach to rendering the main region of a page might look like this:
 
 .Manually create component placeholders
-[source, javascript]
+[source,typescript]
 ----
-var portal = require('/lib/xp/portal');
+const portal = require('/lib/xp/portal');
 
-exports.GET = function(req) {
-
+exports.GET = (req) => {
   // Get components of the main region
   const content = portal.getContent();
   const components = content.page.regions["main"].components || [];
@@ -155,35 +148,33 @@ exports.GET = function(req) {
             </body>
           </html>`
   };
-}
+};
 ----
 
 === Templating example
 
 Using Thymeleaf templating, placeholder generation might look like this:
 
-.Page controller passing region to template
-[source, javascript]
+.Page implementation passing region to template
+[source,typescript]
 ----
-var thymeleaf = require('/lib/thymeleaf');
+const portal = require('/lib/xp/portal');
+const thymeleaf = require('/lib/thymeleaf');
 
-exports.GET = function(req) {
-
-  var portal = require('/lib/xp/portal');
-
+exports.GET = (req) => {
   // Get the contextual content item
-  var content = portal.getContent();
-  var mainRegion = content.page.regions["main"];
+  const content = portal.getContent();
+  const mainRegion = content.page.regions["main"];
 
   // Render and return the result
   return {
-    body: thymeleaf.render(view, mainRegion);
+    body: thymeleaf.render(view, mainRegion)
   };
-}
+};
 ----
 
 .Thymeleaf template creating placeholders
-[source, html]
+[source,html]
 ----
 <!DOCTYPE html>
 <html>
@@ -202,40 +193,37 @@ exports.GET = function(req) {
 
 == Fragments
 
-Fragments essentially rendered via their existing controllers. However, as fragments are just subsets of a page, the will likely be rendered without any styling, header or footer.
+Fragments are rendered via their existing implementations. However, since a fragment is just a subset of a page, it will likely render without any styling, header, or footer.
 
-To mitigate this, the recommended approach is adding a controller mapping to help spice up the visual appearance.
-
-
-Add a <<mappings#, controller mapping>> for the `portal:fragment` content type. This will then be executed every time a fragment is rendered.
+To mitigate this, add a <<mappings#, site mapping>> for the `portal:fragment` content type. The mapped implementation then runs every time a fragment is rendered.
 
 .cms/site.yaml
 [source,yaml]
 ----
 kind: "Site"
 mappings:
-- controller: "/cms/pages/default/default.js"
+- controller: "/cms/pages/default/default.ts"
   match: "type:'portal:fragment'"
 ----
 
-NOTE: It can often be convenient to reuse your page controller, as this is already doing the job.
+NOTE: Reusing your page implementation is often convenient, since it already does the job.
 
-In the markup produced by the controller, leave a placeholder for the fragment:
+In the markup produced by the implementation, leave a placeholder for the fragment:
 
 `<!--# COMPONENT / -\->`
 
-The site engine will then render the fragment's components here.
+The site engine then renders the fragment's components there.
 
-Using Thymeleaf, the placeholder may be generated with the following line of code:
+Using Thymeleaf, the placeholder may be generated with the following line:
 
-[source, HTML]
+[source,html]
 ----
 <div data-portal-component="fragment" data-th-remove="tag"/>
 ----
 
 
-== Text controllers
+== Text components
 
-Unlike the other components types, <<../cms/pages/text#, Text components>> are built-in to XP. This includes a standard controller that will render the component.
+Unlike other component types, <<../cms/pages/text#, Text components>> are built-in to XP and include a standard implementation.
 
-NOTE: Optionally bypass the built-in controller by running your own code rather than creating a placeholder for the text components.
+NOTE: Bypass the built-in implementation by running your own code instead of placing a text component placeholder.

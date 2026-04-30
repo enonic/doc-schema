@@ -4,9 +4,7 @@
 
 The XP framework also supports execution of asynchronous (potentially long running) background tasks.
 
-Tasks may be executed as inline functions, or as named tasks. Named tasks are defined by creating a folder i.e. `src/main/resources/tasks/<taskname>` in your project.
-
-TODO
+Tasks may be executed as inline functions, or as named tasks. Named tasks are defined by creating a folder, e.g. `src/main/resources/tasks/<taskname>`, in your project.
 
 image::task-engine.svg[Task execution process, 768px]
 
@@ -29,62 +27,52 @@ form:
     max: 1
 ----
 
-When parameters are passed to the task controller, they will be validated according to the descriptor schema.
+Parameters passed to the task are validated against the descriptor schema before the implementation runs.
 
-The `form` list in the descriptor is optional, and may be omitted if the task does not accept any parameters.
+The `form` list is optional and may be omitted if the task does not accept any parameters.
 
-[#controller]
-== Controller
+[#implementation]
+== Implementation
 
-Named tasks require a controller that represents the actual code to be executed. The controller must be placed in the task folder as `src/main/resources/tasks/<taskname>/<taskname>.js`.
+A named task's implementation lives at `src/main/resources/tasks/<taskname>/<taskname>.ts` and must export a `run` function. The task engine invokes `run` with the task parameters as the first argument and the assigned `taskId` as the second.
 
-A named task controller must export a run function, which will be invoked by the <<../runtime/task-engine#,task engine>>. once a task is executed.
-
-The run function will receive the task parameters as a JSON object.
-
-`taskId` is provided as a second argument of the function.
-
-.Example task controller
-[source,javascript]
+.Example task implementation
+[source,typescript]
 ----
-var taskLib = require('/lib/xp/task');
+const taskLib = require('/lib/xp/task');
 
-exports.run = function (params, taskId) {
+exports.run = (params, taskId) => {
+    const count = params.count || 42;
+    taskLib.progress({ info: `Initializing task ${taskId}` });
 
-    var count = params.count || 42;
-    taskLib.progress({info: 'Initializing task ' + taskId});
-
-    for (var i = 0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
         taskLib.progress({
-            info: 'Processing item ' + (i + 1),
+            info: `Processing item ${i + 1}`,
             current: i,
             total: count
         });
         processItem(i);
     }
 
-    taskLib.progress({info: 'Task completed ' + taskId});
+    taskLib.progress({ info: `Task completed ${taskId}` });
 };
 ----
 
 == Execution
 
-Named tasks may be executed by any controller in the system. Applications may even run tasks in other applications.
+Named tasks may be submitted from any module in the app. Applications may even run tasks defined in other applications.
 
-Below is an example of how to run a specific task.
-
-.Sample execution of named task
-[source,javascript]
+.Sample execution of a named task
+[source,typescript]
 ----
-var taskLib = require('/lib/xp/task');
+const taskLib = require('/lib/xp/task');
 
-var taskId = taskLib.submitTask({
-        descriptor: `mytask`,
-        config: {
-            count: 10
-        }
+const taskId = taskLib.submitTask({
+    descriptor: 'mytask',
+    config: {
+        count: 10
     }
-);
+});
 ----
 [#distributable]
 == Distributable

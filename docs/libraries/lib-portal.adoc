@@ -15,7 +15,7 @@ dependencies {
 }
 ----
 
-Add the `import` statement to your controller:
+Add the `import` statement to your code:
 
 [source,typescript]
 ----
@@ -185,7 +185,7 @@ const expected = 'ComponentUrlParams{type=server, params={}, component=main/0}'
 
 === getComponent
 
-Returns component in the current execution context. It is meant to be called from a layout or a part controller.
+Returns the component in the current execution context. Meant to be called from a layout or part.
 
 [.lead]
 Returns
@@ -234,7 +234,7 @@ const expected = {
 
 === getContent
 
-Returns content in the current execution context. It is meant to be called from a page, a layout or a part controller.
+Returns the content in the current execution context. Meant to be called from a page, layout, or part.
 
 [.lead]
 Returns
@@ -469,7 +469,7 @@ const text = getMultipartText('item1');
 
 === getSite
 
-Returns the parent site of a content in the current execution context. It is meant to be called from a page, a layout or a part controller.
+Returns the parent site of the content in the current execution context. Meant to be called from a page, layout, or part.
 
 [.lead]
 Returns
@@ -515,7 +515,7 @@ const expected = {
 
 === getSiteConfig
 
-Returns configuration of the parent site for a content in the current execution context. It is meant to be called from a page, a layout or a part controller.
+Returns the configuration of the parent site for the content in the current execution context. Meant to be called from a page, layout, or part.
 
 [.lead]
 Returns
@@ -901,7 +901,7 @@ const expected = '<p><a href="https://example.com/">Link</a></p>';
 
 === apiUrl
 
-Generates a URL pointing to a <<../framework/universal-api#, Universal API>>. Picks the right URL form based on the current controller's context — service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
+Generates a URL pointing to a <<../framework/universal-api#, Universal API>>. Picks the right URL form based on the calling context — a service-point under the active engine when called from a site, webapp, or admin tool, and `/api/` otherwise.
 
 [.lead]
 Parameters

@@ -2,7 +2,9 @@
 :toc: right
 :imagesdir: images
 
-Admin extensions are app-provided HTTP endpoints that mount into existing <<admin-tools#,admin tools>> at named interface points. They were previously called *widgets*. The most common use is rendering an embedded UI fragment, but an extension is just an HTTP controller — it can equally well serve JSON, binary assets, or any other payload the host tool agrees to consume.
+Admin extensions are app-provided HTTP endpoints that mount into existing <<admin-tools#,admin tools>> at named interface points. (previously known as *widgets*). 
+
+The most common usage is rendering an embedded UI fragment, but an extension is just an HTTP module — it can equally well serve JSON, binary assets, or any other payload the host tool agrees to consume.
 
 == Introduction
 
@@ -15,22 +17,22 @@ An admin extension:
 
 == Usage
 
-To declare an extension, place a descriptor and a controller under `+src/main/resources/admin/extensions/<extension-name>/+`:
+To declare an extension, place a descriptor and an implementation under `+src/main/resources/admin/extensions/<extension-name>/+`:
 
 [source,files]
 ----
 src/main/resources/admin/extensions/
   my-extension/
     my-extension.yaml   # <1>
-    my-extension.js     # <2>
+    my-extension.ts     # <2>
     my-extension.svg    # <3>
 ----
 
 <1> Descriptor — see <<#descriptor,below>>.
-<2> HTTP controller for the extension URL.
+<2> HTTP function implementation for the extension URL.
 <3> Optional SVG icon, served by the discovery endpoint.
 
-The folder name, descriptor base name, and controller base name must all match `<extension-name>`.
+The folder name, descriptor base name, and implementation base name must all match `<extension-name>`.
 
 [#descriptor]
 == Descriptor
@@ -58,31 +60,31 @@ config:                               # <5>
 <2> *description* — string, or `{ text, i18n }`.
 <3> *interfaces* — names of interface points the extension plugs into. The host tool must publish a matching name in its own `interfaces:` list. Use the reserved value `"generic"` to make the extension mountable from any admin tool.
 <4> *allow* — principal keys granted access. `role:system.admin` is always permitted in addition to anything listed here. Required to expose the extension to non-admins.
-<5> *config* — free-form key/value map readable from the controller and surfaced in the discovery endpoint.
+<5> *config* — free-form key/value map readable from the implementation and surfaced in the discovery endpoint.
 
-== Controller
+== Implementation
 
-The controller is a standard <<http#,HTTP controller>> at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.js+`. The shape of the response is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
+The implementation lives at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.ts+` and exports an <<http#, HTTP function>> for each method the extension responds to. The response shape is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
 
-.Sample my-extension.js
-[source,javascript]
+.Sample my-extension.ts
+[source,typescript]
 ----
-exports.GET = function (req) {
+exports.GET = (req) => {
     const contentId = req.params.contentId;
     return {
-        body: '<div>Inspecting content ' + contentId + '</div>',
+        body: `<div>Inspecting content ${contentId}</div>`,
         contentType: 'text/html'
     };
 };
 ----
 
-For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
+For anything beyond a couple of static endpoints, use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
 == URL
 
 The URL at which an extension is reachable is a platform internal and may change between XP releases — *do not hard-code it*. Use `extensionUrl()` from <<../libraries/lib-admin#extensionurl, lib-admin>>; it resolves the URL based on the current admin tool context.
 
-[source,javascript]
+[source,typescript]
 ----
 const adminLib = require('/lib/xp/admin');
 
