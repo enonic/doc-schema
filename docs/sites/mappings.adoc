@@ -12,10 +12,10 @@ Mappings are the first processing step in the <<../runtime/engines/site-engine#,
 
 == Usage
 
-Mappings are defined in the <<../cms/sites#site_xml, site descriptor>>. Examples of use cases are:
+Mappings are defined in the <<../sites#, site descriptor>> (`cms/site.yaml`). Examples of use cases are:
 
-* Map a controller to a specific URL pattern i.e. /mypath
-* Map a controller to a specifc set of content through content matches, i.e. only apply to the `portal:fragment` content type
+* Map a controller to a specific URL pattern i.e. `/mypath`
+* Map a controller to a specific set of content through content matches, i.e. only apply to the `portal:fragment` content type
 * Map a filter to parts of or the entire site structure
 
 .cms/site.yaml mapping examples
@@ -46,7 +46,7 @@ mappings:
 
 <5> *filter* defines the path to the <<../framework/filters#, HTTP filter>>.
 
-<6> *service* specifies a system service handled by the filter (e.g. the `+.../_/image/...+` endpoint). See <<Service mappings>>.
+<6> *service* specifies a system service handled by the filter or controller (e.g. the `+.../_/image/...+` endpoint). See <<Service mappings>>.
 
 NOTE: Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
 
@@ -61,7 +61,7 @@ In case there are several mappings with the same `order` value, the sort order o
 
 == Pattern mappings
 
-Pattern based mappings can for instance be used to take over the request for a specific URL before it reaches the content rendering.
+Pattern-based mappings can, for instance, be used to take over the request for a specific URL before it reaches the content rendering.
 An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.
 
 The `pattern` property specifies a regular expression to be matched against the request URL.
