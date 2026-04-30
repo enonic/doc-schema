@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Response Processors</title>
+<title>Component API</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,14 +437,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Response Processors</h1>
+<h1>Component API</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#triggering">Triggering</a></li>
-<li><a href="#execution_order">Execution order</a></li>
+<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
 </ul>
 </div>
 </div>
@@ -452,7 +449,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A special filter, mainly used to inject page contributions.</p>
+<p>The component API enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Page components may also be directly accessed.
+For instance, one may render only the first part within in a page&#8217;s main region.</p>
+</div>
+<div class="paragraph">
+<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Component rendering</dt>
+<dd>
+<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
+</dd>
+</dl>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -461,125 +478,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Response processors are only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Proessors get executed between the <code>component rendring</code> step, and the <code>contributions filter</code> in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> pipeline. Response processors are commonly used by apps that need to inject &lt;&lt;<a href="contributions.ahtml">page contributions</a> without placing a component on the page.</p>
+<p>By implementing <code>exports.POST()</code> or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.</p>
 </div>
 <div class="paragraph">
-<p>Use cases are:</p>
+<p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Dynamically adding page contributions (i.e. script tags)</p>
-</li>
-<li>
-<p>General manipulation of the response markup i.e. headers or body (i.e. adding SEO tags).</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Consider using regular <a href="filters.ahtml">HTTP Filters</a> for other use-cases.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Create a response processor by placing a controller file in your project folder under <code>src/main/resources/cms/processors/</code> i.e. <code>src/main/resources/cms/processors/myprocessor.js</code>.</p>
-</div>
-<div class="paragraph">
-<p>The controller must export a <code>responseProcessor</code>. ResponseProcessors receive both a request and response objects. Below is an example that dynamically adds a <code>bodyEnd</code> <a href="contributions.ahtml">page contribution</a> to the response.</p>
-</div>
-<div class="listingblock">
-<div class="title">processors/tracker.js</div>
-<div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">exports.responseProcessor = function (req, res) {
-    var trackingScript = '&lt;script src="http://some.cdn/js/tracker.js"&gt;&lt;/script&gt;';
-
-    // Check if contribution field exists, if not create it
-    var bodyEnd = res.pageContributions.bodyEnd;
-    if (!bodyEnd) {
-        res.pageContributions.bodyEnd = [];
-    }
-
-    // Add contribution
-    res.pageContributions.bodyEnd.push(trackingScript);
-
-    return res;
-};</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="triggering"><a class="link" href="#triggering">Triggering</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To wire a processor into the execution pipeline, it must be declared in the app&#8217;s <a href="../cms/sites.ahtml#site_xml">site descriptor</a>, and the application must be added to the respective site.</p>
-</div>
-<div class="listingblock">
-<div class="title">cms/site.yaml</div>
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
-processors:
-- name: "tracker" <i class="conum" data-value="1"></i><b>(1)</b>
-  order: 10       <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>name</strong> indicates the name of the controller file (without the <code>.js</code> extension).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>order</strong> indicates execution order; lower value means higher priority.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Response processors may change any of the values of the response object, including: HTTP status code, response body, HTTP headers, cookies and page contributions.
-It is also possible to return the response object received without any changes.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>An application may contain multiple processors.
-Multiple applications can be added to a Site.
-When a page is rendered, all processors are ordered and executed accordingly.</p>
-</div>
-<div class="paragraph">
-<p>The order of execution is determined by the <code>order</code> value (as defined in the <a href="../cms/sites.ahtml#site_xml">site descriptor</a>) combined with the order of the application list within the site.</p>
-</div>
-<div class="paragraph">
-<p>Processors with a <strong>lower</strong> order will be executed first (across all apps within the site).</p>
-</div>
-<div class="paragraph">
-<p>In case there are several filters with the same <code>order</code> number, the position of the applications (as configured on the site) determines the order of execution.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If <code>applyFilters</code> is set to <code>false</code> in the <a href="../framework/http.ahtml#response">response object</a>, any further response processing or filters will be ignored. Default value is <code>true</code>.
 </td>
 </tr>
 </table>
@@ -589,7 +493,7 @@ If <code>applyFilters</code> is set to <code>false</code> in the <a href="../fra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>

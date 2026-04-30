@@ -672,11 +672,11 @@ Modifications to the <code>headers</code> object do not affect the result of <co
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Site engine only. HTML fragments contributed to the rendered markup — see <a href="../sites/contributions.ahtml">page contributions</a>.</td>
+<td>Site engine only. HTML fragments contributed to the rendered markup — see <a href="sites/contributions.ahtml">page contributions</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Site engine only. If <code>false</code>, no further <a href="../sites/processors.ahtml">response processors</a> or filters run (default <code>true</code>).</td>
+<td>Site engine only. If <code>false</code>, no further <a href="sites/processors.ahtml">response processors</a> or filters run (default <code>true</code>).</td>
 </tr>
 </table>
 </div>
@@ -764,7 +764,7 @@ Modifications to the <code>headers</code> object do not affect the result of <co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>

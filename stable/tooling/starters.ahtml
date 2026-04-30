@@ -632,7 +632,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">cms/processors/</dt>
 <dd>
-<p><a href="../sites/processors.ahtml">Response processors</a> for post-processing the HTML response from sites.</p>
+<p><a href="../framework/sites/processors.ahtml">Response processors</a> for post-processing the HTML response from sites.</p>
 </dd>
 <dt class="hdlist1">cms/layouts/</dt>
 <dd>
@@ -710,7 +710,7 @@ Check out <a href="https://market.enonic.com/starters/library-starter">the libra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>

@@ -567,14 +567,14 @@ exports.GET = () =&gt; ({
 </dl>
 </div>
 <div class="paragraph">
-<p>Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <a href="../sites/components.ahtml">components</a>.</p>
+<p>Component controllers (page, part, layout) are HTTP functions specialised for rendering HTML in the site engine — see <a href="sites/components.ahtml">components</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>

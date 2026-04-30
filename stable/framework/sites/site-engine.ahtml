@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Component API</title>
+<meta name="author" content="toc: right">
+<title>Site engine and request pipeline</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,11 +438,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Component API</h1>
+<h1>Site engine and request pipeline</h1>
+<div class="details">
+<span id="author" class="author">toc: right</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
+<li><a href="#site_request_pipeline">Site request pipeline</a></li>
+<li><a href="#contextual_apis">Contextual APIs</a></li>
 </ul>
 </div>
 </div>
@@ -449,27 +454,60 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The component API enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
+<p>The site engine is responsible for processing of requests on the endpoint <code>:8080/site/&lt;project&gt;/&lt;branch&gt;/*</code>.  &lt;project&gt; and &lt;branch&gt; refer to CMS specific projects and branches, for instance <code>:8080/site/default/draft</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
+<h2 id="site_request_pipeline"><a class="link" href="#site_request_pipeline">Site request pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Page components may also be directly accessed.
-For instance, one may render only the first part within in a page&#8217;s main region.</p>
+<p>The site pipeline is executed as a subset of the <a href="../runtime/web-engine.ahtml#common_request_pipeline">common pipeline</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/site-pipeline.svg" alt="Site rendering pipeline" width="768px">
+</div>
 </div>
 <div class="paragraph">
-<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
+<p>This section describes the standard pipeline involved in processing a page request i.e. <code>:8080/site/&lt;project&gt;/&lt;branch&gt;/&lt;path-to-page&gt;</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Component rendering</dt>
+<dt class="hdlist1">Mappings</dt>
 <dd>
-<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
+<p>Uses path or content based mappings from site descriptor to trigger filters and controllers</p>
+</dd>
+<dt class="hdlist1">Page resolver</dt>
+<dd>
+<p>Looks up content in path, and resolves its controller + config (optionally via page template).</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>For two content types Page resolver does not resolve any controller.
+- For <code>base:shortcut</code> the referenced content path is returned with status code <code>307 Temporary Redirect</code>.
+- For <code>portal:fragment</code> controller is not applicable. A fragment is rendered directly.</p>
+</div>
+<div class="paragraph">
+<p>For the rest of content types controllers are considered in the following order:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Controller that is set directly on content.</p>
+</li>
+<li>
+<p>Controller that is set on a page template for content.
+If set page template is unavailable (i.e. deleted), Page resolver considers it as if page template was not set.</p>
+</li>
+<li>
+<p>Controller that is set on the first found page template (in <code>{site}/_templates</code> folder) that supports content&#8217;s content type.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If no controller is found, response status code is set to <code>404 Not Found</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -478,22 +516,65 @@ For instance, one may render only the first part within in a page&#8217;s main r
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>By implementing <code>exports.POST()</code> or any other HTTP methods in the component controller, it may also be used to act as the backend for your component.</p>
-</div>
-<div class="paragraph">
-<p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
-</div>
+In <code>inline</code> rendering mode response status code is set to <code>418</code> instead of <code>404</code>, so Content Studio can switch to alternative rendering.
+In <code>edit</code> rendering mode status code is <code>200</code> instead of <code>404</code> to allow Content Studio to render in-place Controller selector.
 </td>
 </tr>
 </table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Page renderer</dt>
+<dd>
+<p>Resolves controller and optional configuration (could also come from page template).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If controller is missing, returns 404 (Not found)</p>
+</li>
+<li>
+<p>If controller exists, executes it and returns 200 (OK) by default. Output may potentially include component placeholders</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Response processors</dt>
+<dd>
+<p>For text/html responses, any response processors defined in the site descriptor will be executed. Processors may manipulate the result, for instance by adding pageContributions</p>
+</dd>
+<dt class="hdlist1">Contributions filter</dt>
+<dd>
+<p>For text/html responses, any pageContributions in the response object will now be merged into the response body.</p>
+</dd>
+<dt class="hdlist1">Response filters</dt>
+<dd>
+<p>Any filters registered through a mapping may now execute their final processing before the response is returned from the pipeline.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contextual_apis"><a class="link" href="#contextual_apis">Contextual APIs</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following Universal API&#8217;s are always mounted on the site&#8217;s underscore endpoint.</p>
+</div>
+<div class="paragraph">
+<p>TODO:</p>
+</div>
+<div class="paragraph">
+<p>ASSET
+COMPONENT
+IMAGE
+ATTACHMENT</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>

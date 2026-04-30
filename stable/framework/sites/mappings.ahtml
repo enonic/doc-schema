@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Component controllers</title>
+<title>Mappings</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,24 +437,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Component controllers</h1>
+<h1>Mappings</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#context">Context</a></li>
-<li><a href="#page_controllers">Page controllers</a></li>
-<li><a href="#part_controllers">Part controllers</a></li>
-<li><a href="#layout_controllers">Layout controllers</a></li>
-<li><a href="#regions">Regions</a>
+<li><a href="#usage">Usage</a>
 <ul class="sectlevel2">
-<li><a href="#component_placeholders">Component Placeholders</a></li>
-<li><a href="#javascript_example">JavaScript example</a></li>
-<li><a href="#templating_example">Templating example</a></li>
+<li><a href="#execution_order">Execution order</a></li>
 </ul>
 </li>
-<li><a href="#fragments">Fragments</a></li>
-<li><a href="#text_controllers">Text controllers</a></li>
+<li><a href="#pattern_mappings">Pattern mappings</a></li>
+<li><a href="#match_mappings">Match mappings</a></li>
+<li><a href="#service_mappings">Service mappings</a></li>
 </ul>
 </div>
 </div>
@@ -462,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Special controllers used to render page components.</p>
+<p>Map controllers or filters to specific content types, site relative URLs, or system services.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -471,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Component controllers are only used in context of the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
+Mappings are only available when using the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
 </td>
 </tr>
 </table>
@@ -481,282 +476,75 @@ Component controllers are only used in context of the <a href="../runtime/engine
 <div class="sect1">
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-For a hands on introduction to rendering pages with the Enonic framework, visit the <a href="https://developer.enonic.com/docs/my-first-site">My first site tutorial</a>.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>Component controllers are 1:1 aligned with their respective <a href="../cms/pages.ahtml">page component definitions</a> and must also be placed in specific locations within the code structure.</p>
-</div>
-<div class="paragraph">
-<p>They have the same capabilities as regular <a href="../framework/http.ahtml">HTTP functions</a>, you may take advantage of <a href="contributions.ahtml">page contributions</a>, and the fact that they are always executed in the context of a content item.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Markup response from a component must have a single root element.
-</td>
-</tr>
-</table>
+<p>Mappings are the first processing step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a> - and happens before page rendering starts. You may define mappings for both <a href="../framework/http.ahtml">HTTP functions</a> and <a href="../framework/filters.ahtml">filters</a>. The use cases are vast.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="context"><a class="link" href="#context">Context</a></h2>
+<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Component rendering is initiated by the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>. The controllers are derived when a client requests a specific page via the site engine:</p>
+<p>Mappings are defined in the <a href="../sites.ahtml">site descriptor</a> (<code>cms/site.yaml</code>). Examples of use cases are:</p>
 </div>
-<div class="paragraph">
-<p><code>HTTP request</code> &#8594; <code>/site/&lt;project&gt;/&lt;branch&gt;/path/to/content</code> &#8594; <code>resolve component</code> &#8594; <code>execute controller</code>.</p>
-</div>
-<div class="paragraph">
-<p>This means you will always have a specific content item in your context.</p>
-</div>
-<div class="paragraph">
-<p>API functions such as <a href="../libraries/lib-portal.ahtml#getContent">portalLib.getContent()</a>, and <a href="../libraries/lib-portal.ahtml#getComponent">portalLib.getComponent()</a> will automatically return values based on the context.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Thanks to the site engine&#8217;s built-in access control you are also guaranteed that the current user has read permissions to the contextual content item.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="page_controllers"><a class="link" href="#page_controllers">Page controllers</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Page controllers must be placed next to your <a href="../cms/pages.ahtml">page descriptor</a> i.e. <code>src/main/resources/cms/pages/&lt;page-name&gt;/&lt;page-name&gt;.js</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Map a controller to a specific URL pattern i.e. <code>/mypath</code></p>
+</li>
+<li>
+<p>Map a controller to a specific set of content through content matches, i.e. only apply to the <code>portal:fragment</code> content type</p>
+</li>
+<li>
+<p>Map a filter to parts of or the entire site structure</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
-<div class="title">Sample page controller using the context</div>
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">const portal = require('/lib/xp/portal');
-
-exports.GET = function(req) {
-
-  const content = portal.getContent();
-  return {
-    body: `&lt;html&gt;
-            &lt;body&gt;
-              &lt;h1&gt;${content.displayName}&lt;/h1&gt;
-            &lt;/body&gt;
-          &lt;/html&gt;`
-  };
-};</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="part_controllers"><a class="link" href="#part_controllers">Part controllers</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Part controllers must be placed next to your <a href="../cms/pages/parts.ahtml">part descriptor</a> i.e. <code>src/main/resources/cms/parts/&lt;part-name&gt;/&lt;part-name&gt;.js</code>.</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample part controller using the form value</div>
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">const portal = require('/lib/xp/portal');
-
-exports.GET = function(req) {
-
-  const config = portal.getComponent();
-  return {
-    body: `&lt;div&gt;
-              &lt;h1&gt;${config.heading}&lt;/h1&gt;
-          &lt;/div&gt;`
-  };
-};</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="layout_controllers"><a class="link" href="#layout_controllers">Layout controllers</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Layout controllers must be placed next to your <a href="../cms/pages/layouts.ahtml">layout descriptor</a> i.e. <code>src/main/resources/cms/layouts/&lt;layout-name&gt;/&lt;layout-name&gt;.js</code>.</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample layout using Thymeleaf to render two regions</div>
-<div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">var portal = require('/lib/xp/portal');
-var thymeleaf = require('/lib/thymeleaf');
-
-exports.GET = function (req) {
-    var component = portal.getComponent();
-
-    return {
-        body: thymeleaf.render(resolve('./layout-two-column.html'), {
-            leftRegion: component.regions["left"],
-            rightRegion: component.regions["right"],
-        })
-    };
-
-};</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Thymeleaf view to render layout</div>
-<div class="content">
-<pre class="highlight"><code class="language-HTML" data-lang="HTML">&lt;div class="row"&gt;
-  &lt;div data-portal-region="left"&gt;
-    &lt;div data-th-each="component : ${leftRegion.components}" data-th-remove="tag"&gt;
-      &lt;div data-portal-component="${component.path}" data-th-remove="tag" /&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;div data-portal-region="right"&gt;
-    &lt;div data-th-each="component : ${rightRegion.components}" data-th-remove="tag"&gt;
-      &lt;div data-portal-component="${component.path}" data-th-remove="tag" /&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="regions"><a class="link" href="#regions">Regions</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Component hierarcies are created via <a href="../cms/pages/regions.ahtml">regions</a>. Rendering a region essentially boils down to rendering the components of that region.</p>
-</div>
-<div class="paragraph">
-<p>To render a component, simply leave a component placeholder in your page or layout&#8217;s response markup. Component placeholders are then identified and rendered by the <a href="../runtime/engines/site-engine.ahtml">component rendering</a> step of the site engine.</p>
-</div>
-<div class="paragraph">
-<p>As components may contain new regions, with new placeholders, this process will be repeated until there are no more placeholders left in the response.</p>
-</div>
-<div class="sect2">
-<h3 id="component_placeholders"><a class="link" href="#component_placeholders">Component Placeholders</a></h3>
-<div class="paragraph">
-<p>Placeholders are formatted as HTML comments - and includes the component path. Like this example:</p>
-</div>
-<div class="paragraph">
-<p><code>&lt;!--# COMPONENT /main/0/left/1 --&gt;</code></p>
-</div>
-<div class="paragraph">
-<p>For <code>text/html</code> responses, the site engine will look for component placeholders. For each placeholder, the component&#8217;s controller is executed and the output merged into the response.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="javascript_example"><a class="link" href="#javascript_example">JavaScript example</a></h3>
-<div class="paragraph">
-<p>A basic approach to rendering the main region of a page might look something like this:</p>
-</div>
-<div class="listingblock">
-<div class="title">Manually create component placeholders</div>
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var portal = require('/lib/xp/portal');
-
-exports.GET = function(req) {
-
-  // Get components of the main region
-  const content = portal.getContent();
-  const components = content.page.regions["main"].components || [];
-
-  // Render with placeholders
-  return {
-    body: `&lt;html&gt;&lt;head&gt;Placeholder demo&lt;/head&gt;
-            &lt;body&gt;
-              &lt;main data-portal-region="main"&gt;
-                ${components.map((c) =&gt; `&lt;!--# COMPONENT ${c.path} --&gt;`).join('\n')}
-              &lt;/main&gt;
-            &lt;/body&gt;
-          &lt;/html&gt;`
-  };
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="templating_example"><a class="link" href="#templating_example">Templating example</a></h3>
-<div class="paragraph">
-<p>Using Thymeleaf templating, placeholder generation might look like this:</p>
-</div>
-<div class="listingblock">
-<div class="title">Page controller passing region to template</div>
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">var thymeleaf = require('/lib/thymeleaf');
-
-exports.GET = function(req) {
-
-  var portal = require('/lib/xp/portal');
-
-  // Get the contextual content item
-  var content = portal.getContent();
-  var mainRegion = content.page.regions["main"];
-
-  // Render and return the result
-  return {
-    body: thymeleaf.render(view, mainRegion);
-  };
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Thymeleaf template creating placeholders</div>
-<div class="content">
-<pre class="highlight"><code class="language-html" data-lang="html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1&gt;Page with placeholders&lt;/h1&gt;
-    &lt;main data-portal-region="main"&gt;
-      &lt;div data-th-each="component : ${mainRegion.components}" data-th-remove="tag"&gt;
-        &lt;div data-portal-component="${component.path}" data-th-remove="tag" /&gt;
-      &lt;/div&gt;
-    &lt;/main&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="fragments"><a class="link" href="#fragments">Fragments</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Fragments essentially rendered via their existing controllers. However, as fragments are just subsets of a page, the will likely be rendered without any styling, header or footer.</p>
-</div>
-<div class="paragraph">
-<p>To mitigate this, the recommended approach is adding a controller mapping to help spice up the visual appearance.</p>
-</div>
-<div class="paragraph">
-<p>Add a <a href="mappings.ahtml">controller mapping</a> for the <code>portal:fragment</code> content type. This will then be executed every time a fragment is rendered.</p>
-</div>
-<div class="listingblock">
-<div class="title">cms/site.yaml</div>
+<div class="title">cms/site.yaml mapping examples</div>
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
 mappings:
+- controller: "/cms/foobar/api.js" <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
+  pattern: '/api/v\d+/.*'          <i class="conum" data-value="3"></i><b>(3)</b>
+  order: 10
 - controller: "/cms/pages/default/default.js"
-  match: "type:'portal:fragment'"</code></pre>
+  match: "type:'portal:fragment'"  <i class="conum" data-value="4"></i><b>(4)</b>
+- filter: "/cms/foobar/filter.js"  <i class="conum" data-value="5"></i><b>(5)</b>
+  pattern: '/dont-match-me/.*'
+  invertPattern: true
+  order: 10
+- filter: "/cms/services/image.js" <i class="conum" data-value="6"></i><b>(6)</b>
+  service: "image"</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><strong>controller</strong> defines the path to a standard <a href="../framework/http.ahtml">HTTP function</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><strong>order</strong> defines the <a href="#execution_order">Execution order</a> across apps. Default is <code>50</code>. A lower number means higher priority.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><strong>pattern</strong> specifies a regular expression based site contextual URL — see <a href="#pattern_mappings">Pattern mappings</a>. Default is <code>/.*</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><strong>match</strong> is a property condition evaluated against the contextual content — see <a href="#match_mappings">Match mappings</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><strong>filter</strong> defines the path to the <a href="../framework/filters.ahtml">HTTP filter</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><strong>service</strong> specifies a system service handled by the filter or controller (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a>.</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -765,35 +553,57 @@ mappings:
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-It can often be convenient to reuse your page controller, as this is already doing the job.
+Each mapping may exclusively specify a filter OR a controller, and it must define at least one pattern or match setting.
 </td>
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
 <div class="paragraph">
-<p>In the markup produced by the controller, leave a placeholder for the fragment:</p>
+<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
 </div>
 <div class="paragraph">
-<p><code>&lt;!--# COMPONENT / --&gt;</code></p>
+<p>If two different apps within a site has the same mapping path or match expression,
+the mapping with the <strong>lower</strong> <code>order</code> value is used.</p>
 </div>
 <div class="paragraph">
-<p>The site engine will then render the fragment&#8217;s components here.</p>
-</div>
-<div class="paragraph">
-<p>Using Thymeleaf, the placeholder may be generated with the following line of code:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-HTML" data-lang="HTML">&lt;div data-portal-component="fragment" data-th-remove="tag"/&gt;</code></pre>
+<p>In case there are several mappings with the same <code>order</code> value, the sort order of the applications on the site determines which mapping will be used.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="text_controllers"><a class="link" href="#text_controllers">Text controllers</a></h2>
+<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unlike the other components types, <a href="../cms/pages/text.ahtml">Text components</a> are built-in to XP. This includes a standard controller that will render the component.</p>
+<p>Pattern-based mappings can, for instance, be used to take over the request for a specific URL before it reaches the content rendering.
+An example use case is exposing an API endpoint on the contextual URL /api, or triggering a filter to execute for every request within the site.</p>
+</div>
+<div class="paragraph">
+<p>The <code>pattern</code> property specifies a regular expression to be matched against the request URL.</p>
+</div>
+<div class="paragraph">
+<p>The part of the URL that is taken into account for the matching is the path relative to the site where the application is configured.
+For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then <code>pattern: '/api/.*'</code> will match requests with URL ending in <code>example.com/mysite/api/.*</code>.
+The protocol, host and port are not involved in the pattern matching.</p>
+</div>
+<div class="paragraph">
+<p>If the pattern contains the question mark <code>?</code> character, the URL to match will also include query parameters.
+The query parameters will be normalized, so they are always in alphabetical order.</p>
+</div>
+<div class="paragraph">
+<p>For example, the pattern <code>pattern: '/api\?category=foo&amp;key=\d'+</code> matches both:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/api?category=foo&amp;key=123</code></p>
+</li>
+<li>
+<p>and <code>/api?key=123&amp;category=foo</code></p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -802,7 +612,141 @@ It can often be convenient to reuse your page controller, as this is already doi
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Optionally bypass the built-in controller by running your own code rather than creating a placeholder for the text components.
+The question mark <code>?</code> is escaped with a backslash in the pattern because it is a quantifier in regular expressions. Use <strong>single-quoted</strong> YAML strings for any pattern containing backslashes — YAML&#8217;s double-quoted form interprets backslash escapes and would corrupt regex tokens like <code>\d</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Set <code>invertPattern: true</code> on a mapping to negate the result of evaluating the regular expression.</p>
+</div>
+<div class="paragraph">
+<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
+</div>
+<div class="paragraph">
+<p>Examples:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Anything ending with <code>.json</code> within the <code>/api/*</code> path: <code>pattern: '/api/.*\.json'</code></p>
+</li>
+<li>
+<p>All items within the site, including the site itself: <code>pattern: '/.*'</code></p>
+</li>
+<li>
+<p>Regex with query string: <code>pattern: '/endpoint\?bar=\d&amp;foo=.*'+</code></p>
+</li>
+<li>
+<p>Inverted via <code>invertPattern: true</code> together with <code>pattern: '/section/.*'</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map controller or filter to the site itself.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Match based mappings can for instance be used to automatically render content types without using page templates or associating content with a controller directly.
+An example use case is automatic handling of the content type <code>portal:fragment</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>match</code> property specifies a condition related to the content corresponding with the requested URL path.</p>
+</div>
+<div class="paragraph">
+<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
+</div>
+<div class="paragraph">
+<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content.</p>
+</div>
+<div class="paragraph">
+<p>Examples:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Match fragment content type: <code>match: "type:'portal:fragment'"</code></p>
+</li>
+<li>
+<p>Match content within the <code>/features/</code> path: <code>match: "_path:'/features/.*'"</code></p>
+</li>
+<li>
+<p>Match custom property with string value: <code>match: "data.employee.type:'developer'"</code></p>
+</li>
+<li>
+<p>Match custom property with a number: <code>match: "data.product.category:42"</code></p>
+</li>
+<li>
+<p>Match custom property with a boolean: <code>match: "x.com-enonic-myapp.menuItem.show:true"</code></p>
+</li>
+<li>
+<p>Match any content: <code>match: "type:'.+'"</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The expected value can be either a regular expression to match the property value, or simply a string, number or boolean (<code>true</code> | <code>false</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Missing/unavailable content does not match any condition. Omit <code>match</code> if you need to map a controller or filter to a URL that does not correspond to any content.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Service-based mappings can be used to associate service requests with controllers or filters directly.</p>
+</div>
+<div class="paragraph">
+<p>Supported services:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>image</code> (deprecated)</dt>
+<dd>
+<p>Maps requests to the legacy image service at <code>/_/image/&lt;id&gt;[:&lt;fingerprint&gt;]/&lt;scale&gt;/&lt;name&gt;</code> (e.g. <code>/_/image/123456/scale-100-100/photo.jpg</code>). Replaced by the <code>media:image</code> Universal API.</p>
+</dd>
+<dt class="hdlist1"><code>attachment</code> (deprecated)</dt>
+<dd>
+<p>Maps requests to the legacy attachment service at <code>/_/attachment/&lt;mode&gt;/&lt;id&gt;[:&lt;fingerprint&gt;]/&lt;name&gt;</code> (e.g. <code>/_/attachment/inline/123456/logo.png</code>). Replaced by the <code>media:attachment</code> Universal API.</p>
+</dd>
+<dt class="hdlist1"><code>component</code></dt>
+<dd>
+<p>Maps requests to contextual page components at <code>/_/component/&lt;component-path&gt;</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="../framework/universal-api.ahtml">Universal APIs</a> mounted as service points (<code>/_/&lt;app&gt;:&lt;api&gt;/</code>) cannot be remapped through site mappings — they are routed before the site engine processes mappings. If you need custom behavior on a service-point URL, implement a custom Universal API instead.
 </td>
 </tr>
 </table>
@@ -812,7 +756,7 @@ Optionally bypass the built-in controller by running your own code rather than c
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 12:09:26 UTC
+Last updated 2026-04-30 12:59:01 UTC
 </div>
 </div>
 </body>
