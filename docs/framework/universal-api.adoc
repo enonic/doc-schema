@@ -48,7 +48,7 @@ A custom API can act as a WebSocket channel or a Server-Sent Events stream — s
 [#descriptor]
 == Descriptor
 
-An API descriptor is required. It defines the API's access control, the connectors it is mounted on, and metadata such as title, description, and documentation URL.
+An API descriptor is required. It defines the API's access control, the endpoints it is mounted on, and metadata such as title, description, and documentation URL.
 
 Example of a full API descriptor:
 
@@ -71,7 +71,7 @@ allow: # <5>
 
 <3> *documentationUrl* is a link to the API documentation that will be shown in the UI.
 
-<4> By default, APIs are not mounted on the <<#web-api,Generic API endpoint>>.
+<4> By default, APIs are not mounted on the <<#portal-endpoint,Portal endpoint>>.
 To enable it, add `"web"` to the `mount` list.
 
 <5> APIs must list principals that have access to it. It is required to specify at least one principal. Use `role:system.everyone` to make the API public.
@@ -83,10 +83,10 @@ NOTE: A request to an API that is not mounted on the matched URL returns *404 No
 A Universal API can be exposed through three *independent* axes — they don't substitute for each other and any combination is valid:
 
 . *Service point* — the API is mounted into a `site`, `webapp`, or `admin tool` engine via that engine's descriptor.
-. *Web API* — the API opts in with `mount: "web"` and becomes reachable on the public XP connector under `/api/`.
-. *Management API* — the API opts in with `mount: "management"` and becomes reachable on the *management connector*, which listens on its own port.
+. *Portal endpoint* — the API opts in with `mount: "web"` and becomes reachable on the *Portal* endpoint (the public XP port, aka Web) under `/api/`.
+. *Management endpoint* — the API opts in with `mount: "management"` and becomes reachable on the *Management* endpoint, which listens on its own port.
 
-The `/api/` URL prefix is the same for both Web API and Management API, but the two are served by *different network connectors on different ports*. The management connector is not reachable through the public connector and vice versa.
+The `/api/` URL prefix is the same on both endpoints, but the two are served on *different ports*. The Management endpoint is not reachable through the Portal endpoint and vice versa.
 
 [#service-point]
 == Service point
@@ -141,19 +141,21 @@ apis:
 
 NOTE: Wildcards and "expose all APIs from app X" rules are intentionally not supported here. Each API must be listed by its descriptor key. The reason is security: it prevents new or insecure APIs from being silently exposed on a service path when an app is upgraded or a new dependency is added. Publishing an additional API always requires an explicit change to the hosting descriptor.
 
-[#web-api]
-== Web API
+[#portal-endpoint]
+== Portal (aka Web) Endpoint
 
-The dedicated `/api` endpoint exposes APIs independently of any engine, so they can be consumed by any HTTP client:
+The dedicated `/api` URL on the *Portal* endpoint (the public XP port) exposes APIs independently of any engine, so they can be consumed by any HTTP client:
 
 * Generic API endpoint: `/api/<app-name>:<api-name>/`
 
 To opt in, an API must include `"web"` in its `mount` list (see <<#descriptor,API descriptor>>).
 
-[#management-api]
-== Management API
+[#management-endpoint]
+== Management Endpoint
 
-An API can also be exposed on the *management connector* by adding `"management"` to its `mount` list. The management connector is a separate listener on its own port, distinct from the public web connector — use it for internal or operational APIs that should not be reachable from the public network.
+NOTE: The Management endpoint is for *advanced use only*. It is intended for extending XP's management capabilities (cluster operations, internal tooling, infrastructure integrations) — not for regular application APIs.
+
+An API can also be exposed on the *Management* endpoint by adding `"management"` to its `mount` list. The Management endpoint is a separate listener on its own port, distinct from the Portal endpoint — use it for internal or operational APIs that should not be reachable from the public network.
 
 .src/main/resources/apis/<api-name>/<api-name>.yaml
 [source,yaml]
@@ -165,11 +167,11 @@ allow:
   - "role:system.admin"
 ----
 
-Both mounts can be combined: `mount: ["web", "management"]` makes the API reachable on both connectors. The `allow` principal list is enforced on every request regardless of which connector served it.
+Both mounts can be combined: `mount: ["web", "management"]` makes the API reachable on both endpoints. The `allow` principal list is enforced on every request regardless of which endpoint served it.
 
 == API discovery
 
-`GET /api` (or `GET /api/`) returns a JSON index of every API that opts in to the Web API mount. Discovery is only served on the *web connector* (the public web port) — it is not exposed on the management connector. The response is a `resources` array, one entry per API:
+`GET /api` (or `GET /api/`) returns a JSON index of every API mounted on the *endpoint that received the request*. Calling it on the Portal endpoint lists APIs with `"web"` in `mount`; calling it on the Management endpoint lists APIs with `"management"` in `mount`. The response is a `resources` array, one entry per API:
 
 [source,json]
 ----
@@ -191,9 +193,9 @@ Both mounts can be combined: `mount: ["web", "management"]` makes the API reacha
 
 Behavior worth knowing:
 
-* Only APIs whose descriptor includes `"web"` in `mount` are listed. APIs that are mounted only on the management connector or exclusively as service points under sites, webapps, or admin tools do not appear here.
+* Service points (APIs mounted only under sites, webapps, or admin tools) do not appear in either listing.
 * Both YAML-declared APIs and dynamically registered Java handlers are included.
-* The listing is *not* filtered by the caller's principals — clients see every web-mounted API and are expected to compare against the `allowedPrincipals` field themselves before invoking.
+* The listing is *not* filtered by the caller's principals — clients see every API mounted on the endpoint and are expected to compare against the `allowedPrincipals` field themselves before invoking.
 
 NOTE: Discovery is intended for development. By default it is enabled only when XP runs in dev mode and disabled in production.
 

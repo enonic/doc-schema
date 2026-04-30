@@ -109,7 +109,7 @@ A failed check returns *401 Unauthorized* if the configured ID provider asks for
 
 == Mounting Universal APIs
 
-Any API listed in `apis:` is mounted as a service point under the tool's URL. The same API can simultaneously be mounted on the public web connector (`mount: ["web"]` in the API descriptor) — the two mounts are independent. See <<universal-api#service-point,Universal API: Service point>>.
+Any API listed in `apis:` is mounted as a service point under the tool's URL. The same API can simultaneously be mounted on the Portal endpoint (`mount: ["web"]` in the API descriptor) — the two mounts are independent. See <<universal-api#service-point,Universal API: Service point>>.
 
 == Hosting admin extensions
 
