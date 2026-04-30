@@ -637,6 +637,18 @@ The default <code>dev</code> task is now registered automatically by the plugin.
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Remove any <code>java.toolchain.languageVersion</code> (and <code>sourceCompatibility</code> / <code>targetCompatibility</code>) configuration from your <code>build.gradle</code>. The XP Gradle plugin sets the correct Java toolchain automatically — manual settings can conflict with what the plugin expects.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="gradle_properties"><a class="link" href="#gradle_properties">gradle.properties</a></h3>
@@ -692,7 +704,7 @@ xpVersion = 8.0.0-SNAPSHOT #TODO 'SNAPSHOT' is only while XP 8.0 is in developme
 <div class="title">settings.gradle sample</div>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id("com.enonic.xp.settings") version "4.0.0-A3"
+    id("com.enonic.xp.settings") version "4.0.0-B1"
 }</code></pre>
 </div>
 </div>
@@ -1947,7 +1959,7 @@ Folder-based exports from XP 7 should be converted to a ZIP archive before they 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-30 11:27:06 UTC
+Last updated 2026-04-30 12:09:26 UTC
 </div>
 </div>
 </body>
