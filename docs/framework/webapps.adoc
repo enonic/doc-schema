@@ -26,6 +26,10 @@ Once deployed, the controller is reachable at `+<server>:<port>/webapp/<app-name
 
 NOTE: For anything beyond a couple of static endpoints, it is recommended to use the https://market.enonic.com/vendors/enonic/router-lib[router library] for method dispatch, parameter extraction, and pattern matching.
 
+== WebSocket and SSE
+
+A webapp can act as a WebSocket channel or a Server-Sent Events stream — same as any other XP controller. Return a `webSocket` or `sse` object from the request handler. See <<websocket#,WebSocket>> and <<sse#,SSE>> for the controller-side details.
+
 == Descriptor
 
 A webapp descriptor is *optional*. A webapp consisting of just `+webapp.js+` runs without any descriptor file.
@@ -42,6 +46,10 @@ apis:
 ----
 
 Each listed API becomes reachable as a service point at `+<server>:<port>/webapp/<app-name>/_/<app>:<api>/+`. See <<universal-api#service-point,Universal API: Service point>> for the full mounting rules.
+
+== Tracing
+
+Each webapp request emits a `renderApp` trace event with the application key and request path, observable through XP's standard tracing infrastructure.
 
 == See also
 

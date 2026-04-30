@@ -109,6 +109,10 @@
         {
           "title": "Webapps",
           "document": "framework/webapps"
+        },
+        {
+          "title": "Custom APIs",
+          "document": "framework/universal-api"
         }
       ]
     },
@@ -226,10 +230,6 @@
       "title": "Examples",
       "document": "examples",
       "menuItems": [
-        {
-          "title": "Custom APIs",
-          "document": "framework/universal-api"
-        },
         {
           "title": "Asset serving",
           "document": "static-assets"
