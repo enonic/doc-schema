@@ -800,7 +800,7 @@ This function returns immediately.
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">required for schedule.type = CRON</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>time zone of cron scheduling. It isn&#8217;t applicable to a onetime job.</p>
+<p>time zone of cron scheduling. It isn&#8217;t applicable to a one-time job.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -841,7 +841,7 @@ const simpleOneTimeJob = create({
     name: 'my-project',
     descriptor: 'appKey:task',
     enabled: true,
-    schedule: {type: 'ONE_TIME', value: '2021-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 
 const extendedCronJob = create({
@@ -891,10 +891,7 @@ const expectedExtendedCronJob = {
     config: {
         a: 1,
         b: 2,
-        c: {
-            0: '1',
-            1: '2'
-        },
+        c: ['1', '2'],
         d: {
             e: {
                 f: 3.6,
@@ -905,8 +902,8 @@ const expectedExtendedCronJob = {
     user: 'user:system:user',
     creator: 'user:system:creator',
     modifier: 'user:system:creator',
-    createdTime: '2021-01-01T10:36:00Z',
-    modifiedTime: '2016-01-01T10:36:00Z',
+    createdTime: '2016-11-02T10:36:00Z',
+    modifiedTime: '2016-11-02T10:36:00Z',
     schedule: {
         value: '* * * * 5',
         timeZone: 'GMT-02:00',
@@ -1311,7 +1308,7 @@ if (result) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:15:30 UTC
+Last updated 2026-05-03 09:15:58 UTC
 </div>
 </div>
 </body>
