@@ -69,7 +69,7 @@ import {get as getApp} from '/lib/xp/app';
 const application = getApp({key: 'my-app-key'});
 
 if (application) {
-  log.info('Application name = %s', application.displayName);
+  log.info('Application key = %s', application.key);
 } else {
   log.info('Application not found');
 }
@@ -80,17 +80,13 @@ if (application) {
 ----
 const expected = {
     key: 'my-app',
-    displayName: 'app display name',
-    vendorName: 'vendor name',
-    vendorUrl: 'https://vendor.url',
-    url: 'https://myapp.url',
     version: '1.0.0',
     systemVersion: '4.2.3-SNAPSHOT',
     minSystemVersion: '2.0.0',
     maxSystemVersion: '3.0.0',
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
-    system: false
+    system: true
 };
 ----
 
@@ -119,10 +115,6 @@ const apps = list();
 const expected = [
     {
         key: 'app1',
-        displayName: 'app display name',
-        vendorName: 'vendor name',
-        vendorUrl: 'https://vendor.url',
-        url: 'https://myapp.url',
         version: '1.0.0',
         systemVersion: '1.21.3',
         minSystemVersion: '2.0.0',
@@ -133,10 +125,6 @@ const expected = [
     },
     {
         key: 'app2',
-        displayName: 'app display name 2',
-        vendorName: 'vendor name 2',
-        vendorUrl: 'https://vendor2.url',
-        url: 'https://myapp2.url',
         version: '4.1.2',
         systemVersion: '1.2.33-SNAPSHOT',
         minSystemVersion: '5.3.11',
@@ -176,7 +164,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : (<<applicationDescriptor,`ApplicationDescriptor`>>) Application descriptor.
+*object* : (<<applicationDescriptor,`ApplicationDescriptor`>>) Application descriptor, or `null` if the application was not found.
 
 [.lead]
 Example
@@ -194,6 +182,11 @@ const descriptor = getDescriptor({key: 'my-app-key'});
 const expected = {
     key: 'my-app',
     description: 'my app description',
+    title: 'My app',
+    titleI18nKey: 'myapp.title',
+    vendorName: 'vendor name',
+    vendorUrl: 'https://vendor.url',
+    url: 'https://myapp.url',
     icon: {
         data: {},
         mimeType: 'image/png',
@@ -298,6 +291,8 @@ const result = deleteVirtualApplication({
 
 Fetches mode of an application with the specified key.
 
+TIP: This function requires the Schema Admin role. It means that user role in the current context may lack sufficient permissions, for example when executed from inside a service - in this case you must explicitly execute the function in the <<lib-context#runcontext, context>> of `system.schema.admin` role.
+
 [.lead]
 Parameters
 
@@ -323,7 +318,7 @@ Parameters
 [.lead]
 Returns
 
-*string* : Application mode. Can be one of the following types:
+*string* : Application mode, or `null` if the application is not installed (neither as a bundled app nor as a virtual app). When the application is installed, the value is one of:
 
 * `bundled` - an installed and active application, no virtual app with the same key exists;
 * `virtual` - a "virtual", node-based application, no bundled app with the same key exists;
@@ -362,15 +357,11 @@ Properties
 |===
 | Name               | Type    | Description
 | key                | string  | Application key
-| displayName        | string  | Display name
-| vendorName         | string  | Vendor name
-| vendorUrl          | string  | Vendor url
-| url                | string  | Url
-| version            | string  | Version
-| systemVersion      | string  | System version
-| minSystemVersion   | string  | Min system version
-| maxSystemVersion   | string  | Max system version
-| modifiedTime       | object  | Modified time
+| version            | string  | Application version. May be `null`
+| systemVersion      | string  | XP version the application was built against. May be `null`
+| minSystemVersion   | string  | Minimum XP version required to run the application. May be `null`
+| maxSystemVersion   | string  | Maximum XP version supported by the application. May be `null`
+| modifiedTime       | string  | Last modification time, ISO-8601 instant. May be `null`
 | started            | boolean | `true` if the application is started. Virtual applications are always started
 | system             | boolean | `true` for a system application
 
@@ -394,8 +385,13 @@ Properties
 |===
 | Name               | Type             | Description
 | key                | string           | Application key
-| description        | `string           | Application description
-| icon               | <<icon,Icon>> | Application icon
+| description        | string           | Application description
+| title              | string           | Application title. May be `null`
+| titleI18nKey       | string           | i18n key for the application title. May be `null`
+| vendorName         | string           | Vendor name. May be `null`
+| vendorUrl          | string           | Vendor URL. May be `null`
+| url                | string           | Application URL. May be `null`
+| icon               | <<icon,Icon>>    | Application icon. Omitted when the application has no icon
 
 |===
 
@@ -414,9 +410,9 @@ Properties
 [frame="none"]
 [grid="none"]
 |===
-| Name                      | Type    | Description
-| data                      | object  | icon stream data
-| mimeType                  | string  | icon mime type
-| modifiedTime              | string  | icon modified time
+| Name                      | Type       | Description
+| data                      | ByteSource | Icon binary data, as a stream that can be read with `lib-io`
+| mimeType                  | string     | Icon MIME type
+| modifiedTime              | string     | Icon modified time, ISO-8601 instant
 
 |===
