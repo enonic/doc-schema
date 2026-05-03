@@ -57,14 +57,14 @@ An object with the following keys and their values:
 [frame="topbot"]
 [grid="none"]
 [caption=""]
-!===
-! Name ! Type ! Description
-! type ! string ! Event type, for example `node.pushed` or `custom.myEvent`.
-! timestamp ! number ! Time the event was published, in milliseconds since the epoch.
-! localOrigin ! boolean ! `true` if the event was published on the current node, `false` if it was received from another cluster node.
-! distributed ! boolean ! `true` if the event was distributed across the cluster.
-! data ! object ! Event payload. Shape depends on the event `type`; for built-in node events, see <<lib-node#events, Node library>>.
-!===
+|===
+| Name | Type | Description
+| type | string | Event type, for example `node.pushed` or `custom.myEvent`.
+| timestamp | number | Time the event was published, in milliseconds since the epoch.
+| localOrigin | boolean | `true` if the event was published on the current node, `false` if it was received from another cluster node.
+| distributed | boolean | `true` if the event was distributed across the cluster.
+| data | object | Event payload. Shape depends on the event `type`; for built-in node events, see <<lib-node#events, Node library>>.
+|===
 
 [.lead]
 Returns
