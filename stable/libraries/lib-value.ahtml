@@ -525,7 +525,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stream</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The binary stream</p>
 </div></div></td>
@@ -587,7 +587,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="geopointstring"><a class="link" href="#geopointstring">geoPointString</a></h3>
 <div class="paragraph">
-<p>Creates a GeoPoint value as a string.</p>
+<p>Creates a GeoPoint value from a comma-separated latitude and longitude string.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -686,7 +686,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string | Date</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A ISO local date-time string (e.g '2011-12-03') or a Date object</p>
+<p>An ISO local date string (e.g '2011-12-03') or a Date object</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -762,7 +762,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string | Date</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A ISO local date-time string (e.g '10:15:30') or a Date object</p>
+<p>An ISO local time string (e.g '10:15:30') or a Date object</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -817,7 +817,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:12:41 UTC
+Last updated 2026-05-03 09:13:17 UTC
 </div>
 </div>
 </body>
