@@ -465,6 +465,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#processhtml">processHtml</a></li>
 <li><a href="#sanitizehtml">sanitizeHtml</a></li>
 <li><a href="#apiurl">apiUrl</a></li>
+<li><a href="#baseurl">baseUrl</a></li>
 <li><a href="#serviceurl">serviceUrl</a></li>
 <li><a href="#url">url</a></li>
 </ul>
@@ -729,6 +730,33 @@ const url = assetUrl({
 </div></div></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">project</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the project.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the branch.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">baseUrl</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Custom baseUrl.</p>
+</div></div></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
@@ -752,7 +780,6 @@ const url = assetUrl({
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Obtains list of active tasks:</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {attachmentUrl} from '/lib/xp/portal';
 
@@ -870,19 +897,12 @@ const url = attachmentUrl({
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Obtains list of active tasks:</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {componentUrl} from '/lib/xp/portal';
 
 const url = componentUrl({
   component: 'main/0'
 });</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Return value:</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = 'ComponentUrlParams{type=server, params={}, component=main/0}'</code></pre>
 </div>
 </div>
 </div>
@@ -997,7 +1017,7 @@ log.info('Current content path = %s', result._path);</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The current ID provider as JSON.</p>
+<p><strong>string|null</strong> : The current ID provider key, or <code>null</code> if no ID provider is bound to the current context.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1024,7 +1044,7 @@ if (idProviderKey) {
 <div class="sect2">
 <h3 id="getmultipartform"><a class="link" href="#getmultipartform">getMultipartForm</a></h3>
 <div class="paragraph">
-<p>Returns a JSON containing multipart items. If not a multipart request, then this function returns <code>undefined</code>.</p>
+<p>Returns a JSON containing multipart items. If the request is not multipart, an empty object is returned.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
@@ -1075,7 +1095,7 @@ log.info('Multipart form %s', result);</code></pre>
 <div class="sect2">
 <h3 id="getmultipartitem"><a class="link" href="#getmultipartitem">getMultipartItem</a></h3>
 <div class="paragraph">
-<p>Returns a JSON containing a named multipart item. If the item does not exist, it returns <code>undefined</code>.</p>
+<p>Returns a JSON containing a named multipart item. If the item does not exist, it returns <code>null</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1147,7 +1167,7 @@ log.info('Multipart item %s', result);</code></pre>
 <div class="sect2">
 <h3 id="getmultipartstream"><a class="link" href="#getmultipartstream">getMultipartStream</a></h3>
 <div class="paragraph">
-<p>Returns a data stream for a named multipart item.</p>
+<p>Returns a data stream for a named multipart item. If the item does not exist, it returns <code>null</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1207,7 +1227,7 @@ const stream2 = getMultipartStream('item2', 1);</code></pre>
 <div class="sect2">
 <h3 id="getmultiparttext"><a class="link" href="#getmultiparttext">getMultipartText</a></h3>
 <div class="paragraph">
-<p>Returns the multipart item data as text.</p>
+<p>Returns the multipart item data as text. If the item does not exist, it returns <code>null</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1404,15 +1424,6 @@ log.info('Field value for the current site config = %s', result.Field);</code></
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">contextPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vhost</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Context path. Either vhost (using vhost target path) or relative to the current path.</p>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
@@ -1581,19 +1592,19 @@ const url = imagePlaceholder({
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>ID of the image content.</p>
+<p>ID of the image content. Either <code>id</code> or <code>path</code> is required.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">path</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Path to the image. If id is specified, this parameter is not used.</p>
+<p>Path to the image. If <code>id</code> is specified, this parameter is not used.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1602,7 +1613,7 @@ const url = imagePlaceholder({
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Required. Options are width(px), height(px), block(width, height) and square(px).</p>
+<p>Required. Options are <code>width(px)</code>, <code>height(px)</code>, <code>block(width,height)</code>, <code>square(px)</code>, <code>max(px)</code>, <code>wide(width,height)</code> and <code>full</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1648,6 +1659,33 @@ const url = imagePlaceholder({
 <td class="tableblock halign-left valign-top"><p class="tableblock">server</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>URL type. Either <code>server</code> (server-relative URL) or <code>absolute</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">project</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the project.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the branch.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">baseUrl</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Custom baseUrl.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1755,15 +1793,6 @@ const url = imageUrl({
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">contextPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vhost</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Context path. Either vhost (using vhost target path) or relative to the current path.</p>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
@@ -1850,15 +1879,6 @@ const url = imageUrl({
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The URL to redirect to after the logout.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">contextPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vhost</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Context path. Either vhost (using vhost target path) or relative to the current path.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1962,7 +1982,25 @@ const url = imageUrl({
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">server</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>URL type. Either <code>server</code> (server-relative URL) or <code>absolute</code>.</p>
+<p>URL type. Either <code>server</code> (server-relative URL) or <code>absolute</code> or <code>websocket</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">project</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Project of the context.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Branch of the project for context.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2318,6 +2356,125 @@ const url = apiUrl({
 </div>
 </div>
 <div class="sect2">
+<h3 id="baseurl"><a class="link" href="#baseurl">baseUrl</a></h3>
+<div class="paragraph">
+<p>Generates a base URL.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Input parameters as JSON</p>
+</div>
+<table class="tableblock frame-ends grid-none stretch">
+<caption class="title">Properties</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 96%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">server</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>URL type. Either <code>server</code> (server-relative URL) or <code>absolute</code> or <code>websocket</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ID of the content.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path to the content.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">project</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the project to use for resolving the URL.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the branch to use for resolving the URL.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>string</strong> : The generated URL.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {baseUrl} from '/lib/xp/portal';
+
+const url = baseUrl({
+  type: 'server',
+  path: '/path',
+  project: 'explicit-project',
+  branch: 'explicit-branch'
+});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="serviceurl"><a class="link" href="#serviceurl">serviceUrl</a></h3>
 <div class="admonitionblock warning">
 <table>
@@ -2489,11 +2646,11 @@ const url = serviceUrl({
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">path</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | string[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Path of the resource.</p>
+<p>Path to the resource. If a string is provided, it is treated as a full path. If an array of strings is provided, each element is treated as a path segment and will be joined using <code>/</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2547,7 +2704,7 @@ const url = buildUrl({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:15:58 UTC
+Last updated 2026-05-03 09:22:32 UTC
 </div>
 </div>
 </body>
