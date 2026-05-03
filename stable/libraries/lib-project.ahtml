@@ -587,8 +587,7 @@ const currentPermissions = addPermissions({
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-  id: 'my-project',
-  permissions: {
+    permissions: {
         owner: [
             'user:mystore:user1',
             'user:mystore:user2'
@@ -654,11 +653,11 @@ Only <code>system.admin</code> and <code>cms.admin</code> roles have permissions
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parents</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.6.0</span></span> Parent project id. If provided, the new project will be a Content Layer that automatically inherits changes from the parent project.</p>
+<p>Parent project ids. If provided, the new project will be a Content Layer that automatically inherits changes from its parent projects.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -803,7 +802,7 @@ try {
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
   id: 'my-project',
   displayName: 'My Content Project',
-  permissions: [],
+  permissions: {},
   readAccess: {
     public: true
   }
@@ -1096,12 +1095,16 @@ const projects = list();</code></pre>
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [{
     id: 'default',
     displayName: 'Default',
-    description: 'Default project'
+    description: 'Default project',
+    permissions: {},
+    readAccess: {
+        public: true
+    }
 },
 {
     id: 'my-project',
     displayName: 'My Content Project',
-    permissions: [],
+    permissions: {},
     readAccess: {
         public: true
     }
@@ -1357,9 +1360,9 @@ To modify READ access, user must have <code>Owner</code> permissions for the pro
 <div class="listingblock">
 <div class="title">Set content project as not available for public READ access</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addPermissions} from '/lib/xp/project';
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modifyReadAccess} from '/lib/xp/project';
 
-const currentPermissions = addPermissions({
+const currentReadAccess = modifyReadAccess({
     id: 'my-project',
     readAccess: {
         public: false
@@ -1371,7 +1374,6 @@ const currentPermissions = addPermissions({
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    id: 'my-project',
     readAccess: {
         public: false
     }
@@ -1484,7 +1486,6 @@ const currentPermissions = removePermissions({
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    id: 'my-project',
     permissions: {
         owner: [
             'user:mystore:user1'
@@ -1504,6 +1505,18 @@ const currentPermissions = removePermissions({
 </div>
 <div class="paragraph">
 <p>Returns available applications of a specified project. The result contains active apps assigned to the project and all of its parents, if any.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+User must be a member of one of the project roles, or either <code>system.admin</code> or <code>cms.admin</code> role.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1562,7 +1575,7 @@ const project = getAvailableApplications({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 21:53:43 UTC
+Last updated 2026-05-03 21:57:51 UTC
 </div>
 </div>
 </body>
