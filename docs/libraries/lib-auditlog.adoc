@@ -47,8 +47,8 @@ An object with the following keys and their values:
 | start | number | <optional> | 0 | Start index (used for paging)
 | count | number | <optional> | 10 | Number of entries to fetch
 | ids | array | <optional> | | Filter by entry ids
-| from | string | <optional> | | Filter by entries earlier than `from`
-| to | string | <optional> | | Filter by entries later than `to`
+| from | string | <optional> | | Filter by entries on or after `from`
+| to | string | <optional> | | Filter by entries on or before `to`
 | type | string | <optional> | | Filter by type
 | source | string | <optional> | | Filter by source
 | users | array | <optional> | | Filter by user keys
@@ -60,7 +60,7 @@ NOTE: All parameters are optional, but you should specify at least one of them. 
 [.lead]
 Returns
 
-*Object* : An array of audit log entries.
+*Object* : Audit log search results, with `total`, `count`, and an array of `hits`.
 
 [.lead]
 Examples
@@ -98,7 +98,7 @@ Parameters
 [.lead]
 Returns
 
-*Object* : Audit log entry as JSON.
+*Object* : Audit log entry as JSON, or `null` if no audit log exists with the given id.
 
 [.lead]
 Examples
@@ -130,7 +130,7 @@ Parameters
 | source | string | <optional> | Log entry source. Defaults to the application ID.
 | user | string | <optional> | Log entry user. Defaults to the user of current context.
 | objects | string[] | <optional> | URIs to objects that relate to this log entry. Defaults to empty array.
-| data | object | <optional> | Custom extra data for the this log entry. Defaults to empty object.
+| data | object | <optional> | Custom extra data for this log entry. Defaults to empty object.
 |===
 
 [.lead]
