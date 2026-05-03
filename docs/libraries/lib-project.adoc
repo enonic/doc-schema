@@ -75,8 +75,7 @@ const currentPermissions = addPermissions({
 [source,typescript]
 ----
 const expected = {
-  id: 'my-project',
-  permissions: {
+    permissions: {
         owner: [
             'user:mystore:user1',
             'user:mystore:user2'
@@ -105,8 +104,7 @@ Parameters
 | Name | Type | Attributes | Description
 | id | string | | Unique project id (alphanumeric characters and hyphens allowed).
 | displayName | string | | Project display name.
-| parent | string | <optional> | image:xp-760.svg[XP 7.6.0,opts=inline] Parent project id. If provided, the new project will be a Content Layer that automatically inherits changes from the parent project.
-
+| parents | string[] | <optional> | Parent project ids. If provided, the new project will be a Content Layer that automatically inherits changes from its parent projects.
 | description | string | <optional> | Project description.
 | language | string | <optional> | Default project language.
 | siteConfig | Object.<string, Object>[] | <optional> | Applications (with optional configurations) to be assigned to the project
@@ -165,7 +163,7 @@ try {
 const expected = {
   id: 'my-project',
   displayName: 'My Content Project',
-  permissions: [],
+  permissions: {},
   readAccess: {
     public: true
   }
@@ -381,12 +379,16 @@ const projects = list();
 const expected = [{
     id: 'default',
     displayName: 'Default',
-    description: 'Default project'
+    description: 'Default project',
+    permissions: {},
+    readAccess: {
+        public: true
+    }
 },
 {
     id: 'my-project',
     displayName: 'My Content Project',
-    permissions: [],
+    permissions: {},
     readAccess: {
         public: true
     }
@@ -520,9 +522,9 @@ Example
 .Set content project as not available for public READ access
 [source,typescript]
 ----
-import {addPermissions} from '/lib/xp/project';
+import {modifyReadAccess} from '/lib/xp/project';
 
-const currentPermissions = addPermissions({
+const currentReadAccess = modifyReadAccess({
     id: 'my-project',
     readAccess: {
         public: false
@@ -534,7 +536,6 @@ const currentPermissions = addPermissions({
 [source,typescript]
 ----
 const expected = {
-    id: 'my-project',
     readAccess: {
         public: false
     }
@@ -596,7 +597,6 @@ const currentPermissions = removePermissions({
 [source,typescript]
 ----
 const expected = {
-    id: 'my-project',
     permissions: {
         owner: [
             'user:mystore:user1'
@@ -612,6 +612,8 @@ const expected = {
 image:xp-7110.svg[XP 7.11.0,opts=inline]
 
 Returns available applications of a specified project. The result contains active apps assigned to the project and all of its parents, if any.
+
+NOTE: User must be a member of one of the project roles, or either `system.admin` or `cms.admin` role.
 
 [.lead]
 Parameters
