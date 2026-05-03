@@ -1405,7 +1405,6 @@ const expected = {
 == Type Definitions
 
 === Schema
-[[schema]]
 (abstract for <<content_type,ContentType>>, <<form_fragment,FormFragment>> and <<mixin,Mixin>>)
 
 [.lead]
@@ -1471,7 +1470,6 @@ Type
 *object*
 
 === Mixin
-[[mixin]]
 (extends <<schema,`Schema`>>)
 
 In XP 8 this is what was called `XData` in XP 7. Each mixin attaches optional metadata to a content item.
@@ -1494,7 +1492,6 @@ Properties
 |===
 
 === Component
-[[component]]
 (abstract for <<page,Page>>, <<part,Part>> and <<layout,Layout>>)
 
 [.lead]
@@ -1525,7 +1522,6 @@ Properties
 |===
 
 === Page
-[[page]]
 (extends <<component,`Component`>>)
 
 [.lead]
@@ -1546,7 +1542,6 @@ Properties
 |===
 
 === Layout
-[[layout]]
 (extends <<component,`Component`>>)
 
 [.lead]
@@ -1567,7 +1562,6 @@ Properties
 |===
 
 === Part
-[[part]]
 (extends <<component,`Component`>>)
 
 [.lead]
@@ -1588,7 +1582,6 @@ Properties
 |===
 
 === Site
-[[site]]
 
 [.lead]
 Type
@@ -1612,7 +1605,6 @@ Properties
 |===
 
 === Styles
-[[styles]]
 
 [.lead]
 Type
@@ -1678,7 +1670,6 @@ Properties
 |===
 
 === Icon
-[[icon]]
 
 [.lead]
 Type

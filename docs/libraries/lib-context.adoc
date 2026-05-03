@@ -137,7 +137,6 @@ const result = run({
 == Type Definitions
 
 === GetContext
-[[getcontext]]
 
 The shape of the object returned by `get()`.
 
@@ -172,7 +171,6 @@ The shape of the object returned by `get()`.
 <6> *attributes* (_object_) Custom attributes set on the context. Always present; may be empty. Only values of type `number`, `string`, `boolean`, or plain `object` are serialized.
 
 === RunContext
-[[runcontext]]
 
 The parameter object passed to `run()`. Any field omitted is inherited from the calling context.
 

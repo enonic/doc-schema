@@ -493,7 +493,6 @@ const taskId = submitTask({
 == Type Definitions
 
 === TaskInfo
-[[taskinfo]]
 
 [.lead]
 Type

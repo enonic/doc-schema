@@ -143,7 +143,6 @@ const defaultFromEmail = getDefaultFromEmail();
 == Objects
 
 === attachments
-[[attachments]]
 
 Array of attachments to include in an e-mail
 
