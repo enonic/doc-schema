@@ -72,7 +72,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : Repository created as JSON
+*<<Repository>>* : The created repository.
 
 [.lead]
 Examples
@@ -98,20 +98,21 @@ const result2 = create({
     id: 'test-repo2',
     rootPermissions: [
         {
-            principal: "role:admin",
+            principal: 'role:admin',
             allow: [
-                "READ",
-                "CREATE",
-                "MODIFY",
-                "DELETE",
-                "PUBLISH",
-                "READ_PERMISSIONS",
-                "WRITE_PERMISSIONS"
+                'READ',
+                'CREATE',
+                'MODIFY',
+                'DELETE',
+                'PUBLISH',
+                'READ_PERMISSIONS',
+                'WRITE_PERMISSIONS'
             ],
             deny: []
         }
     ],
-    rootChildOrder: "_ts DESC"
+    rootChildOrder: '_ts DESC',
+    transient: true
 });
 
 log.info('Repository created with id %s', result2.id);
@@ -121,16 +122,18 @@ log.info('Repository created with id %s', result2.id);
 ----
 // First repository created.
 const expected1 = {
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 };
 ----
 
 === createBranch
 
-Creates a branch
+Creates a branch.
 
 [.lead]
 Parameters
@@ -146,7 +149,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : The branch (as JSON)
+*<<BranchResult>>* : The created branch.
 
 [.lead]
 Examples
@@ -212,7 +215,7 @@ if (result) {
 
 === deleteBranch
 
-Deletes a branch
+Deletes a branch.
 
 [.lead]
 Parameters
@@ -228,7 +231,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : The branch (as JSON)
+*<<BranchResult>>* : The deleted branch.
 
 [.lead]
 Examples
@@ -255,7 +258,7 @@ try {
 
 === get
 
-Retrieves a repository
+Retrieves a repository.
 
 [.lead]
 Parameters
@@ -271,7 +274,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : The repository (as JSON)
+*<<Repository>> | null* : The repository, or `null` if no repository exists with the given id.
 
 [.lead]
 Examples
@@ -294,21 +297,56 @@ if (result) {
 ----
 // Repository retrieved.
 const expected = {
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 };
 ----
 
-=== list
+=== getBinary
 
-Retrieves the list of repositories
+Returns a data stream for a repository attachment.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name  | Type   | Description
+| params | <<GetRepositoryBinaryParams>> | JSON with the parameters
+|===
 
 [.lead]
 Returns
 
-*object* : The repositories (as JSON array)
+*\** : Stream of the attachment data.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getBinary} from '/lib/xp/repo';
+
+const binaryStream = getBinary({
+    repoId: 'my-repo',
+    binaryReference: 'myBinaryReference'
+});
+----
+
+=== list
+
+Retrieves the list of repositories.
+
+[.lead]
+Returns
+
+*<<Repository>>[]* : The list of repositories.
 
 [.lead]
 Examples
@@ -326,21 +364,67 @@ log.info('%s repositories found', result.length);
 ----
 // Repositories retrieved.
 const expected = [{
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
+        'master'
     ],
+    data: {}
 }, {
-    id: "another-repo",
+    id: 'another-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 }];
+----
+
+=== modify
+
+Updates a repository.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name  | Type   | Description
+| params | <<ModifyRepositoryParams>> | JSON with the parameters
+|===
+
+[.lead]
+Returns
+
+*<<Repository>>* : The updated repository.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {modify} from '/lib/xp/repo';
+
+// Update repository data
+const result = modify({
+    id: 'my-repo',
+    editor: (repo) => {
+        repo.transient = true;
+        repo.data = {
+            ...repo.data,
+            myString: 'modified',
+            myArray: ['modified1', 'modified2', 'modified3']
+        };
+        return repo;
+    }
+});
 ----
 
 === refresh
 
-Refreshes indices in the current repository
+Refreshes indices in the current repository.
 
 [.lead]
 Parameters
@@ -350,7 +434,7 @@ Parameters
 [grid="none"]
 |===
 | Name | Type | Attributes| Description
-| params | <<RefreshParams>> | <nullable> | JSON with the parameters
+| params | <<RefreshParams>> | <optional> | JSON with the parameters
 |===
 
 [.lead]
@@ -381,6 +465,24 @@ refresh({
 
 == Objects
 
+=== Repository
+
+Repository object returned by `create`, `get`, `list`, and `modify`.
+
+[.lead]
+Fields
+
+[%header,cols="1%,1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Attributes | Description
+| id | string | | Repository ID.
+| branches | string[] | | Branches available in the repository.
+| data | object | <optional> | Repository data as a key/value map.
+| transient | boolean | | `true` if the repository is transient (not persisted to disk).
+|===
+
 === CreateRepositoryParams
 
 Object to pass to the `create` function.
@@ -392,15 +494,33 @@ Fields
 [frame="none"]
 [grid="none"]
 |===
-| Name | Type | Attributes| Details
-| id | string | | Repository ID
-| rootPermissions | array | <optional> |Array of root permissions. By default, all permissions to 'system.admin' and read permission to 'system.authenticated'
-| transient | boolean | <optional> | If true, the repository will be transient
+| Name | Type | Attributes | Description
+| id | string | | Repository ID.
+| rootPermissions | <<AccessControlEntry>>[] | <optional> | Array of root permissions. By default, all permissions to `role:system.admin` and `READ` permission to `role:system.authenticated`.
+| rootChildOrder | string | <optional> | Root child order (for example, `_ts DESC`).
+| transient | boolean | <optional> | Mark the repository as transient. Defaults to `false`.
+|===
+
+=== AccessControlEntry
+
+Permission entry used in `CreateRepositoryParams.rootPermissions`.
+
+[.lead]
+Fields
+
+[%header,cols="1%,1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Attributes | Description
+| principal | string | | Principal key (for example, `role:system.admin`, `user:system:su`).
+| allow | string[] | <optional> | Permissions to grant. Each value is one of `READ`, `CREATE`, `MODIFY`, `DELETE`, `PUBLISH`, `READ_PERMISSIONS`, `WRITE_PERMISSIONS`.
+| deny | string[] | <optional> | Permissions to deny. Same set of values as `allow`.
 |===
 
 === CreateBranchParams
 
-Create branch parameters JSON
+Object to pass to the `createBranch` function.
 
 [.lead]
 Fields
@@ -410,13 +530,13 @@ Fields
 [grid="none"]
 |===
 | Name | Type | Description
-| branchId | string  | Branch ID
-| repoId | string | Repository where the branch should be created
+| branchId | string  | Branch ID.
+| repoId | string | Repository where the branch should be created.
 |===
 
 === DeleteBranchParams
 
-Delete branch parameters JSON
+Object to pass to the `deleteBranch` function.
 
 [.lead]
 Fields
@@ -426,13 +546,60 @@ Fields
 [grid="none"]
 |===
 | Name | Type | Description
-| branchId | string  | Branch ID
-| repoId | string | Repository where the branch should be deleted
+| branchId | string  | Branch ID.
+| repoId | string | Repository where the branch should be deleted.
+|===
+
+=== BranchResult
+
+Object returned by `createBranch` and `deleteBranch`.
+
+[.lead]
+Fields
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| id | string | Branch ID.
+|===
+
+=== ModifyRepositoryParams
+
+Object to pass to the `modify` function.
+
+[.lead]
+Fields
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| id | string | Repository ID.
+| editor | function | Editor callback function. Receives the current `<<Repository>>` and must return the modified repository.
+|===
+
+=== GetRepositoryBinaryParams
+
+Object to pass to the `getBinary` function.
+
+[.lead]
+Fields
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| repoId | string | Repository ID.
+| binaryReference | string | Reference to the binary.
 |===
 
 === RefreshParams
 
-Refresh parameters JSON
+Object to pass to the `refresh` function.
 
 [.lead]
 Fields
@@ -441,8 +608,8 @@ Fields
 [frame="none"]
 [grid="none"]
 |===
-| Name | Type | Attributes| Default | Description
-| mode | string | <optional> | 'all' | Index definition settings
-| repo | string | <optional> | 'com.enonic.cms.default' | Repository id: 'com.enonic.cms.default' \| 'system-repo'. Default is the current repository set in portal
-| branch | string | <optional> | 'branch'=master | Branch
+| Name | Type | Attributes | Default | Description
+| mode | string | <optional> | `all` | Index type to be refreshed. One of `all`, `search`, or `storage`.
+| repo | string | <optional> | | Repository ID. Defaults to the repository of the current context.
+| branch | string | <optional> | | Branch. Defaults to the branch of the current context.
 |===
