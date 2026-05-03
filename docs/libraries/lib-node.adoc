@@ -277,7 +277,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : Commit object(s)
+*object* : Commit object. A single commit is created and applied to all the nodes referenced in `keys`.
 
 [.lead]
 Example
@@ -312,18 +312,10 @@ const result2 = repo.commit({
 [source,typescript]
 ----
 const expected = {
-    {
-        id: "aa1f76bf-4bb9-41be-b166-03561c1555b2",
-        message: "Commit message",
-        committer: "user:system:anonymous",
-        timestamp: "2019-01-24T15:19:30.818029Z"
-    },
-    {
-        id: "5c15b187-e3ab-4d87-88b2-ffb84bd1c7bb",
-        message: "Commit message",
-        committer: "user:system:anonymous",
-        timestamp: "2019-01-24T15:19:30.818029Z"
-    }
+    id: "aa1f76bf-4bb9-41be-b166-03561c1555b2",
+    message: "Commit message",
+    committer: "user:system:anonymous",
+    timestamp: "2019-01-24T15:19:30.818029Z"
 }
 ----
 
@@ -720,9 +712,9 @@ const expected = {
 }
 ----
 
-=== findVersions
+=== getVersions
 
-Fetches versions of a node.
+Returns versions of a node.
 
 [.lead]
 Parameters
@@ -735,33 +727,42 @@ An object with the following keys and their values:
 |===
 | Name | Type | Attributes | Details
 | key | string | | Path or ID of a node to get versions of
-| start | number | optional | start index used for paging - default: 0
-| count | number | optional | number of content to fetch, used for paging - default: 10
+| cursor | string | optional | Opaque cursor returned in a previous result, used to fetch the next page
+| count | number | optional | Number of versions to fetch - default: 10
 |===
 
 [.lead]
 Returns
 
-*object* : An object with stats about the result and an array listing the versions
+*object* : An object with stats about the result, the cursor for the next page (if any), and an array listing the versions.
 
 [.lead]
 Example
 
-.Fetch all versions of a content with a given path
+.Fetch the first page of versions, then the next page using the returned cursor.
 [source,typescript]
 ----
-const result = repo.findVersions({
-    key: '/my-name'
+const firstPage = repo.getVersions({
+    key: '/my-name',
+    count: 2
 });
 
+if (firstPage.cursor) {
+    const nextPage = repo.getVersions({
+        key: '/my-name',
+        count: 2,
+        cursor: firstPage.cursor
+    });
+}
 ----
 
 .Sample response
 [source,typescript]
 ----
 const expected = {
-    total: 2,
+    total: 40,
     count: 2,
+    cursor: "eyJ0cyI6MTAwMDAwMCwiaWQiOiJub2RlVmVyc2lvbk9sZCJ9",
     hits: [
         {
             versionId: "72dcd8c1-9d70-444d-ad7a-508d8c1865a0",
@@ -846,7 +847,7 @@ const nodes = repo.get([{
 
 === getActiveVersion
 
-Fetches the active version of a node.
+Returns the active version of a node in the current context branch.
 
 [.lead]
 Parameters
@@ -864,7 +865,29 @@ An object with the following key and value:
 [.lead]
 Returns
 
-*object* : Active content versions per branch
+*object* : The active node version, or `null` if the node was not found.
+
+[.lead]
+Example
+
+.Fetch the active version of a node.
+[source,typescript]
+----
+const version = repo.getActiveVersion({
+    key: '/my-name'
+});
+----
+
+.Sample response
+[source,typescript]
+----
+const expected = {
+    versionId: "72dcd8c1-9d70-444d-ad7a-508d8c1865a0",
+    nodeId: "ddd1c933-0725-45e8-9a54-a3dd87193f60",
+    nodePath: "/my-name",
+    timestamp: "2019-05-13T15:56:17.018Z"
+}
+----
 
 === getBinary
 
@@ -1003,15 +1026,20 @@ Applies a patch to a node.
 This is a low-level function. It should be used with caution as it can corrupt data if used incorrectly.
 ====
 
+[.lead]
+Parameters
+
+An object with the following keys and their values:
+
 [%header,cols="1%,1%,1%,1%,98%a"]
 [frame="none"]
 [grid="none"]
 |===
-| Name | Type | Attributes| Default| Description
+| Name | Type | Attributes | Default | Details
 | key | string | | | Path or id to the node
 | editor | function | | | Patcher callback function
-| branches | string[] | <optional> | false | A list of branches to patch. +
-* If not provided or empty, the content in the current branch will be patched. +
+| branches | string[] | <optional> | `[]` | A list of branches to patch. +
+* If not provided or empty, the node in the current context branch will be patched. +
 * If one branch is listed, the patch occurs in that specific branch. +
 * If multiple branches are listed: +
 1.  The patch is applied to the *first* branch in the list. +
@@ -1020,6 +1048,10 @@ This is a low-level function. It should be used with caution as it can corrupt d
 * If its node version is *different*, the patch is applied to it separately (`update` permission is required).
 |===
 
+[.lead]
+Returns
+
+*object* : Patch result, with one entry in `branchResults` per branch where the node was patched.
 
 [.lead]
 *Patchable Fields:*
@@ -1107,7 +1139,7 @@ An object with the following keys and their values:
 [.lead]
 Returns
 
-*boolean* : `true` if the node was successfully moved or renamed, `false` otherwise.
+*object* : The moved or renamed node.
 
 [.lead]
 Examples
@@ -1186,8 +1218,7 @@ const expected = {
     success: [
         "a"
     ],
-    failed: [],
-    deleted: []
+    failed: []
 }
 ----
 
@@ -1205,7 +1236,7 @@ const result = repo.push({
 .Sample response
 [source,typescript]
 ----
-const expected ={
+const expected = {
     success: [
         "a",
         "b",
@@ -1216,8 +1247,7 @@ const expected ={
             id: "d",
             reason: "ACCESS_DENIED"
         }
-    ],
-    deleted: []
+    ]
 }
 ----
 
@@ -1241,8 +1271,7 @@ const expected = {
         "a",
         "d"
     ],
-    failed: [],
-    deleted: []
+    failed: []
 }
 ----
 
@@ -1516,48 +1545,9 @@ repo.refresh();
 repo.refresh('SEARCH');
 ----
 
-=== setActiveVersion
+=== sort
 
-Sets the active version of a node.
-
-[.lead]
-Parameters
-
-An object with the following keys and their values:
-
-[%header,cols="1%,1%,98%a"]
-[frame="none"]
-[grid="none"]
-|===
-| Name | Kind | Details
-| key | string | Path or ID of the node
-| versionID | string | Version to set as active
-|===
-
-[.lead]
-Returns
-
-*boolean* : `true` if deleted, `false` otherwise
-
-[.lead]
-Example
-
-.Setting the previous version active
-[source,typescript]
-----
-const findVersions = repo.findVersions({
-    key: node._id
-});
-
-const result = repo.setActiveVersion({
-    key: node._id,
-    versionId: findVersions.hits[1].versionId
-});
-----
-
-=== setChildOrder
-
-Sets the order of a node's children.
+Sorts the children of a node by changing the parent's `_childOrder`. When the parent is set to manual ordering, child nodes are reordered according to their `_manualOrderValue`.
 
 [.lead]
 Parameters
@@ -1569,14 +1559,14 @@ An object with the following keys and their values:
 [grid="none"]
 |===
 | Name | Kind | Details
-| key | string | Path or ID of the node
-| childOrder | string | children order
+| key | string | Path or ID of the parent node
+| childOrder | string | New child order expression for the parent (for example `displayName ASC` or `_manualOrderValue DESC`)
 |===
 
 [.lead]
 Returns
 
-*object* : The updated node
+*object* : An object with the updated parent `node` and an array of `reorderedNodes` describing children whose ordering was affected.
 
 [.lead]
 Example
@@ -1584,7 +1574,7 @@ Example
 .Setting the children to be ordered in reverse alphabetical order by name
 [source,typescript]
 ----
-repo.setChildOrder({
+const result = repo.sort({
     key: '/name-list',
     childOrder: 'name DESC'
 });
@@ -1595,7 +1585,7 @@ repo.setChildOrder({
 Applies permissions on a node.
 
 [.lead]
-*Parameters:*
+Parameters
 
 An object with the following keys and their values:
 
@@ -1603,21 +1593,38 @@ An object with the following keys and their values:
 [frame="none"]
 [grid="none"]
 |===
-| Name | Type | Attributes | Description
+| Name | Type | Attributes | Details
 | key | string | | Path or id of the node.
-| permissions | <<PermissionsParams>>[] | <optional> | Array of permissions to overwrite current permissions. Cannot be used with 'addPermissions' or 'removePermissions'.
-| addPermissions | <<PermissionsParams>>[] | <optional> | Array of permissions to add. Cannot be used with 'permissions'.
-| removePermissions | <<PermissionsParams>>[] | <optional> | Array of permissions to remove. Cannot be used with 'permissions'.
-| scope | string ('SINGLE' \| 'TREE' \| 'SUBTREE') | <optional>  | scope of applying permissions. Scope 'SINGLE' applies permissions only to the node itself. 'TREE' applies permissions to the node and its descendants. 'SUBTREE' applies permissions only to the node's descendants. Default is 'SINGLE'.
+| permissions | object[] | <optional> | Array of permissions to overwrite current permissions. Cannot be combined with `addPermissions` or `removePermissions`.
+| addPermissions | object[] | <optional> | Array of permissions to add. Cannot be combined with `permissions`.
+| removePermissions | object[] | <optional> | Array of permissions to remove. Cannot be combined with `permissions`.
+| scope | string | <optional>  | Scope of applying permissions. `'SINGLE'` applies permissions only to the node itself. `'TREE'` applies permissions to the node and its descendants. `'SUBTREE'` applies permissions only to the node's descendants. Default is `'SINGLE'`.
 | branches | string[] | <optional> | Array of additional branches to apply permissions to. Current context branch should not be included.
 |===
+
+Each permission entry has the following shape:
+
+[%header,cols="1%,1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Attributes | Details
+| principal | string | | Principal key (for example `role:system.everyone` or `user:system:my-user`).
+| allow | string[] | <optional> | Permissions to allow. Possible values are `READ`, `CREATE`, `MODIFY`, `DELETE`, `PUBLISH`, `READ_PERMISSIONS`, `WRITE_PERMISSIONS`.
+| deny | string[] | <optional> | Permissions to deny.
+|===
+
+[.lead]
+Returns
+
+*object* : An object keyed by node id, with one `branchResults` entry per branch the permissions were applied to.
 
 [.lead]
 Examples
 
 .1) Applying permissions to a node by overwriting the current permissions.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1636,7 +1643,7 @@ repo.applyPermissions({
 
 .2) Adding permissions to a node.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1655,7 +1662,7 @@ repo.applyPermissions({
 
 .3) Removing permissions from a node.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1677,7 +1684,7 @@ repo.applyPermissions({
 
 .Applying permissions to a node and its descendants.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1693,7 +1700,7 @@ repo.applyPermissions({
 
 .Applying permissions to a node's descendants only.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1703,13 +1710,13 @@ repo.applyPermissions({
             allow: ['READ']
         }
     ],
-    scope: 'CHILDREN'
+    scope: 'SUBTREE'
 });
 ----
 
 .Applying permissions to a node and its descendants in multiple branches.
 
-[source,js]
+[source,typescript]
 ----
 repo.applyPermissions({
     key: '/my-node',
@@ -1736,9 +1743,9 @@ Fields
 [grid="none"]
 |===
 | Name | Kind | Details
-| repoId | object | Repository ID
-| branch | object | Branch ID
-| user | <<User>> | Optional user to execute the callback with - Default is the default user
+| repoId | string | Repository ID
+| branch | string | Branch ID
+| user | <<User>> | Optional user to execute the callback with - default is the current user. Not allowed when this source is part of a `multiRepoConnect` call.
 | principals | string[] | Additional principals to execute the callback with
 |===
 
