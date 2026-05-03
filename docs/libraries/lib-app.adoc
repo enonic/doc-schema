@@ -341,7 +341,6 @@ const result = getApplicationMode({
 == Type Definitions
 
 === Application
-[[application]]
 
 [.lead]
 Type
@@ -396,7 +395,6 @@ Properties
 |===
 
 === Icon
-[[icon]]
 
 [.lead]
 Type

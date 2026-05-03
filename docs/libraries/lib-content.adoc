@@ -1681,7 +1681,6 @@ const result = patch({
 ----
 
 === move
-[[move]]
 
 Renames a content or moves it to a new path
 
