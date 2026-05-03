@@ -554,7 +554,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Filter by entries earlier than <code>from</code></p>
+<p>Filter by entries on or after <code>from</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -563,7 +563,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Filter by entries later than <code>to</code></p>
+<p>Filter by entries on or before <code>to</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -620,7 +620,7 @@ All parameters are optional, but you should specify at least one of them. If no 
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>Object</strong> : An array of audit log entries.</p>
+<p><strong>Object</strong> : Audit log search results, with <code>total</code>, <code>count</code>, and an array of <code>hits</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -676,7 +676,7 @@ const result = find({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>Object</strong> : Audit log entry as JSON.</p>
+<p><strong>Object</strong> : Audit log entry as JSON, or <code>null</code> if no audit log exists with the given id.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -761,7 +761,7 @@ const log = getAuditEntry({
 <td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Custom extra data for the this log entry. Defaults to empty object.</p>
+<p>Custom extra data for this log entry. Defaults to empty object.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -809,7 +809,7 @@ const log2 = logAuditEntry({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:29:23 UTC
+Last updated 2026-05-03 10:33:12 UTC
 </div>
 </div>
 </body>
