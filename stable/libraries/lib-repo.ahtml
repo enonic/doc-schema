@@ -450,15 +450,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#deleterepo">deleteRepo</a></li>
 <li><a href="#deletebranch">deleteBranch</a></li>
 <li><a href="#get">get</a></li>
+<li><a href="#getbinary">getBinary</a></li>
 <li><a href="#list">list</a></li>
+<li><a href="#modify">modify</a></li>
 <li><a href="#refresh">refresh</a></li>
 </ul>
 </li>
 <li><a href="#objects">Objects</a>
 <ul class="sectlevel2">
+<li><a href="#repository">Repository</a></li>
 <li><a href="#createrepositoryparams">CreateRepositoryParams</a></li>
+<li><a href="#accesscontrolentry">AccessControlEntry</a></li>
 <li><a href="#createbranchparams">CreateBranchParams</a></li>
 <li><a href="#deletebranchparams">DeleteBranchParams</a></li>
+<li><a href="#branchresult">BranchResult</a></li>
+<li><a href="#modifyrepositoryparams">ModifyRepositoryParams</a></li>
+<li><a href="#getrepositorybinaryparams">GetRepositoryBinaryParams</a></li>
 <li><a href="#refreshparams">RefreshParams</a></li>
 </ul>
 </li>
@@ -583,7 +590,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : Repository created as JSON</p>
+<p><strong><a href="#repository">Repository</a></strong> : The created repository.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -609,20 +616,21 @@ const result2 = create({
     id: 'test-repo2',
     rootPermissions: [
         {
-            principal: "role:admin",
+            principal: 'role:admin',
             allow: [
-                "READ",
-                "CREATE",
-                "MODIFY",
-                "DELETE",
-                "PUBLISH",
-                "READ_PERMISSIONS",
-                "WRITE_PERMISSIONS"
+                'READ',
+                'CREATE',
+                'MODIFY',
+                'DELETE',
+                'PUBLISH',
+                'READ_PERMISSIONS',
+                'WRITE_PERMISSIONS'
             ],
             deny: []
         }
     ],
-    rootChildOrder: "_ts DESC"
+    rootChildOrder: '_ts DESC',
+    transient: true
 });
 
 log.info('Repository created with id %s', result2.id);</code></pre>
@@ -632,10 +640,12 @@ log.info('Repository created with id %s', result2.id);</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">// First repository created.
 const expected1 = {
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 };</code></pre>
 </div>
 </div>
@@ -643,7 +653,7 @@ const expected1 = {
 <div class="sect2">
 <h3 id="createbranch"><a class="link" href="#createbranch">createBranch</a></h3>
 <div class="paragraph">
-<p>Creates a branch</p>
+<p>Creates a branch.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -675,7 +685,7 @@ const expected1 = {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The branch (as JSON)</p>
+<p><strong><a href="#branchresult">BranchResult</a></strong> : The created branch.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -771,7 +781,7 @@ if (result) {
 <div class="sect2">
 <h3 id="deletebranch"><a class="link" href="#deletebranch">deleteBranch</a></h3>
 <div class="paragraph">
-<p>Deletes a branch</p>
+<p>Deletes a branch.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -803,7 +813,7 @@ if (result) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The branch (as JSON)</p>
+<p><strong><a href="#branchresult">BranchResult</a></strong> : The deleted branch.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -832,7 +842,7 @@ try {
 <div class="sect2">
 <h3 id="get"><a class="link" href="#get">get</a></h3>
 <div class="paragraph">
-<p>Retrieves a repository</p>
+<p>Retrieves a repository.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -864,7 +874,7 @@ try {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The repository (as JSON)</p>
+<p><strong><a href="#repository">Repository</a> | null</strong> : The repository, or <code>null</code> if no repository exists with the given id.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -887,24 +897,77 @@ if (result) {
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">// Repository retrieved.
 const expected = {
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 };</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getbinary"><a class="link" href="#getbinary">getBinary</a></h3>
+<div class="paragraph">
+<p>Returns a data stream for a repository attachment.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#getrepositorybinaryparams">GetRepositoryBinaryParams</a></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>\</strong>* : Stream of the attachment data.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getBinary} from '/lib/xp/repo';
+
+const binaryStream = getBinary({
+    repoId: 'my-repo',
+    binaryReference: 'myBinaryReference'
+});</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="list"><a class="link" href="#list">list</a></h3>
 <div class="paragraph">
-<p>Retrieves the list of repositories</p>
+<p>Retrieves the list of repositories.</p>
 </div>
 <div class="paragraph lead">
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The repositories (as JSON array)</p>
+<p><strong><a href="#repository">Repository</a>[]</strong> : The list of repositories.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -922,23 +985,87 @@ log.info('%s repositories found', result.length);</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">// Repositories retrieved.
 const expected = [{
-    id: "test-repo",
+    id: 'test-repo',
+    transient: false,
     branches: [
-        "master"
+        'master'
     ],
+    data: {}
 }, {
-    id: "another-repo",
+    id: 'another-repo',
+    transient: false,
     branches: [
-        "master"
-    ]
+        'master'
+    ],
+    data: {}
 }];</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="modify"><a class="link" href="#modify">modify</a></h3>
+<div class="paragraph">
+<p>Updates a repository.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#modifyrepositoryparams">ModifyRepositoryParams</a></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON with the parameters</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong><a href="#repository">Repository</a></strong> : The updated repository.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modify} from '/lib/xp/repo';
+
+// Update repository data
+const result = modify({
+    id: 'my-repo',
+    editor: (repo) =&gt; {
+        repo.transient = true;
+        repo.data = {
+            ...repo.data,
+            myString: 'modified',
+            myArray: ['modified1', 'modified2', 'modified3']
+        };
+        return repo;
+    }
+});</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="refresh"><a class="link" href="#refresh">refresh</a></h3>
 <div class="paragraph">
-<p>Refreshes indices in the current repository</p>
+<p>Refreshes indices in the current repository.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -962,7 +1089,7 @@ const expected = [{
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">params</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#refreshparams">RefreshParams</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;nullable&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>JSON with the parameters</p>
 </div></div></td>
@@ -1002,6 +1129,65 @@ refresh({
 <h2 id="objects"><a class="link" href="#objects">Objects</a></h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="repository"><a class="link" href="#repository">Repository</a></h3>
+<div class="paragraph">
+<p>Repository object returned by <code>create</code>, <code>get</code>, <code>list</code>, and <code>modify</code>.</p>
+</div>
+<div class="paragraph lead">
+<p>Fields</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 97.03%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Repository ID.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branches</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Branches available in the repository.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Repository data as a key/value map.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">transient</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>true</code> if the repository is transient (excluded from dumps and snapshots).</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="createrepositoryparams"><a class="link" href="#createrepositoryparams">CreateRepositoryParams</a></h3>
 <div class="paragraph">
 <p>Object to pass to the <code>create</code> function.</p>
@@ -1021,7 +1207,7 @@ refresh({
 <th class="tableblock halign-left valign-top">Name</th>
 <th class="tableblock halign-left valign-top">Type</th>
 <th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Details</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -1030,15 +1216,23 @@ refresh({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Repository ID</p>
+<p>Repository ID.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">rootPermissions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">array</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#accesscontrolentry">AccessControlEntry</a>[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Array of root permissions. By default, all permissions to 'system.admin' and read permission to 'system.authenticated'</p>
+<p>Array of root permissions. By default, all permissions to <code>role:system.admin</code> and <code>READ</code> permission to <code>role:system.authenticated</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rootChildOrder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Root child order (for example, <code>_ts DESC</code>).</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1046,7 +1240,58 @@ refresh({
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>If true, the repository will be transient</p>
+<p>Mark the repository as transient. Defaults to <code>false</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="accesscontrolentry"><a class="link" href="#accesscontrolentry">AccessControlEntry</a></h3>
+<div class="paragraph">
+<p>Permission entry used in <code>CreateRepositoryParams.rootPermissions</code>.</p>
+</div>
+<div class="paragraph lead">
+<p>Fields</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 97.03%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Principal key (for example, <code>role:system.admin</code>, <code>user:system:su</code>).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">allow</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Permissions to grant. Each value is one of <code>READ</code>, <code>CREATE</code>, <code>MODIFY</code>, <code>DELETE</code>, <code>PUBLISH</code>, <code>READ_PERMISSIONS</code>, <code>WRITE_PERMISSIONS</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">deny</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Permissions to deny. Same set of values as <code>allow</code>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1055,7 +1300,7 @@ refresh({
 <div class="sect2">
 <h3 id="createbranchparams"><a class="link" href="#createbranchparams">CreateBranchParams</a></h3>
 <div class="paragraph">
-<p>Create branch parameters JSON</p>
+<p>Object to pass to the <code>createBranch</code> function.</p>
 </div>
 <div class="paragraph lead">
 <p>Fields</p>
@@ -1078,14 +1323,14 @@ refresh({
 <td class="tableblock halign-left valign-top"><p class="tableblock">branchId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Branch ID</p>
+<p>Branch ID.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repoId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Repository where the branch should be created</p>
+<p>Repository where the branch should be created.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1094,7 +1339,7 @@ refresh({
 <div class="sect2">
 <h3 id="deletebranchparams"><a class="link" href="#deletebranchparams">DeleteBranchParams</a></h3>
 <div class="paragraph">
-<p>Delete branch parameters JSON</p>
+<p>Object to pass to the <code>deleteBranch</code> function.</p>
 </div>
 <div class="paragraph lead">
 <p>Fields</p>
@@ -1117,14 +1362,124 @@ refresh({
 <td class="tableblock halign-left valign-top"><p class="tableblock">branchId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Branch ID</p>
+<p>Branch ID.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repoId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Repository where the branch should be deleted</p>
+<p>Repository where the branch should be deleted.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="branchresult"><a class="link" href="#branchresult">BranchResult</a></h3>
+<div class="paragraph">
+<p>Object returned by <code>createBranch</code> and <code>deleteBranch</code>.</p>
+</div>
+<div class="paragraph lead">
+<p>Fields</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Branch ID.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="modifyrepositoryparams"><a class="link" href="#modifyrepositoryparams">ModifyRepositoryParams</a></h3>
+<div class="paragraph">
+<p>Object to pass to the <code>modify</code> function.</p>
+</div>
+<div class="paragraph lead">
+<p>Fields</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Repository ID.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Editor callback function. Receives the current <code><a href="#repository">Repository</a></code> and must return the modified repository.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="getrepositorybinaryparams"><a class="link" href="#getrepositorybinaryparams">GetRepositoryBinaryParams</a></h3>
+<div class="paragraph">
+<p>Object to pass to the <code>getBinary</code> function.</p>
+</div>
+<div class="paragraph lead">
+<p>Fields</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">repoId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Repository ID.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">binaryReference</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Reference to the binary.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1133,7 +1488,7 @@ refresh({
 <div class="sect2">
 <h3 id="refreshparams"><a class="link" href="#refreshparams">RefreshParams</a></h3>
 <div class="paragraph">
-<p>Refresh parameters JSON</p>
+<p>Object to pass to the <code>refresh</code> function.</p>
 </div>
 <div class="paragraph lead">
 <p>Fields</p>
@@ -1160,27 +1515,27 @@ refresh({
 <td class="tableblock halign-left valign-top"><p class="tableblock">mode</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'all'</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>all</code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Index definition settings</p>
+<p>Index type to be refreshed. One of <code>all</code>, <code>search</code>, or <code>storage</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repo</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'com.enonic.cms.default'</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Repository id: 'com.enonic.cms.default' | 'system-repo'. Default is the current repository set in portal</p>
+<p>Repository ID. Defaults to the repository of the current context.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'branch'=master</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Branch</p>
+<p>Branch. Defaults to the branch of the current context.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1191,7 +1546,7 @@ refresh({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:22:32 UTC
+Last updated 2026-05-03 09:29:23 UTC
 </div>
 </div>
 </body>
