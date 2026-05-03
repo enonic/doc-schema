@@ -70,13 +70,13 @@ Parameters
 [grid="none"]
 |===
 | Name  | Type   | Description
-| key | string | Resource key to look up
+| key | string \| ResourceKey | Resource key to look up
 |===
 
 [.lead]
 Returns
 
-*Resource* : Resource reference.
+*Resource* : Resource reference exposing `exists()`, `getSize()`, `getTimestamp()`, and `getStream()`.
 
 [.lead]
 Examples
@@ -89,6 +89,7 @@ import {getResource} from '/lib/xp/io';
 const res1 = getResource('/lib/xp/examples/io/sample.txt');
 const exists = res1.exists();
 const size = res1.getSize();
+const timestamp = res1.getTimestamp();
 const stream = res1.getStream();
 ----
 
@@ -115,13 +116,13 @@ Parameters
 [grid="none"]
 |===
 | Name    | Type   | Description
-| stream      |  | Stream to get size of
+| stream  | ByteSource | Stream to get size of
 |===
 
 [.lead]
 Returns
 
-*number* : Returns the size of a stream.
+*number* : Size of the stream in bytes.
 
 [.lead]
 Example
@@ -153,7 +154,7 @@ Parameters
 [.lead]
 Returns
 
-_*_ : A new stream.
+*ByteSource* : A new stream containing the UTF-8 bytes of the input string.
 
 [.lead]
 Example
@@ -178,8 +179,8 @@ Parameters
 [grid="none"]
 |===
 | Name    | Type   | Description
-| stream   |  | Stream to read lines from
-| func   | function | Callback function to be called for each line
+| stream | ByteSource | Stream to read lines from
+| func   | (line: string) => void | Callback function called for each line
 |===
 
 [.lead]
@@ -210,7 +211,7 @@ Parameters
 [grid="none"]
 |===
 | Name    | Type   | Description
-| stream   |  | A stream to read lines from
+| stream  | ByteSource | Stream to read lines from
 |===
 
 [.lead]
@@ -242,13 +243,13 @@ Parameters
 [grid="none"]
 |===
 | Name    | Type   | Description
-| stream   |  | A stream to read text from
+| stream  | ByteSource | Stream to read text from
 |===
 
 [.lead]
 Returns
 
-*string* : Text read from a stream or a string.
+*string* : Text read from the stream.
 
 [.lead]
 Example
