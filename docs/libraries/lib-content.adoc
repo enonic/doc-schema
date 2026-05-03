@@ -27,7 +27,8 @@ You are now ready to use the API.
 == Constants
 
 === CONTENT_ROOT_PATH
-Variable of type NodePath describing content node root path.
+String constant with the root path of content nodes (`/content`).
+
 [.lead]
 Usage
 
@@ -35,11 +36,11 @@ Usage
 ----
 import {CONTENT_ROOT_PATH} from '/lib/xp/content';
 
-const myRoot = CONTENT_ROOT_PATH; // NodePath.create( "/content" ).build()
+const myRoot = CONTENT_ROOT_PATH; // "/content"
 ----
 
 === ARCHIVE_ROOT_PATH
-Variable of type NodePath describing archive node root path.
+String constant with the root path of archived nodes (`/archive`).
 
 
 [.lead]
@@ -49,7 +50,7 @@ Usage
 ----
 import {ARCHIVE_ROOT_PATH} from '/lib/xp/content';
 
-const myRoot = ARCHIVE_ROOT_PATH; // NodePath.create( "/archive" ).build()
+const myRoot = ARCHIVE_ROOT_PATH; // "/archive"
 ----
 
 == Functions
@@ -107,7 +108,7 @@ An object with the following keys and their values:
 [grid="none"]
 |===
 | Name | Type | Description
-| сontent | string | Path or id of the content to be archived
+| content | string | Path or id of the content to be archived
 |===
 
 [.lead]
@@ -296,12 +297,17 @@ An object with the following keys and their values:
 [grid="none"]
 |===
 | Name | Type | Attributes| Default| Description
-| name | string | <optional> | | Name of content
+| name | string | | | Name of content
 | parentPath | string | <optional> | / | Path to place content under
-| mimeType | string | <optional> | | Mime-type of the data
 | focalX | number | <optional> | | Focal point for X axis (if it's an image)
 | focalY | number | <optional> | | Focal point for Y axis (if it's an image)
-| data | | | | Data (as stream) to use
+| artist | string \| string[] | <optional> | | Artist of the media
+| tags | string \| string[] | <optional> | | Tags of the media
+| caption | string | <optional> | | Caption of the media
+| altText | string | <optional> | | Alt text of the media
+| copyright | string | <optional> | | Copyright of the media
+| data | object | | | Data (as stream) to use
+| idGenerator | function | <optional> | | Function used to generate the id-suffix appended to the content name
 |===
 
 [.lead]
@@ -320,7 +326,6 @@ import {createMedia} from '/lib/xp/content';
 const result = createMedia({
     name: 'mycontent',
     parentPath: '/a/b',
-    mimeType: 'text/plain',
     data: stream
 });
 ----
@@ -347,7 +352,7 @@ const expected = {
 
 === updateMedia
 
-Modifies a media content
+Updates a media content
 
 [.lead]
 *Parameters:*
@@ -361,16 +366,13 @@ An object with the following keys and their values:
 | Name | Type | Attributes| Default| Description
 | key | string | | | Path or id of the media content
 | name | string | | | Name of the media content
-| data | | | | Media data (as a stream)
-| mimeType | string | <optional> | | Mime-type of the data
+| data | object | | | Media data (as a stream)
 | focalX | number | <optional> | | Focal point for X axis (if content is an image)
 | focalY | number | <optional> | | Focal point for Y axis (if content is an image)
 | caption | string | <optional> | | Caption
 | artist | string \| string[]  | <optional> | | Artist
 | copyright | string | <optional> | | Copyright
 | tags | string \| string[] | <optional> | | Tags
-| workflowInfo | object | <optional> | | Workflow state (default: READY).
-
 |===
 
 [.lead]
@@ -385,7 +387,7 @@ Examples
 ----
 import {updateMedia} from '/lib/xp/content';
 
-// Modifies a media.
+// Updates a media.
 const result = updateMedia({
     key: '/a/b/mycontent',
     name: 'mycontent',
@@ -393,7 +395,6 @@ const result = updateMedia({
     artist: ['Artist 1', 'Artist 2'],
     caption: 'Caption',
     copyright: 'Copyright',
-    mimeType: 'text/plan',
     tags: ['tag1', 'tag2']
 });
 ----
@@ -417,7 +418,6 @@ const expected = {
             "Artist 2"
         ],
         copyright: "Copyright",
-        mimeType: "text/plan",
         tags: [
             "tag1",
             "tag2"
@@ -426,11 +426,7 @@ const expected = {
     x: {},
     page: {},
     attachments: {},
-    publish: {},
-    workflow: {
-        state: "READY",
-        checks: {}
-    }
+    publish: {}
 };
 ----
 
@@ -675,6 +671,46 @@ const expected = {
 };
 ----
 
+=== getActiveVersions
+
+Returns the active content version for each specified branch.
+
+[.lead]
+*Parameters:*
+
+An object with the following keys and their values:
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| key | string | Path or id of the content
+| branches | string[] | Array of branch names to get active versions for
+|===
+
+[.lead]
+Returns
+
+*object* : Object with branch names as keys and content versions as values.
+
+[.lead]
+Examples
+
+[source,typescript]
+----
+import {getActiveVersions} from '/lib/xp/content';
+
+// Fetch active versions for draft and master branches
+const result = getActiveVersions({
+    key: 'contentid',
+    branches: ['draft', 'master']
+});
+
+log.info('Draft version: %s', result.draft.versionId);
+log.info('Master version: %s', result.master.versionId);
+----
+
 === getAttachments
 
 This function returns a content attachments
@@ -776,7 +812,7 @@ An object with the following keys and their values:
 [.lead]
 Returns
 
-*object* : An array of child items (as JSON) fetched from the repository
+*object* : Result object with `total`, `count` and `hits` properties listing the children fetched from the repository
 
 [.lead]
 Examples
@@ -1093,13 +1129,13 @@ const contentType = getType('com.enonic.myapp:person');
 // Content type returned:
 const expected = {
     name: "com.enonic.myapp:person",
-    displayName: "Person",
+    title: "Person",
     description: "Person content type",
     superType: "base:structured",
     abstract: false,
     final: true,
     allowChildContent: true,
-    displayNameExpression: "${name}",
+    modifiedTime: "2016-01-01T12:00:00Z",
     icon: {
         mimeType: "image/png",
         modifiedTime: "2016-01-01T12:00:00Z"
@@ -1228,11 +1264,60 @@ import {getTypes} from '/lib/xp/content';
 const contentTypes = getTypes();
 
 log.info('%s content types found:', contentTypes.length);
-contentTypes.forEach(({displayName,name,superType}) => {
+contentTypes.forEach(({title, name, superType}) => {
     if (superType === 'base:structured') {
-        log.info('%s - %s', name, displayName);
+        log.info('%s - %s', name, title);
     }
 });
+----
+
+=== getVersions
+
+Returns content versions, with cursor-based pagination.
+
+[.lead]
+*Parameters:*
+
+An object with the following keys and their values:
+
+[%header,cols="1%,1%,1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Attributes| Default | Description
+| key | string | | | Path or id of the content
+| count | number | <optional> | 10 | Number of content versions to fetch
+| cursor | string | <optional> | | Cursor for pagination
+|===
+
+[.lead]
+Returns
+
+*object* : Result object with `total`, `count`, `cursor` and `hits` properties listing the content versions.
+
+[.lead]
+Examples
+
+[source,typescript]
+----
+import {getVersions} from '/lib/xp/content';
+
+// Fetch first page
+const result = getVersions({
+    key: 'contentid',
+    count: 2
+});
+
+log.info('Total versions: %s', result.total);
+
+// Fetch next page using cursor
+if (result.cursor) {
+    const nextPage = getVersions({
+        key: 'contentid',
+        count: 2,
+        cursor: result.cursor
+    });
+}
 ----
 
 === update
@@ -1339,6 +1424,96 @@ const expected = {
 };
 ----
 
+=== updateMetadata
+
+Updates metadata (`owner` and `variantOf`) for a content. The update is applied to both the master and draft branches.
+
+[.lead]
+*Parameters:*
+
+An object with the following keys and their values:
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| key | string | Path or id to the content
+| editor | function | Editor callback function to modify metadata
+|===
+
+The editor callback receives an object with the current `source` content, `owner` and `variantOf`, and must return the same object with the desired modifications.
+
+[.lead]
+Returns
+
+*object* : Result object with the updated `content` property.
+
+[.lead]
+Examples
+
+[source,typescript]
+----
+import {updateMetadata} from '/lib/xp/content';
+
+// Update content metadata by path
+const result = updateMetadata({
+    key: '/a/b/mycontent',
+    editor: (c) => {
+        c.owner = 'user:system:new-owner';
+        return c;
+    }
+});
+
+if (result) {
+    log.info('Content metadata updated');
+} else {
+    log.info('Content not found');
+}
+----
+
+=== updateWorkflow
+
+Updates workflow information (state and checks) for a content. The update is applied to the draft branch only.
+
+[.lead]
+*Parameters:*
+
+An object with the following keys and their values:
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| key | string | Path or id to the content
+| editor | function | Editor callback function to modify workflow
+|===
+
+The editor callback receives an object with the current `source` content and a writable `state` property, and must return the same object with the desired modifications.
+
+[.lead]
+Returns
+
+*object* : Result object with the updated `content` property.
+
+[.lead]
+Examples
+
+[source,typescript]
+----
+import {updateWorkflow} from '/lib/xp/content';
+
+// Mark content workflow as READY
+const result = updateWorkflow({
+    key: '/a/b/mycontent',
+    editor: (w) => {
+        w.state = 'READY';
+        return w;
+    }
+});
+----
+
 === patch
 
 Patches a content
@@ -1357,7 +1532,7 @@ It should be used with caution. Access is restricted to users with `admin` or `c
 | Name | Type | Attributes| Default| Description
 | key | string | | | Path or id to the content
 | patcher | function | | | Patcher callback function
-| branches | string[] | <optional> | false | A list of branches to patch. +
+| branches | string[] | <optional> | `[]` | A list of branches to patch. +
 * If not provided or empty, the content in the current branch will be patched. +
 * If one branch is listed, the patch occurs in that specific branch. +
 * If multiple branches are listed: +
@@ -1408,6 +1583,7 @@ It should be used with caution. Access is restricted to users with `admin` or `c
 | originProject | string | The name of the project this content was inherited from.
 | originalParentPath | string | The original parent path in the parent project.
 | originalName | string | The original name in the parent project.
+| attachments | object | An object listing the content's existing attachments, keyed by attachment name. Use the `attachments` patch parameter (with `createAttachments` / `modifyAttachments` / `removeAttachments`) to manage the attachment binaries themselves.
 |===
 
 [[createAttachments_details]]
@@ -1424,8 +1600,7 @@ An object with the following keys and their values:
 | mimeType | string | <optional> | Mime-type of the data
 | label | string | <optional> | Label of the attachment
 | textContent | string | <optional> | Text content to set
-| sha512 | string | <optional> | SHA-512 hash of the data
-| size | number | <optional> | Size of the data in bytes
+| data | object \| string | <optional> | Data (as stream) to use
 |===
 
 [[modifyAttachments_details]]
@@ -1437,12 +1612,13 @@ An object with the following keys and their values:
 [frame="none"]
 [grid="none"]
 |===
-| Name        | Type    | Attributes |  Description
-| name        | string         |             | Name of the attachment to modify
-| mimeType    | string         | <optional> | Mime-type of the data
-| label       | string         | <optional> | Label of the attachment
-| textContent | string         | <optional> | Text content to set
-| data        | object(stream) | <optional> | Data (as stream) to use
+| Name | Type | Attributes |  Description
+| name | string | | Name of the attachment to modify
+| mimeType | string | <optional> | Mime-type of the data
+| label | string | <optional> | Label of the attachment
+| textContent | string | <optional> | Text content to set
+| sha512 | string | <optional> | SHA-512 hash of the data
+| size | number | <optional> | Size of the data in bytes
 |===
 
 [.lead]
@@ -1617,12 +1793,12 @@ An object with the following keys and their values:
 [grid="none"]
 |===
 | Name | Type | Attributes| Default| Description
-| keys | string[] | | | List of all content keys(path or id) that should be published
+| keys | string[] | | | List of all content keys (path or id) that should be published
 | schedule | <<ScheduleParams>> | <optional> | | Schedule publishing
-| excludeChildrenIds | string[] | <optional> | | List of content keys whose descendants should be excluded from publishing
+| excludeDescendantsOf | string[] | <optional> | | List of content keys whose descendants should be excluded from publishing
+| excludeChildrenIds | string[] | <optional> | | _Deprecated, use_ `excludeDescendantsOf` _instead._
 | includeDependencies | boolean | <optional> | true | Whether all related content should be included when publishing content
-| sourceBranch | string | | | _Not in use from_ image:xp-7120.svg[XP 7.12.0,opts=inline]. The branch where the content to be published is stored.
-| targetBranch | string | | | _Not in use since_ image:xp-7120.svg[XP 7.12.0,opts=inline]. The branch to which the content should be published. Technically, publishing is just a move from one branch to another, and publishing user content from master to draft is therefore also valid usage of this function, which may be practical if user input to a web-page is stored on master
+| message | string | <optional> | | Publish message
 |===
 
 ==== ScheduleParams
@@ -1652,8 +1828,6 @@ import {publish} from '/lib/xp/content';
 // Publish content by path or key
 const result = publish({
     keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
-    sourceBranch: 'draft',
-    targetBranch: 'master',
     schedule: {
         from: new Date().toISOString(),
         to: '2018-01-01T13:37:00.000Z'
@@ -1700,11 +1874,12 @@ An object with the following keys and their values:
 | Name | Type | Attributes| Default| Description
 | start | number | <optional> | 0 | Start index (used for paging)
 | count | number | <optional> | 10 | Number of contents to fetch
-| query | string/object | | | Query string or <<../storage/dsl#, DSL>> expression
-| filters | object | <optional> | | Filters to apply to query result
-| sort | string/object | <optional> | | Sorting string or <<../storage/dsl#sort, DSL>> expression
-| aggregations | string | <optional> | | Aggregations expression
+| query | string \| object | <optional> | | Query string or <<../storage/dsl#, DSL>> expression
+| filters | object \| object[] | <optional> | | Filters to apply to query result
+| sort | string \| object \| object[] | <optional> | | Sorting string or <<../storage/dsl#sort, DSL>> expression
+| aggregations | object | <optional> | | Aggregations expression
 | contentTypes | string[] | <optional> | | Content types to filter on
+| highlight | object | <optional> | | Highlight expression
 |===
 
 [.lead]
@@ -2118,9 +2293,11 @@ Examples
 
 .1) Applying permissions to a content by overwriting the current permissions.
 
-[source,js]
+[source,typescript]
 ----
-repo.applyPermissions({
+import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -2137,9 +2314,11 @@ repo.applyPermissions({
 
 .2) Adding permissions to a content.
 
-[source,js]
+[source,typescript]
 ----
-repo.applyPermissions({
+import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     addPermissions: [
         {
@@ -2156,9 +2335,11 @@ repo.applyPermissions({
 
 .3) Removing permissions from a content.
 
-[source,js]
+[source,typescript]
 ----
-repo.applyPermissions({
+import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     removePermissions: [
         {
@@ -2178,9 +2359,11 @@ repo.applyPermissions({
 
 .Applying permissions to a content and its descendants.
 
-[source,js]
+[source,typescript]
 ----
-repo.applyPermissions({
+import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -2194,9 +2377,11 @@ repo.applyPermissions({
 
 .Applying permissions to a content's descendants only.
 
-[source,js]
+[source,typescript]
 ----
-repo.applyPermissions({
+import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -2204,20 +2389,20 @@ repo.applyPermissions({
             allow: ['READ']
         }
     ],
-    scope: 'CHILDREN'
+    scope: 'SUBTREE'
 });
 ----
 
 ==== PermissionsParams
 
-[%header,cols="1%,1%,98%a"]
+[%header,cols="1%,1%,1%,98%a"]
 [frame="none"]
 [grid="none"]
 |===
-| Name | Type | Description
-| principal | string | Principal key
-| allow | string[] | Allowed permissions
-| deny | string[] | Denied permissions
+| Name | Type | Attributes | Description
+| principal | string | | Principal key
+| allow | string[] | <optional> | Allowed permissions
+| deny | string[] | <optional> | Denied permissions
 |===
 
 === unpublish
@@ -2280,15 +2465,16 @@ Fields
 |===
 | Name | Type | Attributes| Description
 | name | string | | Name of the content type
-| displayName | string | | Display name of the content type
+| title | string | | Title of the content type
 | description | string | | Description of the content type
 | superType | string | | Name of the super type, or null if it has no super type
 | abstract | boolean | | Whether or not content of this type may be instantiated
 | final | boolean | | Whether or not it may be used as super type of other content types
 | allowChildContent | boolean | | Whether or not allow creating child items on content of this type
-| displayNameExpression | string | | ES6 string template for generating the content name based on values in the content form
+| modifiedTime | string | | Modified time of the content type
 | icon | <<IconType>> | <optional> | Icon of the content type
 | form | object[] | | Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet
+| config | object | | Custom schema configuration for the descriptor
 |===
 
 === IconType
