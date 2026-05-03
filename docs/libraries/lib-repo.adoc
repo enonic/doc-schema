@@ -480,7 +480,7 @@ Fields
 | id | string | | Repository ID.
 | branches | string[] | | Branches available in the repository.
 | data | object | <optional> | Repository data as a key/value map.
-| transient | boolean | | `true` if the repository is transient (not persisted to disk).
+| transient | boolean | | `true` if the repository is transient (excluded from dumps and snapshots).
 |===
 
 === CreateRepositoryParams
