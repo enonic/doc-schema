@@ -109,7 +109,7 @@ sendToGroup({group: 'live', message: {data: 'Update'}});
 
 === close
 
-Closes an SSE connection. The connection's `sseEvent` handler will receive a `close` event.
+Closes an SSE connection. The connection's `sseEvent` function will receive a `close` event.
 
 [.lead]
 Parameters
@@ -162,10 +162,14 @@ Example
 
 [source,typescript]
 ----
-import {isOpen} from '/lib/xp/sse';
+import {isOpen, send} from '/lib/xp/sse';
 
-if (!isOpen({clientId: clientId})) {
-    return;
+for (let i = 0; i < 10; i++) {
+    if (!isOpen({clientId: clientId})) {
+        break;
+    }
+    const data = computeExpensiveData(i);
+    send({clientId: clientId, message: {event: 'update', data: data}});
 }
 ----
 
