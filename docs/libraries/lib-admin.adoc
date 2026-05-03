@@ -27,35 +27,57 @@ You are now ready to use the API.
 
 == Functions
 
-[[widget-url]]
-=== widgetUrl
+=== getInstallation
 
-Returns the URL for a widget.
+Returns the installation name.
 
 [.lead]
 Parameters
 
-[%header,cols="1%,1%,98%a"]
-[frame="none"]
-[grid="none"]
-|===
-| Name | Kind | Details
-| application | string | Full application name. (f.ex, 'com.enonic.xp.app.main')
-| widget | string | Name of the widget. (f.ex, 'launcher')
-| type | string | Either `server` (server-relative URL) or `absolute`
-| params | object | Custom query parameters to append to the url.
-
-|===
+None
 
 [.lead]
 Returns
 
-*string* : URL of the requested admin tool.
+*string* : The installation name.
 
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getInstallation} from '/lib/xp/admin';
+
+const name = getInstallation();
+----
+
+=== getVersion
+
+Returns the version of the XP installation.
+
+[.lead]
+Parameters
+
+None
+
+[.lead]
+Returns
+
+*string* : The version number of the XP runtime.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getVersion} from '/lib/xp/admin';
+
+const version = getVersion();
+----
 
 === getToolUrl
 
-Returns URL of an admin tool in an application.
+Returns the URL for an admin tool of a specific application.
 
 [.lead]
 Parameters
@@ -64,15 +86,25 @@ Parameters
 [frame="none"]
 [grid="none"]
 |===
-| Name | Kind | Details
-| application | string | Full application name (f.ex, 'com.enonic.app')
-| tool | string | Name of the tool inside an app (f.ex, 'main')
+| Name | Type | Description
+| application | string | Full application name (f.ex, `com.enonic.app.main`).
+| tool | string | Name of the tool inside an app (f.ex, `main`).
 |===
 
 [.lead]
 Returns
 
 *string* : URL of the requested admin tool.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getToolUrl} from '/lib/xp/admin';
+
+const url = getToolUrl('com.enonic.app.main', 'main');
+----
 
 === getHomeToolUrl
 
@@ -81,46 +113,123 @@ Returns the URL for the Home admin tool.
 [.lead]
 Parameters
 
-An object with the following keys and their values:
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| params | object | Parameter object. Optional.
+
+[%header,cols="1%,1%,1%,1%,96%a"]
+[frame="topbot"]
+[grid="none"]
+[caption=""]
+.Properties
+!===
+! Name ! Type   ! Attributes ! Default ! Description
+! type ! string ! <optional> ! server  ! URL type. Either `server` (server-relative URL) or `absolute`.
+!===
+
+|===
+
+[.lead]
+Returns
+
+*string* : The URL pointing to the Home admin tool.
+
+[.lead]
+Example
+
+[source,typescript]
+----
+import {getHomeToolUrl} from '/lib/xp/admin';
+
+const url = getHomeToolUrl({type: 'absolute'});
+----
+
+=== extensionUrl
+
+Returns the URL for an admin extension.
+
+[.lead]
+Parameters
 
 [%header,cols="1%,1%,98%a"]
 [frame="none"]
 [grid="none"]
 |===
-| Name | Kind | Details
-| type | string | Either `server` (server-relative URL) or `absolute`
+| Name | Type | Description
+| params | object | Parameter object.
+
+[%header,cols="1%,1%,1%,1%,96%a"]
+[frame="topbot"]
+[grid="none"]
+[caption=""]
+.Properties
+!===
+! Name        ! Type   ! Attributes ! Default ! Description
+! application ! string !            !         ! Application key that provides the extension.
+! extension   ! string !            !         ! Name of the extension.
+! type        ! string ! <optional> ! server  ! URL type. Either `server` (server-relative URL) or `absolute`.
+! params      ! object ! <optional> !         ! Custom query parameters to append to the URL.
+!===
+
 |===
 
 [.lead]
 Returns
 
-*string* : The URL pointing to the Home Tool
+*string* : URL of the requested extension.
 
-=== getInstallation
+[.lead]
+Example
 
-Returns installation name.
+[source,typescript]
+----
+import {extensionUrl} from '/lib/xp/admin';
+
+const url = extensionUrl({
+    application: 'com.enonic.app.main',
+    extension: 'launcher',
+    type: 'absolute',
+    params: {
+        id: '42'
+    }
+});
+----
+
+=== widgetUrl
+
+WARNING: Deprecated — use <<extensionurl, `extensionUrl`>> instead. This function will be removed in future versions.
+
+Returns the URL for a widget. Equivalent to calling `extensionUrl` with `extension` set to the widget name.
 
 [.lead]
 Parameters
 
-None
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name | Type | Description
+| params | object | Parameter object.
+
+[%header,cols="1%,1%,1%,1%,96%a"]
+[frame="topbot"]
+[grid="none"]
+[caption=""]
+.Properties
+!===
+! Name        ! Type   ! Attributes ! Default ! Description
+! application ! string !            !         ! Application key that provides the widget.
+! widget      ! string !            !         ! Name of the widget.
+! type        ! string ! <optional> ! server  ! URL type. Either `server` (server-relative URL) or `absolute`.
+! params      ! object ! <optional> !         ! Custom query parameters to append to the URL.
+!===
+
+|===
 
 [.lead]
 Returns
 
-*string* : The installation name
-
-=== getVersion
-
-Returns version of XP installation.
-
-[.lead]
-Parameters
-
-None
-
-
-[.lead]
-Returns
-
-*string* : The version number of the XP runtime.
+*string* : URL of the requested widget.
