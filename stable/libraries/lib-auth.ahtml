@@ -531,7 +531,7 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <div class="sect2">
 <h3 id="addmembers"><a class="link" href="#addmembers">addMembers</a></h3>
 <div class="paragraph">
-<p>Adds members to a principal (user or role).</p>
+<p>Adds members to a principal (group or role).</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -553,11 +553,11 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Key of the principal to add members to</p>
+<p>Key of the group or role to add members to</p>
 </div></div></td>
 </tr>
 <tr>
@@ -565,7 +565,7 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A list of the new members that should be added to the principal</p>
+<p>Keys of users and groups to add</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -576,11 +576,22 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <div class="paragraph">
 <p><strong>void</strong></p>
 </div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Add members to a specified principal</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {addMembers} from '/lib/xp/auth';
+
+addMembers('role:roleId', ['user:system:user1', 'group:system:group-a']);</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="changepassword"><a class="link" href="#changepassword">changePassword</a></h3>
 <div class="paragraph">
-<p>Changes password for a specified user.</p>
+<p>Changes or clears the password for the specified user.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -592,11 +603,13 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <colgroup>
 <col style="width: 1%;">
 <col style="width: 1%;">
-<col style="width: 98%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
 <th class="tableblock halign-left valign-top">Attributes</th>
 <th class="tableblock halign-left valign-top">Description</th>
 </tr>
@@ -604,16 +617,18 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">userKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The key of the user to change password for</p>
+<p>Key of the user to change password for</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">password</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The new password</p>
+<p>The new password to set. If <code>null</code>, the password will be cleared.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -623,6 +638,24 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 </div>
 <div class="paragraph">
 <p><strong>void</strong></p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Change the password of the current user</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getUser, changePassword} from '/lib/xp/auth';
+
+const user = getUser();
+
+if (user) {
+    changePassword({
+        userKey: user.key,
+        password: 'new-secret-password'
+    });
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -671,7 +704,7 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Group display name</p>
 </div></div></td>
@@ -679,9 +712,9 @@ In this case you must explicitly execute the function in the <a href="lib-contex
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A description of the principal</p>
+<p>Group description</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -752,13 +785,13 @@ const group = createGroup({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The name of the role.  The key of the role will be 'role.&lt;name&gt;'.</p>
+<p>The name of the role. The key of the role will be <code>role:&lt;name&gt;</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Role display name</p>
 </div></div></td>
@@ -766,9 +799,9 @@ const group = createGroup({
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A description of the role</p>
+<p>Role description</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -852,7 +885,7 @@ const role = createRole({
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>User display name</p>
 </div></div></td>
@@ -862,7 +895,7 @@ const role = createRole({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional user e-mail</p>
+<p>User e-mail</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -930,11 +963,11 @@ const user = createUser({
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Key of the principal to delete</p>
+<p>Principal key to delete</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -962,8 +995,11 @@ const deleted = deletePrincipal('user:myIdProvider:userId');</code></pre>
 <div class="paragraph">
 <p>Search for principals matching the specified criteria.</p>
 </div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
 <div class="paragraph">
-<p>An object with the following keys and their value.  All parameters are optional:</p>
+<p>An object with the following keys and their values. All parameters are optional:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -999,18 +1035,18 @@ const deleted = deletePrincipal('user:myIdProvider:userId');</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">start</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>First principal to return from the search results. It can be used for pagination.</p>
+<p>First principal to return from the search results. It can be used for pagination. Default is <code>0</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">count</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A limit on the number of principals to be returned</p>
+<p>A limit on the number of principals to be returned. Default is <code>10</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1057,14 +1093,20 @@ const result = findPrincipals({
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-js" data-lang="js">({
-    type: "user",
-    key: "user:system:user1",
-    displayName: "The One And Only",
-    disabled: false,
-    email: "user1@enonic.com",
-    login: "user1",
-    idProvider: "myIdProvider",
-    hasPassword: true
+    total: 1,
+    count: 1,
+    hits: [
+        {
+            type: "user",
+            key: "user:system:user1",
+            displayName: "The One And Only",
+            disabled: false,
+            email: "user1@enonic.com",
+            login: "user1",
+            idProvider: "myIdProvider",
+            hasPassword: true
+        }
+    ]
 })</code></pre>
 </div>
 </div>
@@ -1073,6 +1115,9 @@ const result = findPrincipals({
 <h3 id="findusers"><a class="link" href="#findusers">findUsers</a></h3>
 <div class="paragraph">
 <p>Search for users matching the specified query.</p>
+</div>
+<div class="paragraph lead">
+<p>Parameters</p>
 </div>
 <div class="paragraph">
 <p>An object with the following keys and their values:</p>
@@ -1106,7 +1151,7 @@ const result = findPrincipals({
 <td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional start index for paging</p>
+<p>Start index for paging. Default is <code>0</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1114,7 +1159,7 @@ const result = findPrincipals({
 <td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional number of users to fetch at a time</p>
+<p>Number of users to fetch. Default is <code>10</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1122,7 +1167,7 @@ const result = findPrincipals({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional sorting expression</p>
+<p>Sorting expression</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1130,7 +1175,7 @@ const result = findPrincipals({
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>If set to <code>true</code>, a full profile of each user will be included in the result</p>
+<p>If set to <code>true</code>, a full profile of each user will be included in the result. Default is <code>false</code>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1244,7 +1289,22 @@ const pwd = generatePassword();</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: An object with all the values in the configuration.</p>
+<p><strong>object</strong>: An object with all the values in the configuration, or <code>null</code> if no configuration is set.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Reading a value from the ID provider configuration</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getIdProviderConfig} from '/lib/xp/auth';
+
+const config = getIdProviderConfig&lt;{ field?: string }&gt;();
+
+if (config) {
+    log.info('Field value for the current ID provider config = %s', config.field);
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1272,11 +1332,11 @@ const pwd = generatePassword();</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key to retrieve the members of.</p>
+<p>Principal key (group or role) to retrieve members for</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1285,7 +1345,7 @@ const pwd = generatePassword();</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object[]</strong>: A list of objects for each member of the principal or empty array if none.</p>
+<p><strong>object[]</strong>: A list of users and groups that are members of the principal, or an empty array if none.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1349,11 +1409,11 @@ const result = getMembers('group:system:content-managers');</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key to retrieve memberships for</p>
+<p>Principal key (user or group) to retrieve memberships for</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1361,7 +1421,7 @@ const result = getMembers('group:system:content-managers');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Retrieve transitive memberships.  Considered <code>false</code> if not specified</p>
+<p>Retrieve transitive memberships. Considered <code>false</code> if not specified.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1370,7 +1430,7 @@ const result = getMembers('group:system:content-managers');</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>string[]</strong>: A list of the principals that the specified principal is a member of.</p>
+<p><strong>object[]</strong>: A list of groups and roles that the specified principal is a member of.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1389,7 +1449,7 @@ const result = getMemberships('user:system:user1');</code></pre>
 <pre class="highlight"><code class="language-js" data-lang="js">[{
     type: "role",
     key: "role:system.admin",
-    displayName:"Administrator"
+    displayName: "Administrator"
 }]</code></pre>
 </div>
 </div>
@@ -1405,10 +1465,26 @@ const result = getMemberships('user:system:user1', true);</code></pre>
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-js" data-lang="js">[
-    "role:system.admin.login",
-    "group:system:content-managers",
-    "role:cms.expert",
-    "role:cms.cm.app"
+    {
+        type: "role",
+        key: "role:system.admin.login",
+        displayName: "Login to administration console"
+    },
+    {
+        type: "group",
+        key: "group:system:content-managers",
+        displayName: "Content Managers"
+    },
+    {
+        type: "role",
+        key: "role:cms.expert",
+        displayName: "CMS Expert"
+    },
+    {
+        type: "role",
+        key: "role:cms.cm.app",
+        displayName: "Content Manager App"
+    }
 ]</code></pre>
 </div>
 </div>
@@ -1438,11 +1514,11 @@ const result = getMemberships('user:system:user1', true);</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key to retrieve memberships for</p>
+<p>Principal key to look for</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1451,7 +1527,10 @@ const result = getMemberships('user:system:user1', true);</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: The principal as an object.</p>
+<p><strong>object</strong>: The principal as an object, or <code>null</code> if it does not exist.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
 </div>
 <div class="listingblock">
 <div class="title">Retrieving the full principal for 'user1'</div>
@@ -1509,7 +1588,7 @@ const result = getPrincipal('user:system:user1');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal key to retrieve profile for</p>
+<p>Principal key of the user</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1517,7 +1596,7 @@ const result = getPrincipal('user:system:user1');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional scope setting</p>
+<p>Scope of the data to retrieve</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1526,7 +1605,7 @@ const result = getPrincipal('user:system:user1');</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: Profile data.</p>
+<p><strong>object</strong>: Profile data, or <code>null</code> if the user was not found.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1553,19 +1632,45 @@ const result = getProfile({
 <div class="sect2">
 <h3 id="getuser"><a class="link" href="#getuser">getUser</a></h3>
 <div class="paragraph">
-<p>Returns the logged-in user. If not logged-in, this will return <em>undefined</em> or <em>null</em>.</p>
+<p>Returns the logged-in user. If not logged-in, this will return <code>null</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
 </div>
 <div class="paragraph">
-<p>None</p>
+<p>An optional object with the following keys and their values:</p>
 </div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Kind</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">includeProfile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set to <code>true</code>, the user&#8217;s profile is included in the result. Default is <code>false</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph lead">
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: <a href="#user"><code>User</code></a> data.</p>
+<p><strong>object</strong>: <a href="#user"><code>User</code></a> data, or <code>null</code> if not logged in.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1623,7 +1728,7 @@ const result = getUser();</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The role to check for</p>
+<p>Role name to check for</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1642,7 +1747,7 @@ const result = getUser();</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {hasRole} from '/lib/xp/auth';
 
-const hasRole = hasRole('system.admin');</code></pre>
+const isAdmin = hasRole('system.admin');</code></pre>
 </div>
 </div>
 </div>
@@ -1821,7 +1926,7 @@ const loginResult = login({
 <td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Group editor function</p>
+<p>Group editor function to apply to the group</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1830,7 +1935,7 @@ const loginResult = login({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: The updated group.</p>
+<p><strong>object</strong>: The updated group, or <code>null</code> if the group was not found.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1906,7 +2011,7 @@ const group = modifyGroup({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional scope setting</p>
+<p>Scope of the data to retrieve and update</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1914,7 +2019,7 @@ const group = modifyGroup({
 <td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Profile editor function</p>
+<p>Profile editor function to apply</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1923,7 +2028,10 @@ const group = modifyGroup({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: The updated profile.</p>
+<p><strong>object</strong>: The updated profile, or <code>null</code> if the user was not found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
 </div>
 <div class="listingblock">
 <div class="title">Changing a profile</div>
@@ -1987,7 +2095,7 @@ const profileModified = modifyProfile({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The role key</p>
+<p>Principal key of the role to modify</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1995,7 +2103,7 @@ const profileModified = modifyProfile({
 <td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Role editor function</p>
+<p>Role editor function to apply to the role</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -2004,14 +2112,17 @@ const profileModified = modifyProfile({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: The updated role.</p>
+<p><strong>object</strong>: The updated role, or <code>null</code> if the role was not found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
 </div>
 <div class="listingblock">
 <div class="title">Changing a role</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modifyRole} from '/lib/xp/auth';
 
-// Callback to edit the profile.
+// Callback to edit the role.
 function roleEditor(c) {
     c.displayName = 'Nothing Role';
     c.description = 'This role does not give access to anything!';
@@ -2069,7 +2180,7 @@ const theRole = modifyRole({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The user key</p>
+<p>Principal key of the user to modify</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2077,7 +2188,7 @@ const theRole = modifyRole({
 <td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>User editor function</p>
+<p>User editor function to apply to the user</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -2086,14 +2197,17 @@ const theRole = modifyRole({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong>: The updated <a href="#user"><code>User</code></a>.</p>
+<p><strong>object</strong>: The updated <a href="#user"><code>User</code></a>, or <code>null</code> if the user was not found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
 </div>
 <div class="listingblock">
 <div class="title">Changing a user</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {modifyUser} from '/lib/xp/auth';
 
-// Callback to edit the profile.
+// Callback to edit the user.
 function userEditor(c) {
     c.displayName = 'User 1-A';
     c.email = 'user1a@enonic.com';
@@ -2148,11 +2262,11 @@ const theUser = modifyUser({
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principalKey</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The principal key of a group or a role to remove members from</p>
+<p>Key of the group or role to remove members from</p>
 </div></div></td>
 </tr>
 <tr>
@@ -2160,7 +2274,7 @@ const theUser = modifyUser({
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Principal keys to remove as members</p>
+<p>Keys of the principals to remove</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -2171,10 +2285,15 @@ const theUser = modifyUser({
 <div class="paragraph">
 <p><strong>void</strong></p>
 </div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
 <div class="listingblock">
-<div class="title">Remove members from a specified principal.</div>
+<div class="title">Remove members from a specified principal</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">authLib.removeMembers('role:roleId', ['user:system:user1', 'group:system:group-a']);</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {removeMembers} from '/lib/xp/auth';
+
+removeMembers('role:roleId', ['user:system:user1', 'group:system:group-a']);</code></pre>
 </div>
 </div>
 </div>
@@ -2185,7 +2304,7 @@ const theUser = modifyUser({
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="user"><a class="link" href="#user">User</a></h3>
-<div id="user" class="paragraph lead">
+<div class="paragraph lead">
 <p>Type</p>
 </div>
 <div class="paragraph">
@@ -2279,7 +2398,7 @@ const theUser = modifyUser({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>

@@ -463,7 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#duplicate">duplicate</a></li>
 <li><a href="#exists">exists</a></li>
 <li><a href="#findchildren">findChildren</a></li>
-<li><a href="#findversions">findVersions</a></li>
+<li><a href="#getversions">getVersions</a></li>
 <li><a href="#get">get</a></li>
 <li><a href="#getactiveversion">getActiveVersion</a></li>
 <li><a href="#getbinary">getBinary</a></li>
@@ -474,8 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#push">push</a></li>
 <li><a href="#query_2">query</a></li>
 <li><a href="#refresh">refresh</a></li>
-<li><a href="#setactiveversion">setActiveVersion</a></li>
-<li><a href="#setchildorder">setChildOrder</a></li>
+<li><a href="#sort">sort</a></li>
 <li><a href="#applypermissions">applyPermissions</a></li>
 </ul>
 </li>
@@ -931,7 +930,7 @@ const repo = connect({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : Commit object(s)</p>
+<p><strong>object</strong> : Commit object. A single commit is created and applied to all the nodes referenced in <code>keys</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -966,18 +965,10 @@ const repo = connect({
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    {
-        id: "aa1f76bf-4bb9-41be-b166-03561c1555b2",
-        message: "Commit message",
-        committer: "user:system:anonymous",
-        timestamp: "2019-01-24T15:19:30.818029Z"
-    },
-    {
-        id: "5c15b187-e3ab-4d87-88b2-ffb84bd1c7bb",
-        message: "Commit message",
-        committer: "user:system:anonymous",
-        timestamp: "2019-01-24T15:19:30.818029Z"
-    }
+    id: "aa1f76bf-4bb9-41be-b166-03561c1555b2",
+    message: "Commit message",
+    committer: "user:system:anonymous",
+    timestamp: "2019-01-24T15:19:30.818029Z"
 }</code></pre>
 </div>
 </div>
@@ -1649,9 +1640,9 @@ if (result) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="findversions"><a class="link" href="#findversions">findVersions</a></h3>
+<h3 id="getversions"><a class="link" href="#getversions">getVersions</a></h3>
 <div class="paragraph">
-<p>Fetches versions of a node.</p>
+<p>Returns versions of a node.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1684,11 +1675,11 @@ if (result) {
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">start</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cursor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>start index used for paging - default: 0</p>
+<p>Opaque cursor returned in a previous result, used to fetch the next page</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1696,7 +1687,7 @@ if (result) {
 <td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">optional</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>number of content to fetch, used for paging - default: 10</p>
+<p>Number of versions to fetch - default: 10</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1705,25 +1696,35 @@ if (result) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : An object with stats about the result and an array listing the versions</p>
+<p><strong>object</strong> : An object with stats about the result, the cursor for the next page (if any), and an array listing the versions.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Fetch all versions of a content with a given path</div>
+<div class="title">Fetch the first page of versions, then the next page using the returned cursor.</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const result = repo.findVersions({
-    key: '/my-name'
-});</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const firstPage = repo.getVersions({
+    key: '/my-name',
+    count: 2
+});
+
+if (firstPage.cursor) {
+    const nextPage = repo.getVersions({
+        key: '/my-name',
+        count: 2,
+        cursor: firstPage.cursor
+    });
+}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Sample response</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
-    total: 2,
+    total: 40,
     count: 2,
+    cursor: "eyJ0cyI6MTAwMDAwMCwiaWQiOiJub2RlVmVyc2lvbk9sZCJ9",
     hits: [
         {
             versionId: "72dcd8c1-9d70-444d-ad7a-508d8c1865a0",
@@ -1854,7 +1855,7 @@ if (result) {
 <div class="sect2">
 <h3 id="getactiveversion"><a class="link" href="#getactiveversion">getActiveVersion</a></h3>
 <div class="paragraph">
-<p>Fetches the active version of a node.</p>
+<p>Returns the active version of a node in the current context branch.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1889,7 +1890,29 @@ if (result) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : Active content versions per branch</p>
+<p><strong>object</strong> : The active node version, or <code>null</code> if the node was not found.</p>
+</div>
+<div class="paragraph lead">
+<p>Example</p>
+</div>
+<div class="listingblock">
+<div class="title">Fetch the active version of a node.</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const version = repo.getActiveVersion({
+    key: '/my-name'
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample response</div>
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
+    versionId: "72dcd8c1-9d70-444d-ad7a-508d8c1865a0",
+    nodeId: "ddd1c933-0725-45e8-9a54-a3dd87193f60",
+    nodePath: "/my-name",
+    timestamp: "2019-05-13T15:56:17.018Z"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2144,6 +2167,12 @@ if (result) {
 </tr>
 </table>
 </div>
+<div class="paragraph lead">
+<p>Parameters</p>
+</div>
+<div class="paragraph">
+<p>An object with the following keys and their values:</p>
+</div>
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
 <col style="width: 0.9803%;">
@@ -2158,7 +2187,7 @@ if (result) {
 <th class="tableblock halign-left valign-top">Type</th>
 <th class="tableblock halign-left valign-top">Attributes</th>
 <th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Details</th>
 </tr>
 </thead>
 <tbody>
@@ -2184,10 +2213,10 @@ if (result) {
 <td class="tableblock halign-left valign-top"><p class="tableblock">branches</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[]</code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>A list of branches to patch.<br>
-* If not provided or empty, the content in the current branch will be patched.<br>
+* If not provided or empty, the node in the current context branch will be patched.<br>
 * If one branch is listed, the patch occurs in that specific branch.<br>
 * If multiple branches are listed:<br>
 1.  The patch is applied to the <strong>first</strong> branch in the list.<br>
@@ -2198,6 +2227,12 @@ if (result) {
 </tr>
 </tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : Patch result, with one entry in <code>branchResults</code> per branch where the node was patched.</p>
+</div>
 <div class="paragraph lead">
 <p><strong>Patchable Fields:</strong></p>
 </div>
@@ -2348,7 +2383,7 @@ const patchedNode = repo.patch({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>boolean</strong> : <code>true</code> if the node was successfully moved or renamed, <code>false</code> otherwise.</p>
+<p><strong>object</strong> : The moved or renamed node.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -2476,8 +2511,7 @@ const patchedNode = repo.patch({
     success: [
         "a"
     ],
-    failed: [],
-    deleted: []
+    failed: []
 }</code></pre>
 </div>
 </div>
@@ -2495,7 +2529,7 @@ const patchedNode = repo.patch({
 <div class="listingblock">
 <div class="title">Sample response</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected ={
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     success: [
         "a",
         "b",
@@ -2506,8 +2540,7 @@ const patchedNode = repo.patch({
             id: "d",
             reason: "ACCESS_DENIED"
         }
-    ],
-    deleted: []
+    ]
 }</code></pre>
 </div>
 </div>
@@ -2531,8 +2564,7 @@ const patchedNode = repo.patch({
         "a",
         "d"
     ],
-    failed: [],
-    deleted: []
+    failed: []
 }</code></pre>
 </div>
 </div>
@@ -2894,9 +2926,9 @@ const patchedNode = repo.patch({
 </div>
 </div>
 <div class="sect2">
-<h3 id="setactiveversion"><a class="link" href="#setactiveversion">setActiveVersion</a></h3>
+<h3 id="sort"><a class="link" href="#sort">sort</a></h3>
 <div class="paragraph">
-<p>Sets the active version of a node.</p>
+<p>Sorts the children of a node by changing the parent&#8217;s <code>_childOrder</code>. When the parent is set to manual ordering, child nodes are reordered according to their <code>_manualOrderValue</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -2922,78 +2954,14 @@ const patchedNode = repo.patch({
 <td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Path or ID of the node</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">versionID</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Version to set as active</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph lead">
-<p>Returns</p>
-</div>
-<div class="paragraph">
-<p><strong>boolean</strong> : <code>true</code> if deleted, <code>false</code> otherwise</p>
-</div>
-<div class="paragraph lead">
-<p>Example</p>
-</div>
-<div class="listingblock">
-<div class="title">Setting the previous version active</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">const findVersions = repo.findVersions({
-    key: node._id
-});
-
-const result = repo.setActiveVersion({
-    key: node._id,
-    versionId: findVersions.hits[1].versionId
-});</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="setchildorder"><a class="link" href="#setchildorder">setChildOrder</a></h3>
-<div class="paragraph">
-<p>Sets the order of a node&#8217;s children.</p>
-</div>
-<div class="paragraph lead">
-<p>Parameters</p>
-</div>
-<div class="paragraph">
-<p>An object with the following keys and their values:</p>
-</div>
-<table class="tableblock frame-none grid-none stretch">
-<colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Kind</th>
-<th class="tableblock halign-left valign-top">Details</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Path or ID of the node</p>
+<p>Path or ID of the parent node</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">childOrder</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>children order</p>
+<p>New child order expression for the parent (for example <code>displayName ASC</code> or <code>_manualOrderValue DESC</code>)</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3002,7 +2970,7 @@ const result = repo.setActiveVersion({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : The updated node</p>
+<p><strong>object</strong> : An object with the updated parent <code>node</code> and an array of <code>reorderedNodes</code> describing children whose ordering was affected.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -3010,7 +2978,7 @@ const result = repo.setActiveVersion({
 <div class="listingblock">
 <div class="title">Setting the children to be ordered in reverse alphabetical order by name</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.setChildOrder({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">const result = repo.sort({
     key: '/name-list',
     childOrder: 'name DESC'
 });</code></pre>
@@ -3023,7 +2991,7 @@ const result = repo.setActiveVersion({
 <p>Applies permissions on a node.</p>
 </div>
 <div class="paragraph lead">
-<p><strong>Parameters:</strong></p>
+<p>Parameters</p>
 </div>
 <div class="paragraph">
 <p>An object with the following keys and their values:</p>
@@ -3040,7 +3008,7 @@ const result = repo.setActiveVersion({
 <th class="tableblock halign-left valign-top">Name</th>
 <th class="tableblock halign-left valign-top">Type</th>
 <th class="tableblock halign-left valign-top">Attributes</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Details</th>
 </tr>
 </thead>
 <tbody>
@@ -3054,34 +3022,34 @@ const result = repo.setActiveVersion({
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">permissions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#PermissionsParams">[PermissionsParams]</a>[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Array of permissions to overwrite current permissions. Cannot be used with 'addPermissions' or 'removePermissions'.</p>
+<p>Array of permissions to overwrite current permissions. Cannot be combined with <code>addPermissions</code> or <code>removePermissions</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">addPermissions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#PermissionsParams">[PermissionsParams]</a>[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Array of permissions to add. Cannot be used with 'permissions'.</p>
+<p>Array of permissions to add. Cannot be combined with <code>permissions</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">removePermissions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#PermissionsParams">[PermissionsParams]</a>[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Array of permissions to remove. Cannot be used with 'permissions'.</p>
+<p>Array of permissions to remove. Cannot be combined with <code>permissions</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">scope</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string ('SINGLE' | 'TREE' | 'SUBTREE')</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>scope of applying permissions. Scope 'SINGLE' applies permissions only to the node itself. 'TREE' applies permissions to the node and its descendants. 'SUBTREE' applies permissions only to the node&#8217;s descendants. Default is 'SINGLE'.</p>
+<p>Scope of applying permissions. <code>'SINGLE'</code> applies permissions only to the node itself. <code>'TREE'</code> applies permissions to the node and its descendants. <code>'SUBTREE'</code> applies permissions only to the node&#8217;s descendants. Default is <code>'SINGLE'</code>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3094,13 +3062,64 @@ const result = repo.setActiveVersion({
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Each permission entry has the following shape:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 97.03%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">principal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Principal key (for example <code>role:system.everyone</code> or <code>user:system:my-user</code>).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">allow</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Permissions to allow. Possible values are <code>READ</code>, <code>CREATE</code>, <code>MODIFY</code>, <code>DELETE</code>, <code>PUBLISH</code>, <code>READ_PERMISSIONS</code>, <code>WRITE_PERMISSIONS</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">deny</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Permissions to deny.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : An object keyed by node id, with one <code>branchResults</code> entry per branch the permissions were applied to.</p>
+</div>
 <div class="paragraph lead">
 <p>Examples</p>
 </div>
 <div class="listingblock">
 <div class="title">1) Applying permissions to a node by overwriting the current permissions.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     permissions: [
         {
@@ -3118,7 +3137,7 @@ const result = repo.setActiveVersion({
 <div class="listingblock">
 <div class="title">2) Adding permissions to a node.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     addPermissions: [
         {
@@ -3136,7 +3155,7 @@ const result = repo.setActiveVersion({
 <div class="listingblock">
 <div class="title">3) Removing permissions from a node.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     removePermissions: [
         {
@@ -3157,7 +3176,7 @@ const result = repo.setActiveVersion({
 <div class="listingblock">
 <div class="title">Applying permissions to a node and its descendants.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     permissions: [
         {
@@ -3172,7 +3191,7 @@ const result = repo.setActiveVersion({
 <div class="listingblock">
 <div class="title">Applying permissions to a node&#8217;s descendants only.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     permissions: [
         {
@@ -3180,14 +3199,14 @@ const result = repo.setActiveVersion({
             allow: ['READ']
         }
     ],
-    scope: 'CHILDREN'
+    scope: 'SUBTREE'
 });</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Applying permissions to a node and its descendants in multiple branches.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">repo.applyPermissions({
     key: '/my-node',
     permissions: [
         {
@@ -3228,14 +3247,14 @@ const result = repo.setActiveVersion({
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">repoId</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Repository ID</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Branch ID</p>
 </div></div></td>
@@ -3244,7 +3263,7 @@ const result = repo.setActiveVersion({
 <td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#user">User</a></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional user to execute the callback with - Default is the default user</p>
+<p>Optional user to execute the callback with - default is the current user. Not allowed when this source is part of a <code>multiRepoConnect</code> call.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3302,7 +3321,7 @@ const result = repo.setActiveVersion({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>

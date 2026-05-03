@@ -582,13 +582,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {exportNodes} from '/lib/xp/export';
 
 // Export content nodes.
-const exportNodes = exportNodes({
+const result = exportNodes({
     sourceNodePath: '/content',
     exportName: 'export-1',
-    nodeExported: (i) =&gt; {
+    nodeExported: (i: number) =&gt; {
     },
-    nodeResolved: (i) =&gt; {
+    nodeResolved: (i: number) =&gt; {
     }
+});</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {exportNodes} from '/lib/xp/export';
+
+// Export content nodes with a custom batch size.
+const result = exportNodes({
+    sourceNodePath: '/content',
+    exportName: 'export-batch',
+    batchSize: 25
 });</code></pre>
 </div>
 </div>
@@ -673,7 +685,7 @@ During node export, current permissions are included in the export file. But whe
 <td class="tableblock halign-left valign-top"><p class="tableblock">xslt</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string or object</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>XSLT file name in exports directory or application resource key. Used for XSLT transformation</p>
 </div></div></td>
@@ -720,7 +732,7 @@ During node export, current permissions are included in the export file. But whe
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A function to be called during import with number of nodes imported since last call</p>
+<p>A function to be called before import starts with number of nodes to import</p>
 </div></div></td>
 </tr>
 <tr>
@@ -764,11 +776,11 @@ const importedNodes = importNodes({
     xsltParams: {k: 'v'},
     includeNodeIds: true,
     includePermissions: true,
-    nodeImported: (i) =&gt; {
+    nodeImported: (i: number) =&gt; {
     },
-    nodeResolved: (i) =&gt; {
+    nodeResolved: (i: number) =&gt; {
     },
-    nodeSkipped: (i) =&gt; {
+    nodeSkipped: (i: number) =&gt; {
     }
 });</code></pre>
 </div>
@@ -794,6 +806,7 @@ const expected = {
     updatedNodes: [
         '/updated'
     ],
+    skippedNodes: [],
     importedBinaries: [
         'binaryPath [ref]'
     ],
@@ -842,7 +855,7 @@ const result = list();
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>

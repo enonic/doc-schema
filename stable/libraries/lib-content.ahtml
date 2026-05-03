@@ -459,6 +459,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#duplicate">duplicate</a></li>
 <li><a href="#exists">exists</a></li>
 <li><a href="#get">get</a></li>
+<li><a href="#getactiveversions">getActiveVersions</a></li>
 <li><a href="#getattachments">getAttachments</a></li>
 <li><a href="#getattachmentstream">getAttachmentStream</a></li>
 <li><a href="#getchildren">getChildren</a></li>
@@ -468,7 +469,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#getsiteconfig">getSiteConfig</a></li>
 <li><a href="#gettype">getType</a></li>
 <li><a href="#gettypes">getTypes</a></li>
+<li><a href="#getversions">getVersions</a></li>
 <li><a href="#update">update</a></li>
+<li><a href="#updatemetadata">updateMetadata</a></li>
+<li><a href="#updateworkflow">updateWorkflow</a></li>
 <li><a href="#patch">patch</a></li>
 <li><a href="#move">move</a></li>
 <li><a href="#publish">publish</a></li>
@@ -538,7 +542,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="content_root_path"><a class="link" href="#content_root_path">CONTENT_ROOT_PATH</a></h3>
 <div class="paragraph">
-<p>Variable of type NodePath describing content node root path.</p>
+<p>String constant with the root path of content nodes (<code>/content</code>).</p>
 </div>
 <div class="paragraph lead">
 <p>Usage</p>
@@ -547,14 +551,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {CONTENT_ROOT_PATH} from '/lib/xp/content';
 
-const myRoot = CONTENT_ROOT_PATH; // NodePath.create( "/content" ).build()</code></pre>
+const myRoot = CONTENT_ROOT_PATH; // "/content"</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="archive_root_path"><a class="link" href="#archive_root_path">ARCHIVE_ROOT_PATH</a></h3>
 <div class="paragraph">
-<p>Variable of type NodePath describing archive node root path.</p>
+<p>String constant with the root path of archived nodes (<code>/archive</code>).</p>
 </div>
 <div class="paragraph lead">
 <p>Usage</p>
@@ -563,7 +567,7 @@ const myRoot = CONTENT_ROOT_PATH; // NodePath.create( "/content" ).build()</code
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {ARCHIVE_ROOT_PATH} from '/lib/xp/content';
 
-const myRoot = ARCHIVE_ROOT_PATH; // NodePath.create( "/archive" ).build()</code></pre>
+const myRoot = ARCHIVE_ROOT_PATH; // "/archive"</code></pre>
 </div>
 </div>
 </div>
@@ -688,7 +692,7 @@ addAttachment({
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">сontent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">content</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Path or id of the content to be archived</p>
@@ -1018,7 +1022,7 @@ const expected = {
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Name of content</p>
@@ -1031,15 +1035,6 @@ const expected = {
 <td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Path to place content under</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mimeType</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Mime-type of the data</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1061,12 +1056,66 @@ const expected = {
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">artist</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Artist of the media</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tags</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Tags of the media</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">caption</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Caption of the media</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">altText</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Alt text of the media</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">copyright</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Copyright of the media</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Data (as stream) to use</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">idGenerator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Function used to generate the id-suffix appended to the content name</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1088,7 +1137,6 @@ const expected = {
 const result = createMedia({
     name: 'mycontent',
     parentPath: '/a/b',
-    mimeType: 'text/plain',
     data: stream
 });</code></pre>
 </div>
@@ -1117,7 +1165,7 @@ const expected = {
 <div class="sect2">
 <h3 id="updatemedia"><a class="link" href="#updatemedia">updateMedia</a></h3>
 <div class="paragraph">
-<p>Modifies a media content</p>
+<p>Updates a media content</p>
 </div>
 <div class="paragraph lead">
 <p><strong>Parameters:</strong></p>
@@ -1163,20 +1211,11 @@ const expected = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Media data (as a stream)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mimeType</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Mime-type of the data</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1233,15 +1272,6 @@ const expected = {
 <p>Tags</p>
 </div></div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">workflowInfo</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Workflow state (default: READY).</p>
-</div></div></td>
-</tr>
 </tbody>
 </table>
 <div class="paragraph lead">
@@ -1257,7 +1287,7 @@ const expected = {
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateMedia} from '/lib/xp/content';
 
-// Modifies a media.
+// Updates a media.
 const result = updateMedia({
     key: '/a/b/mycontent',
     name: 'mycontent',
@@ -1265,7 +1295,6 @@ const result = updateMedia({
     artist: ['Artist 1', 'Artist 2'],
     caption: 'Caption',
     copyright: 'Copyright',
-    mimeType: 'text/plan',
     tags: ['tag1', 'tag2']
 });</code></pre>
 </div>
@@ -1289,7 +1318,6 @@ const expected = {
             "Artist 2"
         ],
         copyright: "Copyright",
-        mimeType: "text/plan",
         tags: [
             "tag1",
             "tag2"
@@ -1298,11 +1326,7 @@ const expected = {
     x: {},
     page: {},
     attachments: {},
-    publish: {},
-    workflow: {
-        state: "READY",
-        checks: {}
-    }
+    publish: {}
 };</code></pre>
 </div>
 </div>
@@ -1694,6 +1718,71 @@ const expected = {
 </div>
 </div>
 <div class="sect2">
+<h3 id="getactiveversions"><a class="link" href="#getactiveversions">getActiveVersions</a></h3>
+<div class="paragraph">
+<p>Returns the active content version for each specified branch.</p>
+</div>
+<div class="paragraph lead">
+<p><strong>Parameters:</strong></p>
+</div>
+<div class="paragraph">
+<p>An object with the following keys and their values:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path or id of the content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branches</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Array of branch names to get active versions for</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : Object with branch names as keys and content versions as values.</p>
+</div>
+<div class="paragraph lead">
+<p>Examples</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getActiveVersions} from '/lib/xp/content';
+
+// Fetch active versions for draft and master branches
+const result = getActiveVersions({
+    key: 'contentid',
+    branches: ['draft', 'master']
+});
+
+log.info('Draft version: %s', result.draft.versionId);
+log.info('Master version: %s', result.master.versionId);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="getattachments"><a class="link" href="#getattachments">getAttachments</a></h3>
 <div class="paragraph">
 <p>This function returns a content attachments</p>
@@ -1885,7 +1974,7 @@ const stream = getAttachmentStream({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : An array of child items (as JSON) fetched from the repository</p>
+<p><strong>object</strong> : Result object with <code>total</code>, <code>count</code> and <code>hits</code> properties listing the children fetched from the repository</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -2300,13 +2389,13 @@ const contentType = getType('com.enonic.myapp:person');</code></pre>
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">// Content type returned:
 const expected = {
     name: "com.enonic.myapp:person",
-    displayName: "Person",
+    title: "Person",
     description: "Person content type",
     superType: "base:structured",
     abstract: false,
     final: true,
     allowChildContent: true,
-    displayNameExpression: "${name}",
+    modifiedTime: "2016-01-01T12:00:00Z",
     icon: {
         mimeType: "image/png",
         modifiedTime: "2016-01-01T12:00:00Z"
@@ -2438,11 +2527,101 @@ return {
 const contentTypes = getTypes();
 
 log.info('%s content types found:', contentTypes.length);
-contentTypes.forEach(({displayName,name,superType}) =&gt; {
+contentTypes.forEach(({title, name, superType}) =&gt; {
     if (superType === 'base:structured') {
-        log.info('%s - %s', name, displayName);
+        log.info('%s - %s', name, title);
     }
 });</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getversions"><a class="link" href="#getversions">getVersions</a></h3>
+<div class="paragraph">
+<p>Returns content versions, with cursor-based pagination.</p>
+</div>
+<div class="paragraph lead">
+<p><strong>Parameters:</strong></p>
+</div>
+<div class="paragraph">
+<p>An object with the following keys and their values:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.9803%;">
+<col style="width: 0.9803%;">
+<col style="width: 0.9803%;">
+<col style="width: 0.9803%;">
+<col style="width: 96.0788%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path or id of the content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">count</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Number of content versions to fetch</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cursor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cursor for pagination</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : Result object with <code>total</code>, <code>count</code>, <code>cursor</code> and <code>hits</code> properties listing the content versions.</p>
+</div>
+<div class="paragraph lead">
+<p>Examples</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {getVersions} from '/lib/xp/content';
+
+// Fetch first page
+const result = getVersions({
+    key: 'contentid',
+    count: 2
+});
+
+log.info('Total versions: %s', result.total);
+
+// Fetch next page using cursor
+if (result.cursor) {
+    const nextPage = getVersions({
+        key: 'contentid',
+        count: 2,
+        cursor: result.cursor
+    });
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2602,6 +2781,148 @@ const expected = {
 </div>
 </div>
 <div class="sect2">
+<h3 id="updatemetadata"><a class="link" href="#updatemetadata">updateMetadata</a></h3>
+<div class="paragraph">
+<p>Updates metadata (<code>owner</code> and <code>variantOf</code>) for a content. The update is applied to both the master and draft branches.</p>
+</div>
+<div class="paragraph lead">
+<p><strong>Parameters:</strong></p>
+</div>
+<div class="paragraph">
+<p>An object with the following keys and their values:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path or id to the content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Editor callback function to modify metadata</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The editor callback receives an object with the current <code>source</code> content, <code>owner</code> and <code>variantOf</code>, and must return the same object with the desired modifications.</p>
+</div>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : Result object with the updated <code>content</code> property.</p>
+</div>
+<div class="paragraph lead">
+<p>Examples</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateMetadata} from '/lib/xp/content';
+
+// Update content metadata by path
+const result = updateMetadata({
+    key: '/a/b/mycontent',
+    editor: (c) =&gt; {
+        c.owner = 'user:system:new-owner';
+        return c;
+    }
+});
+
+if (result) {
+    log.info('Content metadata updated');
+} else {
+    log.info('Content not found');
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updateworkflow"><a class="link" href="#updateworkflow">updateWorkflow</a></h3>
+<div class="paragraph">
+<p>Updates workflow information (state and checks) for a content. The update is applied to the draft branch only.</p>
+</div>
+<div class="paragraph lead">
+<p><strong>Parameters:</strong></p>
+</div>
+<div class="paragraph">
+<p>An object with the following keys and their values:</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Path or id to the content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Editor callback function to modify workflow</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The editor callback receives an object with the current <code>source</code> content and a writable <code>state</code> property, and must return the same object with the desired modifications.</p>
+</div>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>object</strong> : Result object with the updated <code>content</code> property.</p>
+</div>
+<div class="paragraph lead">
+<p>Examples</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateWorkflow} from '/lib/xp/content';
+
+// Mark content workflow as READY
+const result = updateWorkflow({
+    key: '/a/b/mycontent',
+    editor: (w) =&gt; {
+        w.state = 'READY';
+        return w;
+    }
+});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="patch"><a class="link" href="#patch">patch</a></h3>
 <div class="paragraph">
 <p>Patches a content</p>
@@ -2663,7 +2984,7 @@ const expected = {
 <td class="tableblock halign-left valign-top"><p class="tableblock">branches</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[]</code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>A list of branches to patch.<br>
 * If not provided or empty, the content in the current branch will be patched.<br>
@@ -2883,6 +3204,13 @@ const expected = {
 <p>The original name in the parent project.</p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">attachments</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>An object listing the content&#8217;s existing attachments, keyed by attachment name. Use the <code>attachments</code> patch parameter (with <code>createAttachments</code> / <code>modifyAttachments</code> / <code>removeAttachments</code>) to manage the attachment binaries themselves.</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 <div id="createAttachments_details" class="paragraph lead">
@@ -2938,19 +3266,11 @@ An object with the following keys and their values:</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sha512</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object | string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>SHA-512 hash of the data</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">size</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Size of the data in bytes</p>
+<p>Data (as stream) to use</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3008,11 +3328,19 @@ An object with the following keys and their values:</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object(stream)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Data (as stream) to use</p>
+<p>SHA-512 hash of the data</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Size of the data in bytes</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3078,7 +3406,7 @@ const result = patch({
 </div>
 <div class="sect2">
 <h3 id="move"><a class="link" href="#move">move</a></h3>
-<div id="move" class="paragraph">
+<div class="paragraph">
 <p>Renames a content or moves it to a new path</p>
 </div>
 <div class="paragraph lead">
@@ -3234,7 +3562,7 @@ try {
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>List of all content keys(path or id) that should be published</p>
+<p>List of all content keys (path or id) that should be published</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3247,12 +3575,21 @@ try {
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">excludeChildrenIds</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">excludeDescendantsOf</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>List of content keys whose descendants should be excluded from publishing</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">excludeChildrenIds</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>Deprecated, use</em> <code>excludeDescendantsOf</code> <em>instead.</em></p>
 </div></div></td>
 </tr>
 <tr>
@@ -3265,21 +3602,12 @@ try {
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sourceBranch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">message</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><em>Not in use from</em> <span class="image"><span class="alt">XP 7.12.0</span></span>. The branch where the content to be published is stored.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">targetBranch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><em>Not in use since</em> <span class="image"><span class="alt">XP 7.12.0</span></span>. The branch to which the content should be published. Technically, publishing is just a move from one branch to another, and publishing user content from master to draft is therefore also valid usage of this function, which may be practical if user input to a web-page is stored on master</p>
+<p>Publish message</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3336,8 +3664,6 @@ try {
 // Publish content by path or key
 const result = publish({
     keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
-    sourceBranch: 'draft',
-    targetBranch: 'master',
     schedule: {
         from: new Date().toISOString(),
         to: '2018-01-01T13:37:00.000Z'
@@ -3419,8 +3745,8 @@ const expected = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">query</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string/object</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Query string or <a href="../storage/dsl.ahtml">DSL</a> expression</p>
@@ -3428,7 +3754,7 @@ const expected = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">filters</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object | object[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -3437,7 +3763,7 @@ const expected = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">sort</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string/object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | object | object[]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -3446,7 +3772,7 @@ const expected = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">aggregations</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -3460,6 +3786,15 @@ const expected = {
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Content types to filter on</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">highlight</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Highlight expression</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -4021,7 +4356,9 @@ If the content is published, the permissions will be applied to the published co
 <div class="listingblock">
 <div class="title">1) Applying permissions to a content by overwriting the current permissions.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -4039,7 +4376,9 @@ If the content is published, the permissions will be applied to the published co
 <div class="listingblock">
 <div class="title">2) Adding permissions to a content.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     addPermissions: [
         {
@@ -4057,7 +4396,9 @@ If the content is published, the permissions will be applied to the published co
 <div class="listingblock">
 <div class="title">3) Removing permissions from a content.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     removePermissions: [
         {
@@ -4078,7 +4419,9 @@ If the content is published, the permissions will be applied to the published co
 <div class="listingblock">
 <div class="title">Applying permissions to a content and its descendants.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -4093,7 +4436,9 @@ If the content is published, the permissions will be applied to the published co
 <div class="listingblock">
 <div class="title">Applying permissions to a content&#8217;s descendants only.</div>
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">repo.applyPermissions({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {applyPermissions} from '/lib/xp/content';
+
+applyPermissions({
     key: '/my-content',
     permissions: [
         {
@@ -4101,7 +4446,7 @@ If the content is published, the permissions will be applied to the published co
             allow: ['READ']
         }
     ],
-    scope: 'CHILDREN'
+    scope: 'SUBTREE'
 });</code></pre>
 </div>
 </div>
@@ -4109,14 +4454,16 @@ If the content is published, the permissions will be applied to the published co
 <h4 id="permissionsparams"><a class="link" href="#permissionsparams">PermissionsParams</a></h4>
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
-<col style="width: 1%;">
-<col style="width: 1%;">
-<col style="width: 98%;">
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 0.99%;">
+<col style="width: 97.03%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Name</th>
 <th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
 <th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
@@ -4124,6 +4471,7 @@ If the content is published, the permissions will be applied to the published co
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">principal</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Principal key</p>
 </div></div></td>
@@ -4131,6 +4479,7 @@ If the content is published, the permissions will be applied to the published co
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">allow</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Allowed permissions</p>
 </div></div></td>
@@ -4138,6 +4487,7 @@ If the content is published, the permissions will be applied to the published co
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">deny</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Denied permissions</p>
 </div></div></td>
@@ -4247,11 +4597,11 @@ const expected = [
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name of the content type</p>
+<p>Title of the content type</p>
 </div></div></td>
 </tr>
 <tr>
@@ -4295,11 +4645,11 @@ const expected = [
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayNameExpression</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>ES6 string template for generating the content name based on values in the content form</p>
+<p>Modified time of the content type</p>
 </div></div></td>
 </tr>
 <tr>
@@ -4316,6 +4666,14 @@ const expected = [
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Custom schema configuration for the descriptor</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -4774,7 +5132,7 @@ const expected = [
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>

@@ -506,7 +506,7 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <div class="sect2">
 <h3 id="listener"><a class="link" href="#listener">listener</a></h3>
 <div class="paragraph">
-<p>Creates an event listener</p>
+<p>Registers an event listener that fires for events whose type matches the given pattern.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -518,13 +518,56 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <colgroup>
 <col style="width: 1%;">
 <col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Event type pattern. Works like a Java pattern, with two key differences: <code>.</code> is treated as a literal dot (not a wildcard), and <code><strong></code> acts as <code>.</strong></code>, matching any sequence of characters.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">callback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Function invoked for each matching event. Receives a single event argument with the shape described in <a href="#enonic-event">Event object</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">localOnly</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>When <code>true</code>, only events originating on the current node are delivered. Defaults to <code>false</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table id="enonic-event" class="tableblock frame-ends grid-none stretch">
+<caption class="title">Event object passed to the callback</caption>
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
 <col style="width: 98%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Kind</th>
-<th class="tableblock halign-left valign-top">Details</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -532,21 +575,35 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Works like a Java Pattern, with two key differences: <code>.</code> is treated as a literal dot, not a wildcard. <code>*</code> acts as <code>.*</code>, matching any sequence of characters.</p>
+<p>Event type, for example <code>node.pushed</code> or <code>custom.myEvent</code>.</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">callback</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">timestamp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Callback event listener</p>
+<p>Time the event was published, in milliseconds since the epoch.</p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">localOnly</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">localOrigin</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Local events only (default to false)</p>
+<p><code>true</code> if the event was published on the current node, <code>false</code> if it was received from another cluster node.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">distributed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>true</code> if the event was distributed across the cluster.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Event payload. Shape depends on the event <code>type</code>; for built-in node events, see <a href="lib-node.ahtml#events">Node library</a>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -555,15 +612,17 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><code>null</code></p>
+<p><strong>void</strong></p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
 </div>
 <div class="listingblock">
-<div class="title">Adding a listener that logs the event</div>
+<div class="title">Adding a listener that logs every node event</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">eventLib.listener({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {listener} from '/lib/xp/event';
+
+listener({
     type: 'node.*',
     localOnly: false,
     callback: (event) =&gt; {
@@ -576,7 +635,7 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <div class="sect2">
 <h3 id="send"><a class="link" href="#send">send</a></h3>
 <div class="paragraph">
-<p>Sends a custom event.  All custom events are prefixed with <code>custom.</code>.</p>
+<p>Sends a custom event. The supplied <code>type</code> is automatically prefixed with <code>custom.</code> before the event is published.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -588,35 +647,40 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <colgroup>
 <col style="width: 1%;">
 <col style="width: 1%;">
-<col style="width: 98%;">
+<col style="width: 1%;">
+<col style="width: 97%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Kind</th>
-<th class="tableblock halign-left valign-top">Details</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Attributes</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">type</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Event type</p>
+<p>Event type. Will be published as <code>custom.&lt;type&gt;</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">distributed</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>true</code> if it should be distributed in cluster</p>
+<p>When <code>true</code>, the event is broadcast to every node in the cluster. Defaults to <code>false</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Additional data for event.</p>
+<p>Additional data to attach to the event payload.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -625,7 +689,7 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><code>null</code></p>
+<p><strong>void</strong></p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -633,7 +697,9 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 <div class="listingblock">
 <div class="title">Send a custom event into the system</div>
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">eventLib.send({
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {send} from '/lib/xp/event';
+
+send({
     type: 'myEvent',
     distributed: false,
     data: {
@@ -649,7 +715,7 @@ For more details, check out the <a href="lib-node.ahtml#events">Node library</a>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>

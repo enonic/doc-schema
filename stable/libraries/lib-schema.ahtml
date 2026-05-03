@@ -2531,7 +2531,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="schema"><a class="link" href="#schema">Schema</a></h3>
-<div id="schema" class="paragraph">
+<div class="paragraph">
 <p>(abstract for <a href="#content_type">ContentType</a>, <a href="#form_fragment">FormFragment</a> and <a href="#mixin">Mixin</a>)</p>
 </div>
 <div class="paragraph lead">
@@ -2706,7 +2706,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="mixin"><a class="link" href="#mixin">Mixin</a></h3>
-<div id="mixin" class="paragraph">
+<div class="paragraph">
 <p>(extends <a href="#schema"><code>Schema</code></a>)</p>
 </div>
 <div class="paragraph">
@@ -2747,7 +2747,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="component"><a class="link" href="#component">Component</a></h3>
-<div id="component" class="paragraph">
+<div class="paragraph">
 <p>(abstract for <a href="#page">Page</a>, <a href="#part">Part</a> and <a href="#layout">Layout</a>)</p>
 </div>
 <div class="paragraph lead">
@@ -2855,7 +2855,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="page"><a class="link" href="#page">Page</a></h3>
-<div id="page" class="paragraph">
+<div class="paragraph">
 <p>(extends <a href="#component"><code>Component</code></a>)</p>
 </div>
 <div class="paragraph lead">
@@ -2893,7 +2893,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="layout"><a class="link" href="#layout">Layout</a></h3>
-<div id="layout" class="paragraph">
+<div class="paragraph">
 <p>(extends <a href="#component"><code>Component</code></a>)</p>
 </div>
 <div class="paragraph lead">
@@ -2931,7 +2931,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="part"><a class="link" href="#part">Part</a></h3>
-<div id="part" class="paragraph">
+<div class="paragraph">
 <p>(extends <a href="#component"><code>Component</code></a>)</p>
 </div>
 <div class="paragraph lead">
@@ -2969,7 +2969,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="site"><a class="link" href="#site">Site</a></h3>
-<div id="site" class="paragraph lead">
+<div class="paragraph lead">
 <p>Type</p>
 </div>
 <div class="paragraph">
@@ -3032,7 +3032,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="styles"><a class="link" href="#styles">Styles</a></h3>
-<div id="styles" class="paragraph lead">
+<div class="paragraph lead">
 <p>Type</p>
 </div>
 <div class="paragraph">
@@ -3179,7 +3179,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div class="sect2">
 <h3 id="icon"><a class="link" href="#icon">Icon</a></h3>
-<div id="icon" class="paragraph lead">
+<div class="paragraph lead">
 <p>Type</p>
 </div>
 <div class="paragraph">
@@ -3231,7 +3231,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 19:28:17 UTC
+Last updated 2026-05-03 21:53:43 UTC
 </div>
 </div>
 </body>
