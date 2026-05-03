@@ -65,13 +65,25 @@ Examples
 import {exportNodes} from '/lib/xp/export';
 
 // Export content nodes.
-const exportNodes = exportNodes({
+const result = exportNodes({
     sourceNodePath: '/content',
     exportName: 'export-1',
-    nodeExported: (i) => {
+    nodeExported: (i: number) => {
     },
-    nodeResolved: (i) => {
+    nodeResolved: (i: number) => {
     }
+});
+----
+
+[source,typescript]
+----
+import {exportNodes} from '/lib/xp/export';
+
+// Export content nodes with a custom batch size.
+const result = exportNodes({
+    sourceNodePath: '/content',
+    exportName: 'export-batch',
+    batchSize: 25
 });
 ----
 
@@ -111,12 +123,12 @@ An object with the following keys and their values:
 
 | source | string or object | | | Either name of nodes-export located in exports directory or application resource key
 | targetNodePath | string | | | Target path for imported nodes
-| xslt | string or object  | <optional>| true | XSLT file name in exports directory or application resource key. Used for XSLT transformation
+| xslt | string or object  | <optional>| | XSLT file name in exports directory or application resource key. Used for XSLT transformation
 | xsltParams | object  | <optional>| | Parameters used in XSLT transformation
 | includeNodeIds | boolean | <optional>| false | Set to `true` to use node IDs from the import, `false` to generate new node IDs
 | includePermissions | boolean | <optional>| false | Set to `true` to overwrite Node permissions with permissions from the import, `false` to merge permissions with new parent permissions
 | versionAttributes | object | <optional>| | Optional attributes attached to the node version of every imported node
-| nodeResolved | function | <optional>| | A function to be called during import with number of nodes imported since last call
+| nodeResolved | function | <optional>| | A function to be called before import starts with number of nodes to import
 | nodeImported | function | <optional>| | A function to be called during import with number of nodes imported since last call
 | nodeSkipped | function | <optional>| | A function to be called during import with number of nodes skipped since last call
 |===
@@ -142,11 +154,11 @@ const importedNodes = importNodes({
     xsltParams: {k: 'v'},
     includeNodeIds: true,
     includePermissions: true,
-    nodeImported: (i) => {
+    nodeImported: (i: number) => {
     },
-    nodeResolved: (i) => {
+    nodeResolved: (i: number) => {
     },
-    nodeSkipped: (i) => {
+    nodeSkipped: (i: number) => {
     }
 });
 ----
@@ -172,6 +184,7 @@ const expected = {
     updatedNodes: [
         '/updated'
     ],
+    skippedNodes: [],
     importedBinaries: [
         'binaryPath [ref]'
     ],
