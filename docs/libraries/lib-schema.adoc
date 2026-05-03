@@ -60,7 +60,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : (<<schema,`Schema`>>) Property object of the fetched schema.
+*object* : (<<schema,`Schema`>>) Property object of the fetched schema, or `null` if the schema does not exist.
 
 [.lead]
 Example
@@ -507,7 +507,7 @@ const expected = {
     title: 'News page',
     description: 'My news page',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/pages/mypage',
+    componentPath: 'myapp:/cms/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: 'kind: "Page"\ntitle: "News page"\nform: []\nregions:\n- "region-one"\n',
     type: 'PAGE',
@@ -588,7 +588,7 @@ const expected = [
         title: 'News part',
         description: 'My news part',
         descriptionI18nKey: 'key.description',
-        componentPath: 'myapp:/site/parts/part1',
+        componentPath: 'myapp:/cms/parts/part1',
         modifiedTime: '2021-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "News part"\nform: []\n',
         type: 'PART',
@@ -611,7 +611,7 @@ const expected = [
     {
         key: 'myapp:part2',
         title: 'Other part',
-        componentPath: 'myapp:/site/parts/part2',
+        componentPath: 'myapp:/cms/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
         type: 'PART',
@@ -691,7 +691,7 @@ const expected = {
     titleI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/parts/mypart',
+    componentPath: 'myapp:/cms/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: <!-- resource string value -->,
     type: 'PART',
@@ -815,7 +815,7 @@ const expected = {
     titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/layouts/mylayout',
+    componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: <!-- resource string value -->,
     type: 'LAYOUT',
@@ -959,7 +959,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : (<<styles,`Styles`>>) Property object of the fetched styles.
+*object* : (<<styles,`Styles`>>) Property object of the fetched styles, or `null` if the application has no styles descriptor.
 
 [.lead]
 Example
@@ -979,12 +979,10 @@ const result = getStyles({
 ----
 const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: 'kind: "Style"\nstyles: []\n',
     elements: [
         {
-            element: 'style',
             label: 'Style display name',
             name: 'mystyle'
         }
@@ -1067,22 +1065,18 @@ const result = createStyles({
 ----
 const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: <!-- resource string value -->,
     elements: [
         {
-            element: 'style',
             label: 'Warning',
             name: 'warning'
         },
         {
-            element: 'image',
             label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
-            element: 'image',
             label: 'Cinema',
             name: 'editor-style-cinema'
         }
@@ -1165,22 +1159,18 @@ const result = updateStyles({
 ----
 const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: <!-- resource string value -->,
     elements: [
         {
-            element: 'style',
             label: 'Warning',
             name: 'warning'
         },
         {
-            element: 'image',
             label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
-            element: 'image',
             label: 'Cinema',
             name: 'editor-style-cinema'
         }
@@ -1267,7 +1257,7 @@ Parameters
 [.lead]
 Returns
 
-*object* : (<<site,`Site`>>) Property object of the fetched site descriptor.
+*object* : (<<site,`Site`>>) Property object of the fetched site descriptor, or `null` if the application has no CMS descriptor.
 
 [.lead]
 Example
@@ -1353,7 +1343,7 @@ Example
 import {updateSite} from '/lib/xp/schema';
 
 const resource = `kind: "CMS"
-mixin:
+mixins:
 - name: "myapp1:menu-item"
   optional: false
 - name: "myapp2:my-meta-mixin"
@@ -1466,7 +1456,6 @@ Properties
 |===
 | Name                      | Type                      | Description
 | config                    | object                    | Content type config
-| mixinNames                | string[]                  | Form mixin names (formerly known as x-data)
 
 |===
 
@@ -1491,6 +1480,18 @@ In XP 8 this is what was called `XData` in XP 7. Each mixin attaches optional me
 Type
 
 *object*
+
+[.lead]
+Properties
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name                      | Type                      | Description
+| config                    | object                    | Mixin config
+
+|===
 
 === Component
 [[component]]
@@ -1604,7 +1605,7 @@ Properties
 | Name                      | Type                              | Description
 | application               | string                            | Application key
 | modifiedTime              | string                            | Site zulu modified time
-| resource                  | string                            | Site xml resource value
+| resource                  | string                            | Site CMS descriptor YAML resource value
 | form                      | object[]                          | Site descriptor form
 | mixinMappings             | <<mixinMapping,MixinMapping[]>>| Mixin mappings
 
@@ -1627,9 +1628,8 @@ Properties
 |===
 | Name                      | Type                              | Description
 | application               | string                            | Application key
-| cssPath                   | string                            | CSS path
 | modifiedTime              | string                            | Styles zulu modified time
-| resource                  | string                            | Styles xml resource value
+| resource                  | string                            | Styles YAML resource value
 | elements                  | <<element,StyleElement[]>>     | style elements
 
 |===
@@ -1650,7 +1650,7 @@ Properties
 [grid="none"]
 |===
 | Name                   | Type    | Description
-| name                   | object  | Mixin name (formerly known as x-data)
+| name                   | string  | Mixin name (XP 8 mixin — what was called x-data in XP 7)
 | optional               | boolean | `true` if optional
 | allowContentTypes      | string  | Allowed content type pattern
 
@@ -1674,7 +1674,6 @@ Properties
 | Name                      | Type    | Description
 | name                      | string  | Style element name
 | label                     | string  | Style element label
-| element                   | string  | Style element value
 
 |===
 
