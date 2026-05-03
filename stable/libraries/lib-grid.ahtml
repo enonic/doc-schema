@@ -471,7 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Due to distributed nature of <code>SharedMap</code> not all value types can be used. Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons. Developers are themselves responsible for NOT modifying shared objects (keys and values) in place.
+Due to distributed nature of <code>SharedMap</code> not all value types can be used. Strings, numbers, booleans, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons. Developers are themselves responsible for NOT modifying shared objects (keys and values) in place.
 </td>
 </tr>
 </table>
@@ -530,10 +530,10 @@ Due to distributed nature of <code>SharedMap</code> not all value types can be u
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mapId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>map identifier</p>
+<p>Map identifier.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -542,8 +542,7 @@ Due to distributed nature of <code>SharedMap</code> not all value types can be u
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>SharedMap</strong> :
-JS object.</p>
+<p><strong>SharedMap</strong> : An instance of <code>SharedMap</code> bound to the given identifier.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -561,7 +560,7 @@ const sharedMap = getMap('mapId');</code></pre>
 <div class="sect2">
 <h3 id="set"><a class="link" href="#set">set</a></h3>
 <div class="paragraph">
-<p>Puts an entry into a SharedMap with a given time to live (TTL).</p>
+<p>Puts an entry into a SharedMap with a given time to live (TTL). If <code>value</code> is <code>null</code>, the existing entry for that key is removed.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -584,21 +583,21 @@ const sharedMap = getMap('mapId');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Key of the entry</p>
+<p>Key of the entry.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string|number|boolean|JSON|null</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Value of the entry</p>
+<p>Value of the entry. Passing <code>null</code> removes the existing entry.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ttlSeconds</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Maximum time (in seconds) for this entry to remain in the map. 0 means infinite, a negative value means default TTL setting of the map provider (for instance, Hazelcast) or infinite if map provider doesn&#8217;t have own TTL setting.</p>
+<p>Optional. Maximum time (in seconds) for this entry to remain in the map. <code>0</code> means infinite; a negative value means the default TTL of the map provider (for instance, Hazelcast) or infinite if the provider has no own TTL setting.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -607,12 +606,12 @@ const sharedMap = getMap('mapId');</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import gridLib from '/lib/xp/grid';
 
-const sharedMap = gridLib.getMap('mapId');
+const sharedMap = gridLib.getMap&lt;{ greeting: string }&gt;('mapId');
 
 sharedMap.set({
-  key: 'key',
-  value: 'value',
-  ttlSeconds: 2 * 60 * 1000
+  key: 'greeting',
+  value: 'hello',
+  ttlSeconds: 2 * 60
 });</code></pre>
 </div>
 </div>
@@ -620,7 +619,7 @@ sharedMap.set({
 <div class="sect2">
 <h3 id="get"><a class="link" href="#get">get</a></h3>
 <div class="paragraph">
-<p>Returns a value to which the specified key is mapped, or <code>null</code> if this map contains no mapping for the key.</p>
+<p>Returns the value to which the specified key is mapped, or <code>null</code> if the map contains no mapping for the key.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -643,11 +642,17 @@ sharedMap.set({
 <td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The key for a value to be returned</p>
+<p>The key whose associated value is to be returned.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>string\|number\|boolean\|JSON\|null</strong> : The value mapped to the given key, or <code>null</code> if no mapping exists.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import gridLib from '/lib/xp/grid';
@@ -661,7 +666,7 @@ const value = sharedMap.get('key');</code></pre>
 <div class="sect2">
 <h3 id="delete"><a class="link" href="#delete">delete</a></h3>
 <div class="paragraph">
-<p>Removes entry for the specified key if it is present in the map.</p>
+<p>Removes the entry for the specified key if it is present in the map.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -684,7 +689,7 @@ const value = sharedMap.get('key');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The key for a value to be removed</p>
+<p>The key whose associated value is to be removed.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -732,30 +737,34 @@ sharedMap.delete('key');</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">func</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Mapping function that accepts the existing mapped value (or null, if there is no associated mapping). A value returned by the function will replace the existing mapped value for the specified key. If the returned value is null then the entry will be removed from the map.</p>
+<p>Mapping function that accepts the existing mapped value (or <code>null</code>, if there is no associated mapping). The value it returns replaces the existing mapped value for the specified key. If the returned value is <code>null</code>, the entry is removed from the map.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ttlSeconds</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Maximum time (in seconds) for this entry to remain in the map. 0 means infinite, a negative value means default TTL setting of the map provider (for instance, Hazelcast) or infinite if map provider doesn&#8217;t have own TTL setting.</p>
+<p>Optional. Maximum time (in seconds) for this entry to remain in the map. <code>0</code> means infinite; a negative value means the default TTL of the map provider (for instance, Hazelcast) or infinite if the provider has no own TTL setting.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph lead">
+<p>Returns</p>
+</div>
+<div class="paragraph">
+<p><strong>string\|number\|boolean\|JSON\|null</strong> : The new value mapped to the key, or <code>null</code> if the entry was removed (because <code>func</code> returned <code>null</code>).</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import gridLib from '/lib/xp/grid';
 
-const sharedMap = gridLib.getMap('mapId');
+const sharedMap = gridLib.getMap&lt;{ counter: number }&gt;('mapId');
 
-let newValue = sharedMap.modify({
-  key: 'key',
-  func: (oldValue) =&gt;{
-      return oldValue + 1;
-  },
-  ttlSeconds: 2 * 60 * 1000
+const newValue = sharedMap.modify({
+  key: 'counter',
+  func: (oldValue) =&gt; (oldValue ?? 0) + 1,
+  ttlSeconds: 2 * 60
 });</code></pre>
 </div>
 </div>
@@ -765,7 +774,7 @@ let newValue = sharedMap.modify({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 10:38:29 UTC
+Last updated 2026-05-03 10:39:41 UTC
 </div>
 </div>
 </body>
