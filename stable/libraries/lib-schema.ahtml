@@ -609,7 +609,7 @@ Functions of this library require the Schema Admin role. It means that user role
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#schema"><code>Schema</code></a>) Property object of the fetched schema.</p>
+<p><strong>object</strong> : (<a href="#schema"><code>Schema</code></a>) Property object of the fetched schema, or <code>null</code> if the schema does not exist.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1254,7 +1254,7 @@ const result = getComponent({
     title: 'News page',
     description: 'My news page',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/pages/mypage',
+    componentPath: 'myapp:/cms/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: 'kind: "Page"\ntitle: "News page"\nform: []\nregions:\n- "region-one"\n',
     type: 'PAGE',
@@ -1372,7 +1372,7 @@ const result = listComponents({
         title: 'News part',
         description: 'My news part',
         descriptionI18nKey: 'key.description',
-        componentPath: 'myapp:/site/parts/part1',
+        componentPath: 'myapp:/cms/parts/part1',
         modifiedTime: '2021-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "News part"\nform: []\n',
         type: 'PART',
@@ -1395,7 +1395,7 @@ const result = listComponents({
     {
         key: 'myapp:part2',
         title: 'Other part',
-        componentPath: 'myapp:/site/parts/part2',
+        componentPath: 'myapp:/cms/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: 'kind: "Part"\ntitle: "Other part"\nform: []\n',
         type: 'PART',
@@ -1518,7 +1518,7 @@ const result = createComponent({
     titleI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/parts/mypart',
+    componentPath: 'myapp:/cms/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: &lt;!-- resource string value --&gt;,
     type: 'PART',
@@ -1685,7 +1685,7 @@ const result = updateComponent({
     titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/layouts/mylayout',
+    componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: &lt;!-- resource string value --&gt;,
     type: 'LAYOUT',
@@ -1897,7 +1897,7 @@ if (result) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#styles"><code>Styles</code></a>) Property object of the fetched styles.</p>
+<p><strong>object</strong> : (<a href="#styles"><code>Styles</code></a>) Property object of the fetched styles, or <code>null</code> if the application has no styles descriptor.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -1917,12 +1917,10 @@ const result = getStyles({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: 'kind: "Style"\nstyles: []\n',
     elements: [
         {
-            element: 'style',
             label: 'Style display name',
             name: 'mystyle'
         }
@@ -2042,22 +2040,18 @@ const result = createStyles({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: &lt;!-- resource string value --&gt;,
     elements: [
         {
-            element: 'style',
             label: 'Warning',
             name: 'warning'
         },
         {
-            element: 'image',
             label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
-            element: 'image',
             label: 'Cinema',
             name: 'editor-style-cinema'
         }
@@ -2177,22 +2171,18 @@ const result = updateStyles({
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: &lt;!-- resource string value --&gt;,
     elements: [
         {
-            element: 'style',
             label: 'Warning',
             name: 'warning'
         },
         {
-            element: 'image',
             label: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
-            element: 'image',
             label: 'Cinema',
             name: 'editor-style-cinema'
         }
@@ -2341,7 +2331,7 @@ if (result) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#site"><code>Site</code></a>) Property object of the fetched site descriptor.</p>
+<p><strong>object</strong> : (<a href="#site"><code>Site</code></a>) Property object of the fetched site descriptor, or <code>null</code> if the application has no CMS descriptor.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -2464,7 +2454,7 @@ const result = getSite({
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {updateSite} from '/lib/xp/schema';
 
 const resource = `kind: "CMS"
-mixin:
+mixins:
 - name: "myapp1:menu-item"
   optional: false
 - name: "myapp2:my-meta-mixin"
@@ -2696,13 +2686,6 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <p>Content type config</p>
 </div></div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mixinNames</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string[]</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Form mixin names (formerly known as x-data)</p>
-</div></div></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -2735,6 +2718,32 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <div class="paragraph">
 <p><strong>object</strong></p>
 </div>
+<div class="paragraph lead">
+<p>Properties</p>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 1%;">
+<col style="width: 1%;">
+<col style="width: 98%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Mixin config</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="component"><a class="link" href="#component">Component</a></h3>
@@ -3001,7 +3010,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <td class="tableblock halign-left valign-top"><p class="tableblock">resource</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Site xml resource value</p>
+<p>Site CMS descriptor YAML resource value</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3054,13 +3063,6 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">cssPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>CSS path</p>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -3071,7 +3073,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <td class="tableblock halign-left valign-top"><p class="tableblock">resource</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Styles xml resource value</p>
+<p>Styles YAML resource value</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3111,9 +3113,9 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Mixin name (formerly known as x-data)</p>
+<p>Mixin name (XP 8 mixin — what was called x-data in XP 7)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3170,13 +3172,6 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Style element label</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">element</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Style element value</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3236,7 +3231,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 09:14:41 UTC
+Last updated 2026-05-03 09:15:30 UTC
 </div>
 </div>
 </body>
