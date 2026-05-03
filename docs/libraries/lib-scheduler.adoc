@@ -201,12 +201,12 @@ Parameters
 
 ! name ! string ! required ! unique job name.
 ! description ! string ! optional ! job description.
-! descriptor ! string ! required !descriptor of the task to be scheduled.
-! config ! object ! optional !config of the task to be scheduled.
+! descriptor ! string ! required ! descriptor of the task to be scheduled.
+! config ! object ! optional ! config of the task to be scheduled.
 ! schedule ! object ! required ! task time run config.
 ! schedule.value ! string ! required ! schedule value according to its type.
 ! schedule.type ! string ! required ! schedule type (CRON or ONE_TIME).
-! schedule.timeZone ! string !required for schedule.type = CRON ! time zone of cron scheduling. It isn't applicable to a onetime job.
+! schedule.timeZone ! string ! required for schedule.type = CRON ! time zone of cron scheduling. It isn't applicable to a one-time job.
 ! user ! string ! optional ! principal key of the user that submitted the task.
 ! enabled ! boolean ! required ! job is active or not.
 
@@ -228,7 +228,7 @@ const simpleOneTimeJob = create({
     name: 'my-project',
     descriptor: 'appKey:task',
     enabled: true,
-    schedule: {type: 'ONE_TIME', value: '2021-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 
 const extendedCronJob = create({
@@ -278,10 +278,7 @@ const expectedExtendedCronJob = {
     config: {
         a: 1,
         b: 2,
-        c: {
-            0: '1',
-            1: '2'
-        },
+        c: ['1', '2'],
         d: {
             e: {
                 f: 3.6,
@@ -292,8 +289,8 @@ const expectedExtendedCronJob = {
     user: 'user:system:user',
     creator: 'user:system:creator',
     modifier: 'user:system:creator',
-    createdTime: '2021-01-01T10:36:00Z',
-    modifiedTime: '2016-01-01T10:36:00Z',
+    createdTime: '2016-11-02T10:36:00Z',
+    modifiedTime: '2016-11-02T10:36:00Z',
     schedule: {
         value: '* * * * 5',
         timeZone: 'GMT-02:00',
