@@ -105,7 +105,6 @@ Parameters
 | id | string | | Unique project id (alphanumeric characters and hyphens allowed).
 | displayName | string | | Project display name.
 | parents | string[] | <optional> | Parent project ids. If provided, the new project will be a Content Layer that automatically inherits changes from its parent projects.
-| parent | string | <optional> | image:xp-760.svg[XP 7.6.0,opts=inline] Deprecated — use `parents` instead. Parent project id.
 | description | string | <optional> | Project description.
 | language | string | <optional> | Default project language.
 | siteConfig | Object.<string, Object>[] | <optional> | Applications (with optional configurations) to be assigned to the project
