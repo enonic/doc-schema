@@ -567,7 +567,7 @@ log.info('Mime type is %s', type);</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">key</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | ResourceKey</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Resource key to look up</p>
 </div></div></td>
@@ -578,7 +578,7 @@ log.info('Mime type is %s', type);</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>Resource</strong> : Resource reference.</p>
+<p><strong>Resource</strong> : Resource reference exposing <code>exists()</code>, <code>getSize()</code>, <code>getTimestamp()</code>, and <code>getStream()</code>.</p>
 </div>
 <div class="paragraph lead">
 <p>Examples</p>
@@ -591,6 +591,7 @@ log.info('Mime type is %s', type);</code></pre>
 const res1 = getResource('/lib/xp/examples/io/sample.txt');
 const exists = res1.exists();
 const size = res1.getSize();
+const timestamp = res1.getTimestamp();
 const stream = res1.getStream();</code></pre>
 </div>
 </div>
@@ -630,7 +631,7 @@ if (res2.exists()) {
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stream</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Stream to get size of</p>
 </div></div></td>
@@ -641,7 +642,7 @@ if (res2.exists()) {
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>number</strong> : Returns the size of a stream.</p>
+<p><strong>number</strong> : Size of the stream in bytes.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -691,7 +692,7 @@ log.info('Stream size is %s bytes', size);</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><em>*</em> : A new stream.</p>
+<p><strong>ByteSource</strong> : A new stream containing the UTF-8 bytes of the input string.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -729,16 +730,16 @@ const stream = newStream('Hello World');</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stream</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Stream to read lines from</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">func</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(line: string) &#8658; void</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Callback function to be called for each line</p>
+<p>Callback function called for each line</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -784,9 +785,9 @@ processLines(stream, (line) =&gt; {
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stream</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A stream to read lines from</p>
+<p>Stream to read lines from</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -834,9 +835,9 @@ log.info('Num lines: %s', lines.length);</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stream</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A stream to read text from</p>
+<p>Stream to read text from</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -845,7 +846,7 @@ log.info('Num lines: %s', lines.length);</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>string</strong> : Text read from a stream or a string.</p>
+<p><strong>string</strong> : Text read from the stream.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -865,7 +866,7 @@ log.info('Text: %s', text);</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 10:33:12 UTC
+Last updated 2026-05-03 10:37:43 UTC
 </div>
 </div>
 </body>
