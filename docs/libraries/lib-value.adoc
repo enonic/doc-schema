@@ -37,9 +37,9 @@ Parameters
 [frame="none"]
 [grid="none"]
 |===
-| Name   | Type   | Description
-| name   | string | The binary name
-| stream |        | The binary stream
+| Name   | Type       | Description
+| name   | string     | The binary name
+| stream | ByteSource | The binary stream
 |===
 
 [.lead]
@@ -70,7 +70,7 @@ Returns
 
 === geoPointString
 
-Creates a GeoPoint value as a string.
+Creates a GeoPoint value from a comma-separated latitude and longitude string.
 
 [.lead]
 Parameters
@@ -120,7 +120,7 @@ Parameters
 [grid="none"]
 |===
 | Name  | Type           | Description
-| value | string \| Date | A ISO local date-time string (e.g '2011-12-03') or a Date object
+| value | string \| Date | An ISO local date string (e.g '2011-12-03') or a Date object
 |===
 
 [.lead]
@@ -160,7 +160,7 @@ Parameters
 [grid="none"]
 |===
 | Name  | Type           | Description
-| value | string \| Date | A ISO local date-time string (e.g '10:15:30') or a Date object
+| value | string \| Date | An ISO local time string (e.g '10:15:30') or a Date object
 |===
 
 [.lead]
