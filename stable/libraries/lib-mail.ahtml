@@ -522,7 +522,7 @@ If the email address is not specified in angle brackets (e.g., <code>Some Name &
 However, an error is thrown if the default <em>from</em> email is not set.</p>
 </div>
 <div class="paragraph">
-<p>The parameters <code>to</code>, <code>cc</code> and <code>bcc</code> can be passed as a single string or as an array of strings, if there are multiple addresses to specify.</p>
+<p>The parameters <code>from</code>, <code>to</code>, <code>cc</code>, <code>bcc</code> and <code>replyTo</code> can be passed as a single string or as an array of strings, if there are multiple addresses to specify.</p>
 </div>
 <div class="paragraph">
 <p>The content-type of the email can be specified by using the <code>contentType</code> parameter. See example below for sending a message with an HTML body.</p>
@@ -549,9 +549,9 @@ However, an error is thrown if the default <em>from</em> email is not set.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | string[]</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>E-mail address and optionally name of message sender</p>
+<p>E-mail address(es) and optionally name(s) of the message sender</p>
 </div></div></td>
 </tr>
 <tr>
@@ -577,9 +577,9 @@ However, an error is thrown if the default <em>from</em> email is not set.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">replyTo</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string | string[]</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Optional alternative e-mail address for replies</p>
+<p>Optional alternative e-mail address(es) for replies</p>
 </div></div></td>
 </tr>
 <tr>
@@ -605,7 +605,7 @@ However, an error is thrown if the default <em>from</em> email is not set.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">headers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Optional custom headers in the form of name-value pairs</p>
 </div></div></td>
@@ -729,7 +729,7 @@ const defaultFromEmail = getDefaultFromEmail();</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Attachment stream</p>
 </div></div></td>
@@ -756,7 +756,7 @@ const defaultFromEmail = getDefaultFromEmail();</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 10:37:43 UTC
+Last updated 2026-05-03 10:38:29 UTC
 </div>
 </div>
 </body>
