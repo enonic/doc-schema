@@ -571,7 +571,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 const application = getApp({key: 'my-app-key'});
 
 if (application) {
-  log.info('Application name = %s', application.displayName);
+  log.info('Application key = %s', application.key);
 } else {
   log.info('Application not found');
 }</code></pre>
@@ -582,17 +582,13 @@ if (application) {
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     key: 'my-app',
-    displayName: 'app display name',
-    vendorName: 'vendor name',
-    vendorUrl: 'https://vendor.url',
-    url: 'https://myapp.url',
     version: '1.0.0',
     systemVersion: '4.2.3-SNAPSHOT',
     minSystemVersion: '2.0.0',
     maxSystemVersion: '3.0.0',
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
-    system: false
+    system: true
 };</code></pre>
 </div>
 </div>
@@ -624,10 +620,6 @@ const apps = list();</code></pre>
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = [
     {
         key: 'app1',
-        displayName: 'app display name',
-        vendorName: 'vendor name',
-        vendorUrl: 'https://vendor.url',
-        url: 'https://myapp.url',
         version: '1.0.0',
         systemVersion: '1.21.3',
         minSystemVersion: '2.0.0',
@@ -638,10 +630,6 @@ const apps = list();</code></pre>
     },
     {
         key: 'app2',
-        displayName: 'app display name 2',
-        vendorName: 'vendor name 2',
-        vendorUrl: 'https://vendor2.url',
-        url: 'https://myapp2.url',
         version: '4.1.2',
         systemVersion: '1.2.33-SNAPSHOT',
         minSystemVersion: '5.3.11',
@@ -713,7 +701,7 @@ const apps = list();</code></pre>
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>object</strong> : (<a href="#applicationDescriptor"><code>ApplicationDescriptor</code></a>) Application descriptor.</p>
+<p><strong>object</strong> : (<a href="#applicationDescriptor"><code>ApplicationDescriptor</code></a>) Application descriptor, or <code>null</code> if the application was not found.</p>
 </div>
 <div class="paragraph lead">
 <p>Example</p>
@@ -731,6 +719,11 @@ const descriptor = getDescriptor({key: 'my-app-key'});</code></pre>
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">const expected = {
     key: 'my-app',
     description: 'my app description',
+    title: 'My app',
+    titleI18nKey: 'myapp.title',
+    vendorName: 'vendor name',
+    vendorUrl: 'https://vendor.url',
+    url: 'https://myapp.url',
     icon: {
         data: {},
         mimeType: 'image/png',
@@ -919,6 +912,18 @@ const result = deleteVirtualApplication({
 <div class="paragraph">
 <p>Fetches mode of an application with the specified key.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+This function requires the Schema Admin role. It means that user role in the current context may lack sufficient permissions, for example when executed from inside a service - in this case you must explicitly execute the function in the <a href="lib-context.ahtml#runcontext">context</a> of <code>system.schema.admin</code> role.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph lead">
 <p>Parameters</p>
 </div>
@@ -973,7 +978,7 @@ const result = deleteVirtualApplication({
 <p>Returns</p>
 </div>
 <div class="paragraph">
-<p><strong>string</strong> : Application mode. Can be one of the following types:</p>
+<p><strong>string</strong> : Application mode, or <code>null</code> if the application is not installed (neither as a bundled app nor as a virtual app). When the application is installed, the value is one of:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1051,66 +1056,38 @@ const result = getApplicationMode({
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">displayName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Display name</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vendorName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Vendor name</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vendorUrl</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Vendor url</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Url</p>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">version</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Version</p>
+<p>Application version. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">systemVersion</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>System version</p>
+<p>XP version the application was built against. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">minSystemVersion</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Min system version</p>
+<p>Minimum XP version required to run the application. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">maxSystemVersion</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Max system version</p>
+<p>Maximum XP version supported by the application. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Modified time</p>
+<p>Last modification time, ISO-8601 instant. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1164,16 +1141,51 @@ const result = getApplicationMode({
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">`string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Application description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application title. May be <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">titleI18nKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>i18n key for the application title. May be <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vendorName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Vendor name. May be <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vendorUrl</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Vendor URL. May be <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application URL. May be <code>null</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">icon</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#icon">Icon</a></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Application icon</p>
+<p>Application icon. Omitted when the application has no icon</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1206,23 +1218,23 @@ const result = getApplicationMode({
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ByteSource</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon stream data</p>
+<p>Icon binary data, as a stream that can be read with <code>lib-io</code></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">mimeType</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon mime type</p>
+<p>Icon MIME type</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">modifiedTime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>icon modified time</p>
+<p>Icon modified time, ISO-8601 instant</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1233,7 +1245,7 @@ const result = getApplicationMode({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-03 17:03:43 UTC
+Last updated 2026-05-03 19:28:17 UTC
 </div>
 </div>
 </body>
