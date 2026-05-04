@@ -444,7 +444,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#main_builder">Main builder</a>
 <ul class="sectlevel2">
 <li><a href="#gradle_properties">gradle.properties</a></li>
-<li><a href="#application_yaml">application.yaml</a></li>
 <li><a href="#build_gradle">build.gradle</a></li>
 <li><a href="#settings_gradle">settings.gradle</a></li>
 </ul>
@@ -551,38 +550,6 @@ group = com.acme.example <i class="conum" data-value="5"></i><b>(5)</b></code></
 </div>
 </div>
 <div class="sect2">
-<h3 id="application_yaml"><a class="link" href="#application_yaml">application.yaml</a></h3>
-<div class="paragraph">
-<p>App display and vendor metadata live in <code>src/main/resources/application.yaml</code>. This is runtime information used by XP — the Gradle plugin does not read this file during the build.</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample src/main/resources/application.yaml</div>
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Application"
-title: "Vanilla Example" <i class="conum" data-value="1"></i><b>(1)</b>
-description: "A small example app"
-vendorName: "Acme Inc" <i class="conum" data-value="2"></i><b>(2)</b>
-vendorUrl: "https://example.com" <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>title</code> is what shows in the Applications admin tool.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>vendorName</code> — name of the entity publishing the app.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>vendorUrl</code> — link to the vendor&#8217;s website.</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
 <h3 id="build_gradle"><a class="link" href="#build_gradle">build.gradle</a></h3>
 <div class="paragraph">
 <p>This is the main build file. It controls available build settings, dependencies and more.</p>
@@ -615,7 +582,7 @@ dependencies { <i class="conum" data-value="3"></i><b>(3)</b>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Maven repos Gradle resolves dependencies from. <code>xp.enonicRepo('dev')</code> is a shortcut to the Enonic repository.</td>
+<td>Maven repos Gradle resolves dependencies from. <code>xp.enonicRepo()</code> is a shortcut to the Enonic repository.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -926,24 +893,12 @@ Development mode also disables some of XP&#8217;s caching mechanisms. To make th
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScript is also available but is currently experimental and not recommended for production use.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:29:49 UTC
+Last updated 2026-05-04 07:46:45 UTC
 </div>
 </div>
 </body>
