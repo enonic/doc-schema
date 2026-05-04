@@ -2,8 +2,6 @@
 :toc: right
 :imagesdir: ../images
 
-image:xp-730.svg[XP 7.3.0,opts=inline]
-
 This API provides functions for management of Content Projects.
 
 == Usage
@@ -609,7 +607,6 @@ const expected = {
 ----
 
 === getAvailableApplications
-image:xp-7110.svg[XP 7.11.0,opts=inline]
 
 Returns available applications of a specified project. The result contains active apps assigned to the project and all of its parents, if any.
 

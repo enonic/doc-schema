@@ -564,7 +564,7 @@ const result = repo.diff({
 
 === duplicate
 
-image:xp-7120.svg[XP 7.12.0,opts=inline] Duplicates a node.
+Duplicates a node.
 
 [.lead]
 Parameters
@@ -925,7 +925,6 @@ const binaryStream = repo.getBinary({
 ----
 
 === getCommit
-image:xp-770.svg[XP 7.7.0,opts=inline]
 
 Returns a node version commit.
 

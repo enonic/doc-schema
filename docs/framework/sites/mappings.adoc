@@ -86,8 +86,6 @@ Examples:
 * Regex with query string: `+pattern: '/endpoint\?bar=\d+&foo=.*'+`
 * Inverted via `invertPattern: true` together with `+pattern: '/section/.*'+`
 
-NOTE: Before image:xp-780.svg[XP 7.8.0,opts=inline] it was not possible to map an HTTP function or filter to the site itself.
-
 == Match mappings
 
 Match-based mappings can be used to automatically render content types without using page templates or associating content with an implementation directly. A common case is automatic handling of the content type `portal:fragment`.

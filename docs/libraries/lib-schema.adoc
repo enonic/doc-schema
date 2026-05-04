@@ -1462,8 +1462,6 @@ Properties
 [[form_fragment]]
 (extends <<schema,`Schema`>>)
 
-In XP 8 this is what was called `Mixin` in XP 7.
-
 [.lead]
 Type
 
@@ -1472,7 +1470,7 @@ Type
 === Mixin
 (extends <<schema,`Schema`>>)
 
-In XP 8 this is what was called `XData` in XP 7. Each mixin attaches optional metadata to a content item.
+Each mixin attaches optional metadata to a content item.
 
 [.lead]
 Type
@@ -1642,7 +1640,7 @@ Properties
 [grid="none"]
 |===
 | Name                   | Type    | Description
-| name                   | string  | Mixin name (XP 8 mixin — what was called x-data in XP 7)
+| name                   | string  | Mixin name
 | optional               | boolean | `true` if optional
 | allowContentTypes      | string  | Allowed content type pattern
 
