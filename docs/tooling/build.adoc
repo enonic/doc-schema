@@ -46,7 +46,7 @@ group = com.acme.example <5>
 
 === application.yaml
 
-App display and vendor metadata live in `src/main/resources/application.yaml`. The XP Gradle plugin reads it from there.
+App display and vendor metadata live in `src/main/resources/application.yaml`. This is runtime information used by XP — the Gradle plugin does not read this file during the build.
 
 .Sample src/main/resources/application.yaml
 [source,yaml]
@@ -86,13 +86,11 @@ dependencies { // <3>
 }
 ----
 
-<1> Apply the https://developer.enonic.com/docs/enonic-gradle-plugins[Enonic Gradle plugin]. The plugin version is managed in `settings.gradle` (see below) — don't pin it here. App metadata is read from `application.yaml`, so an `app { ... }` block is only needed for plugin-specific options such as `createDefaultDevTask`.
+<1> Apply the https://developer.enonic.com/docs/enonic-gradle-plugins[Enonic Gradle plugin]. The plugin version is managed in `settings.gradle` (see below) — don't pin it here.
 <2> Maven repos Gradle resolves dependencies from. `xp.enonicRepo('dev')` is a shortcut to the Enonic repository.
 <3> Dependencies on libraries. `api.script` is the entry point for server-side script APIs.
 
 NOTE: Don't set `java.toolchain.languageVersion`, `sourceCompatibility`, or `targetCompatibility` in `build.gradle`. The XP Gradle plugin selects the correct Java toolchain automatically — manual settings can conflict with what the plugin expects.
-
-NOTE: The plugin registers a `dev` task that runs `gradlew deploy -t`. To register a custom `dev` task instead, set `createDefaultDevTask = false` in the `app { ... }` block.
 
 === settings.gradle
 
@@ -220,15 +218,11 @@ WARNING: Dev mode should never be used in production. Doing so may cause both se
 
 In addition to running XP in dev mode, your application may contain files that require compilation (including transpilation). This means that must build the files for every change. For instance, if you use TypeScript, these files won't be picked up by default.
 
-XP projects support this out of the box. The XP Gradle plugin registers a `dev` task, so simply run:
+XP projects support this out of the box. Simply run:
 
 Enonic CLI:: `enonic project dev`
-
-Linux/MacOS:: `./gradlew dev`
-
-Windows:: `gradlew.bat dev`
 
 TIP: Development mode also disables some of XP's caching mechanisms. To make the development workflow as smooth as possible, XP tries to invalidate caches for your static assets. This is to prevent you from getting stale resources so that what you see in the browser is always as up to date as possible.
 
 
-NOTE: XP ships with two server-side JavaScript engines: Nashorn (the default) and GraalVM JavaScript. Applications can select GraalJS by setting the `X-Script-Engine` bundle manifest header. The platform-wide default is selected via the `xp.script-engine` system property.
+NOTE: XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScript is also available but is currently experimental and not recommended for production use.
