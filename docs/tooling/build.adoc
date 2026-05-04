@@ -4,11 +4,15 @@
 
 This section explains the details of the Enonic XP build system
 
+NOTE: Upgrading from XP 7? See <<../upgrade#, the Upgrading guide>>.
+
 == Main builder
 
 As explained in the <<code#, code section>>, Enonic development projects use https://gradle.org/[Gradle] as the main build tool.
 
 Gradle is built around the popular Maven ecosystem. Gradle is used because Enonic apps are packaged and deployed as .jar (Java) files in the end.
+
+Builds run on Gradle 9.x — bundle a Gradle Wrapper of version 9.4.1 or later in your project.
 
 TIP: Enonic supports popular TypeScript/JavaScript tooling such as TSUP, NPM and webpack to run on top of Gradle. https://market.enonic.com/starters[Try one or our Starters] to see it in action.
 
@@ -17,74 +21,90 @@ The Gradle build files are described below
 
 === gradle.properties
 
-This file specifies common properties for any Enonic project:
+This file specifies common project-wide properties: project identity and the XP version. App display and vendor metadata live in `application.yaml` (see below).
 
 .Sample gradle.properties file
-[source,files]
+[source,properties]
 ----
 # Gradle Project settings
 projectName = vanilla <1>
 version = 1.0.0-SNAPSHOT <2>
 
 # XP App values
-appDisplayName = Vanilla Example <3>
-appName = com.acme.example.vanilla <4>
-vendorName = Acme Inc
-vendorUrl = https://example.com
-xpVersion = 7.13.3 <5>
+appName = com.acme.example.vanilla <3>
+xpVersion = 8.0.0-SNAPSHOT <4>
 
 # Settings for publishing to a Maven repo
-group = com.acme.example <6>
+group = com.acme.example <5>
 ----
 
-<1> Project name is used for the output file i.e. this will produce an app file called vanilla-<version>.jar
-<2> Version is important metadata, used to identify different releases of an app.
-<3> appDisplayName is used when listing the applications in UI
-<4> appName must be unique across all apps, this is also stored in CMS content is created, used as a namespace
-<5> Minimum version of XP required for the app. This property is typically also used to determine which xp core libraries to use by `build.gradle`
+<1> Project name — used for the output file (this produces an app file called `vanilla-<version>.jar`).
+<2> Version — important metadata, used to identify different releases of an app.
+<3> `appName` must be unique across all apps. It is also stored as a namespace in CMS content created by the app.
+<4> Minimum version of XP required for the app. Typically also used to resolve which XP core libraries to depend on from `build.gradle`. While XP 8.0 is in development, use `8.0.0-SNAPSHOT`.
+<5> Maven group used when publishing the artifact.
+
+=== application.yaml
+
+App display and vendor metadata live in `src/main/resources/application.yaml`. The XP Gradle plugin reads it from there.
+
+.Sample src/main/resources/application.yaml
+[source,yaml]
+----
+kind: "Application"
+title: "Vanilla Example" <1>
+description: "A small example app"
+vendorName: "Acme Inc" <2>
+vendorUrl: "https://example.com" <3>
+----
+
+<1> `title` is what shows in the Applications admin tool.
+<2> `vendorName` — name of the entity publishing the app.
+<3> `vendorUrl` — link to the vendor's website.
 
 === build.gradle
 
 This is the main build file. It controls available build settings, dependencies and more.
 
-.Sample gradle.properties file
-[source,files]
+.Sample build.gradle file
+[source,groovy]
 ----
 plugins { // <1>
-    id 'com.enonic.xp.app' version '3.4.0'
+    id 'com.enonic.xp.app'
 }
 
-app { // <2>
-    name = "${appName}"
-    displayName = "${appDisplayName}"
-    vendorName = "${vendorName}"
-    vendorUrl = "${vendorUrl}"
-    systemVersion = "${xpVersion}"
+repositories { // <2>
+    mavenCentral()
+    xp.enonicRepo('dev') // TODO 'dev' is only while XP 8.0 is in development
 }
 
 dependencies { // <3>
-    implementation xplibs.api.core
+    implementation xplibs.api.script
     implementation xplibs.api.portal
     include xplibs.content
     include xplibs.portal
 }
-
-tasks.register('dev', Exec) { // <4>
-    commandLine './gradlew', 'deploy', '-t'
-}
-
-repositories { // <5>
-    mavenLocal()
-    mavenCentral()
-    xp.enonicRepo()
-}
 ----
 
-<1> Enonic provides a https://developer.enonic.com/docs/enonic-gradle-plugins[Gradle plugin] to simplify the build setup.
-<2> Applies values from gradle.properties.
-<3> Define dependencies to libraries, notice the {xpVersion} which uses the value from gradle.properties.
-<4> Enables `dev` mode for the project
-<5> Defines Maven repos where Gradle will look for dependencies.
+<1> Apply the https://developer.enonic.com/docs/enonic-gradle-plugins[Enonic Gradle plugin]. The plugin version is managed in `settings.gradle` (see below) — don't pin it here. App metadata is read from `application.yaml`, so an `app { ... }` block is only needed for plugin-specific options such as `createDefaultDevTask`.
+<2> Maven repos Gradle resolves dependencies from. `xp.enonicRepo('dev')` is a shortcut to the Enonic repository.
+<3> Dependencies on libraries. `api.script` is the entry point for server-side script APIs.
+
+NOTE: Don't set `java.toolchain.languageVersion`, `sourceCompatibility`, or `targetCompatibility` in `build.gradle`. The XP Gradle plugin selects the correct Java toolchain automatically — manual settings can conflict with what the plugin expects.
+
+NOTE: The plugin registers a `dev` task that runs `gradlew deploy -t`. To register a custom `dev` task instead, set `createDefaultDevTask = false` in the `app { ... }` block.
+
+=== settings.gradle
+
+Apply the settings plugin in `settings.gradle`. It wires up the `xplibs` version catalog and the Enonic-specific Gradle conventions.
+
+.Sample settings.gradle
+[source,groovy]
+----
+plugins {
+    id("com.enonic.xp.settings") version "4.0.0-B1" // TODO '4.0.0-B1' is only while XP 8.0 is in development
+}
+----
 
 == Dependencies
 
@@ -98,11 +118,43 @@ Implementation:: Typically used for Java dependencies. Does not automatically in
 
 Webjar:: Custom Enonic scope that extracts the content of the specified Webjar - https://www.webjars.org/ - placing it into the assets folder, using the version number as root folder
 
+== Libraries
+
+If you are building *a library* (not an application), you don't need the `com.enonic.xp.app` plugin. Apply `com.enonic.xp.base` instead — it gives you the `xp.enonicRepo()` shortcut and the XP version catalog without the application packaging behavior.
+
+.Sample build.gradle for a library
+[source,groovy]
+----
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.enonic.xp.base'
+}
+
+repositories {
+    mavenCentral()
+    xp.enonicRepo('dev') // TODO 'dev' is only while XP 8.0 is in development
+}
+----
+
+NOTE: `com.enonic.xp.base` is only needed if your library uses XP dependencies and you want the `xp.enonicRepo()` shortcut. A pure Java library with no XP types doesn't need it.
+
+.Sample gradle.properties for a library
+[source,properties]
+----
+group = com.mycompany.lib
+projectName = mylib
+version = 1.0.0-SNAPSHOT
+xpVersion = 8.0.0-SNAPSHOT # TODO 'SNAPSHOT' is only while XP 8.0 is in development
+----
+
+`appName` and the `application.yaml` file are application-only — libraries don't need either.
+
 == Compiler
 
-The Enonic XP SDK includes the compiler needed to build Enonic apps.
+Java 25 is bundled with the XP 8 distribution and is the minimum version required for building and running XP 8 applications. The XP Gradle plugin selects the correct toolchain automatically, so you typically don't need to configure a JDK explicitly.
 
-When building applications without using Enonic CLI, you must tell Gradle which compiler (Enonic XP distro) to use. This is done by setting the `JAVA_HOME` environment variable.
+When building outside Enonic CLI, set `JAVA_HOME` to a Java 25 (or later) installation — for example, the JDK bundled with the XP distribution — so Gradle can locate it.
 
 JAVA_HOME:: Defines the location of the JDK.
 
@@ -168,7 +220,7 @@ WARNING: Dev mode should never be used in production. Doing so may cause both se
 
 In addition to running XP in dev mode, your application may contain files that require compilation (including transpilation). This means that must build the files for every change. For instance, if you use TypeScript, these files won't be picked up by default.
 
-Modern XP projects support this out of the box, simply replace the build and deploy command with this:
+XP projects support this out of the box. The XP Gradle plugin registers a `dev` task, so simply run:
 
 Enonic CLI:: `enonic project dev`
 
@@ -179,6 +231,4 @@ Windows:: `gradlew.bat dev`
 TIP: Development mode also disables some of XP's caching mechanisms. To make the development workflow as smooth as possible, XP tries to invalidate caches for your static assets. This is to prevent you from getting stale resources so that what you see in the browser is always as up to date as possible.
 
 
-NOTE: XP 7.x defaults to the Nashorn JavaScript engine for executing JavaScript. For an overview over what JavaScript features Nashorn supports, see https://kangax.github.io/compat-table/es6/#nashorn1_8[this feature table].
-
-
+NOTE: XP ships with two server-side JavaScript engines: Nashorn (the default) and GraalVM JavaScript. Applications can select GraalJS by setting the `X-Script-Engine` bundle manifest header. The platform-wide default is selected via the `xp.script-engine` system property.
