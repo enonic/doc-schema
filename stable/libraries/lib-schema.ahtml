@@ -2694,9 +2694,6 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <div id="form_fragment" class="paragraph">
 <p>(extends <a href="#schema"><code>Schema</code></a>)</p>
 </div>
-<div class="paragraph">
-<p>In XP 8 this is what was called <code>Mixin</code> in XP 7.</p>
-</div>
 <div class="paragraph lead">
 <p>Type</p>
 </div>
@@ -2710,7 +2707,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <p>(extends <a href="#schema"><code>Schema</code></a>)</p>
 </div>
 <div class="paragraph">
-<p>In XP 8 this is what was called <code>XData</code> in XP 7. Each mixin attaches optional metadata to a content item.</p>
+<p>Each mixin attaches optional metadata to a content item.</p>
 </div>
 <div class="paragraph lead">
 <p>Type</p>
@@ -3115,7 +3112,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 <td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Mixin name (XP 8 mixin — what was called x-data in XP 7)</p>
+<p>Mixin name</p>
 </div></div></td>
 </tr>
 <tr>
@@ -3231,7 +3228,7 @@ Despite its name, <code>updateSite</code> writes the <strong>CMS descriptor</str
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

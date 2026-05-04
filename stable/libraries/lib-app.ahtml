@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.11.0</span></span> API for fetching and manipulating applications.</p>
+<p>API for fetching and manipulating applications.</p>
 </div>
 </div>
 </div>
@@ -1245,7 +1245,7 @@ const result = getApplicationMode({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

@@ -462,9 +462,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.3.0</span></span></p>
-</div>
-<div class="paragraph">
 <p>This API provides functions for management of Content Projects.</p>
 </div>
 </div>
@@ -1501,9 +1498,6 @@ const currentPermissions = removePermissions({
 <div class="sect2">
 <h3 id="getavailableapplications"><a class="link" href="#getavailableapplications">getAvailableApplications</a></h3>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.11.0</span></span></p>
-</div>
-<div class="paragraph">
 <p>Returns available applications of a specified project. The result contains active apps assigned to the project and all of its parents, if any.</p>
 </div>
 <div class="admonitionblock note">
@@ -1575,7 +1569,7 @@ const project = getAvailableApplications({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

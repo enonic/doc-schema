@@ -637,18 +637,6 @@ The question mark <code>?</code> is escaped with a backslash in the pattern beca
 </li>
 </ul>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Before <span class="image"><span class="alt">XP 7.8.0</span></span> it was not possible to map an HTTP function or filter to the site itself.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -750,7 +738,7 @@ Missing/unavailable content does not match any condition. Omit <code>match</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

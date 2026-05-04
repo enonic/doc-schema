@@ -599,7 +599,7 @@ exports.all = (req) =&gt; {};</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span> Use <code>request.getHeader(name)</code> to read a header case-insensitively. Prefer it over direct access to the <code>headers</code> object.</p>
+<p>Use <code>request.getHeader(name)</code> to read a header case-insensitively. Prefer it over direct access to the <code>headers</code> object.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -654,7 +654,7 @@ Modifications to the <code>headers</code> object do not affect the result of <co
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Response headers. <span class="image"><span class="alt">XP 7.15.0</span></span> A value of <code>null</code> or <code>undefined</code> removes a header set by an upstream function or filter.</td>
+<td>Response headers. A value of <code>null</code> or <code>undefined</code> removes a header set by an upstream function or filter.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -762,7 +762,7 @@ Modifications to the <code>headers</code> object do not affect the result of <co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

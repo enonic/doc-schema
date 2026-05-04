@@ -666,9 +666,6 @@ addAttachment({
 <div class="sect2">
 <h3 id="archive"><a class="link" href="#archive">archive</a></h3>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.8.0</span></span></p>
-</div>
-<div class="paragraph">
 <p>Archives a content</p>
 </div>
 <div class="paragraph lead">
@@ -1406,7 +1403,7 @@ if (result) {
 <div class="sect2">
 <h3 id="duplicate"><a class="link" href="#duplicate">duplicate</a></h3>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span> Duplicates a content.</p>
+<p>Duplicates a content.</p>
 </div>
 <div class="paragraph lead">
 <p><strong>Parameters:</strong></p>
@@ -1643,7 +1640,7 @@ if (result) {
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">versionId <span class="image"><span class="alt">XP 7.2.0</span></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">versionId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;optional&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -2048,9 +2045,6 @@ const expected = {
 </div>
 <div class="sect2">
 <h3 id="getoutbounddependencies"><a class="link" href="#getoutbounddependencies">getOutboundDependencies</a></h3>
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.2.0</span></span></p>
-</div>
 <div class="paragraph">
 <p>Returns the list of content items that are outbound dependencies of specified content.</p>
 </div>
@@ -3806,7 +3800,7 @@ const expected = {
 <p><strong>object</strong> : Result of query</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.5.0</span></span> If <code>sort</code> was specified, results will contain system meta properties <code>_sort</code> and <code>_score: null</code>, otherwise <code>_score</code>
+<p>If <code>sort</code> was specified, results will contain system meta properties <code>_sort</code> and <code>_score: null</code>, otherwise <code>_score</code>
  will have a relevant value.</p>
 </div>
 <div class="paragraph lead">
@@ -4111,9 +4105,6 @@ removeAttachment({key: '3381d720-993e-4576-b089-aaf67280a74c', name: ['document'
 <div class="sect2">
 <h3 id="resetinheritance"><a class="link" href="#resetinheritance">resetInheritance</a></h3>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.6.0</span></span></p>
-</div>
-<div class="paragraph">
 <p>Resets custom inheritance flags of a content item. For an item that was inherited from a parent content project/layer this action
 will reset specified changes made inside a specified layer.</p>
 </div>
@@ -4184,9 +4175,6 @@ resetInheritance({key: '/mySite/mycontent', projectName: 'layer-no', inherit: ['
 </div>
 <div class="sect2">
 <h3 id="restore"><a class="link" href="#restore">restore</a></h3>
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.8.0</span></span></p>
-</div>
 <div class="paragraph">
 <p>Restores a content from the archive</p>
 </div>
@@ -5132,7 +5120,7 @@ const expected = [
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

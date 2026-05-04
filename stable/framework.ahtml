@@ -481,7 +481,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Integrated</strong> with the Enonic applications runtime. Ship and execute server-side TypeScript/JavaScript.</p>
 </li>
 <li>
-<p><strong>Compatible</strong> across all releases of XP within a major version i.e. 7.x.x</p>
+<p><strong>Compatible</strong> across all releases of XP within a major version i.e. 8.x.x</p>
 </li>
 <li>
 <p><strong>Supports</strong> HTTP request-response, clustered events and background task execution</p>
@@ -496,7 +496,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>Based on the <a href="https://wiki.commonjs.org/wiki/Modules/1.1">CommonJS module specification</a></strong></p>
 </li>
 <li>
-<p><strong>Powered by the GraalVM</strong> Unlike most JavaScript frameworks, this is not powered by Node.js, but uses the Nashorn scripting engine. Next major release of XP is expected to be using GraalJS.</p>
+<p><strong>Powered by the GraalVM</strong> Unlike most JavaScript frameworks, this is not powered by Node.js, but uses the Nashorn scripting engine.</p>
 </li>
 </ul>
 </div>
@@ -517,7 +517,7 @@ XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScrip
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>

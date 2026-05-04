@@ -1352,7 +1352,7 @@ Norwegian indices will be created for strings inside <code>norwegian_set</code> 
 <div class="sect2">
 <h3 id="duplicate"><a class="link" href="#duplicate">duplicate</a></h3>
 <div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.12.0</span></span> Duplicates a node.</p>
+<p>Duplicates a node.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -1977,9 +1977,6 @@ if (firstPage.cursor) {
 </div>
 <div class="sect2">
 <h3 id="getcommit"><a class="link" href="#getcommit">getCommit</a></h3>
-<div class="paragraph">
-<p><span class="image"><span class="alt">XP 7.7.0</span></span></p>
-</div>
 <div class="paragraph">
 <p>Returns a node version commit.</p>
 </div>
@@ -3321,7 +3318,7 @@ const patchedNode = repo.patch({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 07:47:16 UTC
+Last updated 2026-05-04 08:34:04 UTC
 </div>
 </div>
 </body>
