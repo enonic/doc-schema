@@ -19,38 +19,28 @@ The use cases for events are limitless, but the most common are:
 * Notifications (i.e. notify clients connected to any server in the cluster via Websocket)
 * Job triggering
 
-[#architecture]
-== Architecture
-
-Producers publish events through the `EventPublisher` service, which hands every event to a multicaster that dispatches asynchronously to local listeners. A second listener — the cluster sender — forwards events flagged as distributed onto a Hazelcast topic; every other node's cluster receiver picks them up and re-publishes them locally with `distributed=false` and `localOrigin=false` so the receiving node neither rebroadcasts nor mistakes them for its own.
-
 [#local-vs-distributed]
 == Local vs distributed semantics
 
-* `send({distributed: false})` (default) — fires only on the JVM that produced the event; use for in-process signalling like per-node cache eviction.
+* `send({distributed: false})` (default) — fires only on the node that produced the event; use for in-process signalling like per-node cache eviction.
 * `send({distributed: true})` — broadcasts to every member of the cluster; use for cross-node cache invalidation, multi-node WebSocket fanout, or any side effect that has to run on every node.
 * `listener({localOnly: true})` — filters out events that originated on a remote node; use when a side effect should run exactly once on the originating node.
 * The event object's `localOrigin` and `distributed` flags let a listener branch on origin without `localOnly`.
 
 [IMPORTANT]
 ====
-Event delivery is best-effort and fire-and-forget — no persistence, no replay, no acknowledgement. A node that is down or partitioned at broadcast time misses the event entirely; if delivery has to be guaranteed, use a task or the scheduler.
+Event delivery is best-effort and fire-and-forget — no persistence, no replay, no acknowledgement. A node that is down or partitioned at broadcast time misses the event entirely.
 ====
 
 [#threading-ordering]
 == Threading and ordering
 
-`EventPublisherImpl` hands each event to a single-threaded executor (`EventPublisherExecutorImpl`) before walking the listener list, so the publishing thread returns as soon as the event is queued.
+`Each event is handed to a single event worker thred before walking the listener list, so the publishing thread returns as soon as the event is queued.
 
 * Listeners must not block — the dispatch thread is shared, and a slow listener backs up every other listener on the node.
 * On a single node, FIFO holds — events published in sequence on the same node are delivered in that order to a listener that matches both.
-* Across cluster nodes there is no global ordering — distributed events from different nodes can arrive in either order on any third node.
-* Order between listeners for one event follows `EventListener.getOrder()`; lib-event listeners share the default, so among them the order is unspecified.
-
-[#tracing]
-== Tracing
-
-Trace events from `server-trace` are *not* published on the regular event bus — the trace module ships its own `TraceEventDispatcher` and `TraceListener`, so subscribing to `trace.*` through `eventLib.listener` delivers nothing. Tracing is gated by `TraceConfig.enabled` (PID `com.enonic.xp.server.trace`) and is off by default. Events published from inside a traced operation also do not inherit the trace context — the dispatch executor switches threads — so thread a correlation id through the payload yourself if a downstream listener needs to correlate back.
+* Across cluster nodes events from the same nodes are ordered but from different nodes can arrive in either order on any third node.
+* Order between listeners is unspecified.
 
 [#standard-events]
 == Standard event catalog
@@ -82,10 +72,6 @@ Trace events from `server-trace` are *not* published on the regular event bus �
 
 Per-type payload details belong on the corresponding library page (<<../libraries/lib-node#events,Node>>, <<../libraries/lib-repo#events,Repo>>, <<../libraries/lib-task#events,Task>>).
 
-[NOTE]
-====
-The `application*` family is a deliberate exception to the dot-separated subtype convention. Listeners that want to catch every application-related event should subscribe with `type: 'application*'`, which matches both `application` and `application.cluster`.
-====
 
 [#custom-naming]
 == Custom event naming
@@ -145,20 +131,6 @@ eventLib.send({
 });
 ----
 
-[#admin-event-api]
-== Admin event API
-
-The admin module exposes the local node's event stream over a WebSocket via the `+admin:event+` Universal API for tool builders; access is restricted to `role:system.admin.login`. See <<admin-tools#,Building admin tools>>.
-
-[#pitfalls]
-== Pitfalls
-
-* Not a reliable delivery mechanism — no persistence, no replay, no acknowledgement; if delivery matters, use <<tasks#,tasks>> or the <<../libraries/lib-scheduler#,scheduler library>>.
-* No backpressure — dispatch goes through a single-threaded executor with an unbounded queue, so slow listeners back up the whole bus.
-* Don't do heavy work in listeners — submit a task instead.
-* Order across nodes is not preserved.
-* Trace events are not on the bus — `trace.*` is not a valid pattern for `eventLib.listener` (see <<#tracing>>).
-
-== Implementation
+== Library
 
 For implementation details, please visit the <<../libraries/lib-event#,event library>> documentation.
