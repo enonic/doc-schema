@@ -153,6 +153,8 @@ To opt in, an API must include `"web"` in its `mount` list (see <<#descriptor,AP
 [#management-endpoint]
 == Management Endpoint
 
+WARNING: The `mount: "management"` feature is experimental and subject to change. The API shape, behavior, and configuration may change in future releases without the usual deprecation cycle. Avoid relying on it for production workloads.
+
 NOTE: The Management endpoint is for *advanced use only*. It is intended for extending XP's management capabilities (cluster operations, internal tooling, infrastructure integrations) — not for regular application APIs.
 
 An API can also be exposed on the *Management* endpoint by adding `"management"` to its `mount` list. The Management endpoint is a separate listener on its own port, distinct from the Portal endpoint — use it for internal or operational APIs that should not be reachable from the public network.
