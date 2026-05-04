@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../images/task-engine.svg" alt="Task execution process" width="768px">
+<img src="media/task-engine.svg" alt="Task execution process" width="768px">
 </div>
 </div>
 </div>
@@ -613,7 +613,7 @@ For fine-grained control which nodes should be capable to execute distributable 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-04 08:34:04 UTC
+Last updated 2026-05-04 12:29:15 UTC
 </div>
 </div>
 </body>
