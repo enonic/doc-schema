@@ -21,3 +21,5 @@ Here are some highlights:
 * *Fast and performant* as JavaScripts are compiled and adapted to the underlying architecture.
 * *Based on the https://wiki.commonjs.org/wiki/Modules/1.1[CommonJS module specification]*
 * *Powered by the GraalVM* Unlike most JavaScript frameworks, this is not powered by Node.js, but uses the Nashorn scripting engine.
+
+NOTE: XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScript is also available but is currently experimental and not recommended for production use.

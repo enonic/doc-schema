@@ -44,24 +44,6 @@ group = com.acme.example <5>
 <4> Minimum version of XP required for the app. Typically also used to resolve which XP core libraries to depend on from `build.gradle`. While XP 8.0 is in development, use `8.0.0-SNAPSHOT`.
 <5> Maven group used when publishing the artifact.
 
-=== application.yaml
-
-App display and vendor metadata live in `src/main/resources/application.yaml`. This is runtime information used by XP — the Gradle plugin does not read this file during the build.
-
-.Sample src/main/resources/application.yaml
-[source,yaml]
-----
-kind: "Application"
-title: "Vanilla Example" <1>
-description: "A small example app"
-vendorName: "Acme Inc" <2>
-vendorUrl: "https://example.com" <3>
-----
-
-<1> `title` is what shows in the Applications admin tool.
-<2> `vendorName` — name of the entity publishing the app.
-<3> `vendorUrl` — link to the vendor's website.
-
 === build.gradle
 
 This is the main build file. It controls available build settings, dependencies and more.
@@ -87,7 +69,7 @@ dependencies { // <3>
 ----
 
 <1> Apply the https://developer.enonic.com/docs/enonic-gradle-plugins[Enonic Gradle plugin]. The plugin version is managed in `settings.gradle` (see below) — don't pin it here.
-<2> Maven repos Gradle resolves dependencies from. `xp.enonicRepo('dev')` is a shortcut to the Enonic repository.
+<2> Maven repos Gradle resolves dependencies from. `xp.enonicRepo()` is a shortcut to the Enonic repository.
 <3> Dependencies on libraries. `api.script` is the entry point for server-side script APIs.
 
 NOTE: Don't set `java.toolchain.languageVersion`, `sourceCompatibility`, or `targetCompatibility` in `build.gradle`. The XP Gradle plugin selects the correct Java toolchain automatically — manual settings can conflict with what the plugin expects.
@@ -223,6 +205,3 @@ XP projects support this out of the box. Simply run:
 Enonic CLI:: `enonic project dev`
 
 TIP: Development mode also disables some of XP's caching mechanisms. To make the development workflow as smooth as possible, XP tries to invalidate caches for your static assets. This is to prevent you from getting stale resources so that what you see in the browser is always as up to date as possible.
-
-
-NOTE: XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScript is also available but is currently experimental and not recommended for production use.
