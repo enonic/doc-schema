@@ -75,7 +75,7 @@ The ``request`` object is passed to every HTTP function. It carries the request 
 <13> Parsed HTTP request cookies.
 <14> image:xp-8000.svg[XP 8.0.0,opts=inline] Locale strings in decreasing order of preference, derived from the `Accept-Language` header. When the client sends no `Accept-Language` header, the array contains a single element with the server's default locale.
 
-image:xp-7120.svg[XP 7.12.0,opts=inline] Use ``request.getHeader(name)`` to read a header case-insensitively. Prefer it over direct access to the ``headers`` object.
+Use ``request.getHeader(name)`` to read a header case-insensitively. Prefer it over direct access to the ``headers`` object.
 
 NOTE: Modifications to the ``headers`` object do not affect the result of ``getHeader(name)``.
 
@@ -104,7 +104,7 @@ The HTTP function returns a ``response`` object that XP converts to the outgoing
 <1> HTTP status code (default `200`).
 <2> Response body — a string or a JavaScript object.
 <3> MIME type (default `text/plain; charset=utf-8`).
-<4> Response headers. image:xp-7150.svg[XP 7.15.0,opts=inline] A value of `null` or `undefined` removes a header set by an upstream function or filter.
+<4> Response headers. A value of `null` or `undefined` removes a header set by an upstream function or filter.
 <5> Cookies to set on the response. See <<#cookies, Cookies>>.
 <6> URI to redirect to. If set, XP places it in the `Location` header and sets the status to `303`.
 <7> Site engine only. If `true`, the rendered page is post-processed for component tags (default `true`).

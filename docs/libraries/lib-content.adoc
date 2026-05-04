@@ -94,7 +94,6 @@ addAttachment({
 ----
 
 === archive
-image:xp-780.svg[XP 7.8.0,opts=inline]
 
 Archives a content
 
@@ -475,7 +474,7 @@ if (result) {
 
 === duplicate
 
-image:xp-7120.svg[XP 7.12.0,opts=inline] Duplicates a content.
+Duplicates a content.
 
 [.lead]
 *Parameters:*
@@ -605,7 +604,7 @@ An object with the following keys and their values:
 |===
 | Name | Type | Attributes| Description
 | key | string | | Path or id to the parent content
-| versionId image:xp-720.svg[XP 7.2.0,opts=inline] | string | <optional> | Content version id
+| versionId | string | <optional> | Content version id
 |===
 
 [.lead]
@@ -886,8 +885,6 @@ const expected = {
 
 
 === getOutboundDependencies
-
-image:xp-720.svg[XP 7.2.0,opts=inline]
 
 Returns the list of content items that are outbound dependencies of specified content.
 
@@ -1886,7 +1883,7 @@ Returns
 
 *object* : Result of query
 
-image:xp-750.svg[XP 7.5.0,opts=inline] If `sort` was specified, results will contain system meta properties `_sort` and `_score: null`, otherwise `_score`
+If `sort` was specified, results will contain system meta properties `_sort` and `_score: null`, otherwise `_score`
  will have a relevant value.
 
 [.lead]
@@ -2164,7 +2161,6 @@ removeAttachment({key: '3381d720-993e-4576-b089-aaf67280a74c', name: ['document'
 ----
 
 === resetInheritance
-image:xp-760.svg[XP 7.6.0,opts=inline]
 
 Resets custom inheritance flags of a content item. For an item that was inherited from a parent content project/layer this action
 will reset specified changes made inside a specified layer.
@@ -2207,7 +2203,6 @@ resetInheritance({key: '/mySite/mycontent', projectName: 'layer-no', inherit: ['
 ----
 
 === restore
-image:xp-780.svg[XP 7.8.0,opts=inline]
 
 Restores a content from the archive
 
