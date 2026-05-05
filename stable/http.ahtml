@@ -441,10 +441,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#portal_and_services">Portal and services</a></li>
-<li><a href="#request_pipeline">Request pipeline</a></li>
-<li><a href="#http_primitives">HTTP primitives</a></li>
-<li><a href="#services_in_detail">Services in detail</a></li>
+<li><a href="#common_request_pipeline">Request flow</a></li>
+<li><a href="#pages_in_this_section">Pages in this section</a></li>
 </ul>
 </div>
 </div>
@@ -452,74 +450,62 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Every client interaction with Enonic XP — browser request, API call, admin tool, websocket upgrade — flows through a single HTTP gateway: the <strong>Portal</strong>. This section covers the Portal pipeline, the HTTP primitives apps build with, and the four services the Portal routes to.</p>
+<p>The shared infrastructure used by every HTTP function in Enonic XP</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="portal_and_services"><a class="link" href="#portal_and_services">Portal and services</a></h2>
+<h2 id="common_request_pipeline"><a class="link" href="#common_request_pipeline">Request flow</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Portal is XP&#8217;s default gateway for all incoming HTTP traffic. It listens on port 8080 (configurable) and dispatches requests to one of four <strong>services</strong>, each with a fixed URL prefix and a distinct role:</p>
+<p>The XP runtime serves HTTP requests on <code>port 8080</code> (customizable). Every request — regardless of which service ultimately handles it — passes through a common pre-processing pipeline before reaching your code:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 33.3333%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Service</th>
-<th class="tableblock halign-left valign-top">Prefix</th>
-<th class="tableblock halign-left valign-top">Use it for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http/webapps.ahtml">Webapp</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/webapp</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Standalone web applications — served by your app, no CMS context.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http/sites.ahtml">Site</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/site</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CMS-driven websites: pages, parts, layouts, content rendering.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http/universal-api.ahtml">API</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/api</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Custom HTTP APIs, microservices, headless integrations.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http/admin-tools.ahtml">Admin</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/admin</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">XP administration UIs (Content Studio is itself an admin tool).</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/common-pipeline.svg" alt="Common HTTP request pipeline" width="768px">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Vhost filters</dt>
+<dd>
+<p>Request routing based on <a href="deployment/vhosts.ahtml">virtual hosts</a>.</p>
+</dd>
+<dt class="hdlist1">Platform filters</dt>
+<dd>
+<p>Optional system level request filters.</p>
+</dd>
+<dt class="hdlist1">Autologin filter</dt>
+<dd>
+<p>The <a href="deployment/vhosts.ahtml">virtual host contextual ID provider</a> is invoked, unless a user already exists in the context.</p>
+</dd>
+<dt class="hdlist1">Portal service</dt>
+<dd>
+<p>The pipeline of the matching <a href="portal.ahtml">Portal service</a> is executed (api invocation, webapp dispatch, site rendering, or admin tooling).</p>
+</dd>
+<dt class="hdlist1">Auth handler</dt>
+<dd>
+<p>Triggered if the pipeline returns a <code>401 Unauthorized</code>. The contextual ID Provider is invoked and may handle the request.</p>
+</dd>
+<dt class="hdlist1">Error handler</dt>
+<dd>
+<p>If the pipeline returns an unhandled error (everything but <code>200 OK</code>) that was not handled by an ID Provider, the contextual <a href="http/error.ahtml">error handler</a> kicks in.</p>
+</dd>
+<dt class="hdlist1">Platform response filters</dt>
+<dd>
+<p>Optional system level response filters.</p>
+</dd>
+<dt class="hdlist1">Standard error handler</dt>
+<dd>
+<p>Finally, if the request fails with an error that is still unhandled, XP&#8217;s standard error handler kicks in.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="request_pipeline"><a class="link" href="#request_pipeline">Request pipeline</a></h2>
+<h2 id="pages_in_this_section"><a class="link" href="#pages_in_this_section">Pages in this section</a></h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Every request, regardless of which service handles it, passes through a common pre-processing pipeline before reaching your code: virtual host filtering, autologin, authentication, and a small set of platform-level filters. The active service then runs its own service-specific pipeline (mappings, processors, contributions, component rendering, etc. for sites; method dispatch for webapps and APIs).</p>
-</div>
-<div class="paragraph">
-<p>See <a href="http/pipeline.ahtml">Request pipeline</a> for the full execution sequence and the filter ordering.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="http_primitives"><a class="link" href="#http_primitives">HTTP primitives</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The HTTP primitives below are shared across every service. Whichever service you are implementing for, the request and response objects, filter contracts, and error-handling rules are the same.</p>
-</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><a href="http/request-response.ahtml">Request &amp; Response</a></dt>
@@ -544,44 +530,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dd>
 </dl>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="services_in_detail"><a class="link" href="#services_in_detail">Services in detail</a></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Each service has its own page covering its routing rules, descriptor format, and conventions:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><a href="http/webapps.ahtml">Webapps</a></dt>
-<dd>
-<p>How to mount a webapp at <code>/webapp/&lt;app-name&gt;/</code>, declare a <code>webapp.yaml</code> descriptor, and respond to HTTP methods.</p>
-</dd>
-<dt class="hdlist1"><a href="http/universal-api.ahtml">APIs</a></dt>
-<dd>
-<p>The Universal API model — descriptor-driven custom HTTP APIs that can be mounted standalone or as service points beneath sites, webapps, and admin tools.</p>
-</dd>
-<dt class="hdlist1"><a href="http/sites.ahtml">Sites</a></dt>
-<dd>
-<p>The site engine — CMS-driven websites built from <a href="http/sites/components.ahtml">components</a>, <a href="http/sites/mappings.ahtml">mappings</a>, <a href="http/sites/processors.ahtml">processors</a>, and <a href="http/sites/contributions.ahtml">contributions</a>.</p>
-</dd>
-<dt class="hdlist1"><a href="http/admin-tools.ahtml">Admin tools</a></dt>
-<dd>
-<p>First-class admin UIs that mount in the XP admin Launcher.</p>
-</dd>
-<dt class="hdlist1"><a href="http/admin-extensions.ahtml">Admin extensions</a></dt>
-<dd>
-<p>Plug-ins that mount into existing admin tools at named interface points (formerly called <strong>widgets</strong>).</p>
-</dd>
-</dl>
+<p>For the gateway routing model and per-service pipelines, see <a href="portal.ahtml">Portal</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

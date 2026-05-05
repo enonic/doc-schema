@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Mappings</title>
+<title>Building Sites</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,19 +437,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Mappings</h1>
+<h1>Building Sites</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a>
-<ul class="sectlevel2">
-<li><a href="#execution_order">Execution order</a></li>
-</ul>
-</li>
-<li><a href="#pattern_mappings">Pattern mappings</a></li>
-<li><a href="#match_mappings">Match mappings</a></li>
-<li><a href="#service_mappings">Service mappings</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#multiple_apps_per_site">Multiple apps per site</a></li>
 </ul>
 </div>
 </div>
@@ -457,19 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Bind HTTP functions and filters to specific content types, site-relative URLs, or system services.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Mappings are only available when using the <a href="site-engine.ahtml">Site Engine</a>.
-</td>
-</tr>
-</table>
+<p>Use Enonic XP to deliver websites natively, without introducing a 3rd party front-end framework.</p>
 </div>
 </div>
 </div>
@@ -477,7 +459,19 @@ Mappings are only available when using the <a href="site-engine.ahtml">Site Engi
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are the first processing step in the <a href="site-engine.ahtml">site engine</a> — they run before page rendering starts. You may define mappings for both <a href="../request-response.ahtml">HTTP functions</a> and <a href="../filters.ahtml">filters</a>. The use cases are vast.</p>
+<p>As an alternative to using 3rd party front-end frameworks like Next.js, you may use Enonic XP and Enonic Apps natively to deploy Content Schemas, and deliver advanced websites.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+TUTORIALS HERE!
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -485,260 +479,28 @@ Mappings are only available when using the <a href="site-engine.ahtml">Site Engi
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mappings are defined in the <a href="../sites.ahtml">site descriptor</a> (<code>cms/site.yaml</code>). Examples of use cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Bind an HTTP function to a specific URL pattern (e.g. <code>/mypath</code>).</p>
-</li>
-<li>
-<p>Bind an HTTP function to a specific set of content via content matches (e.g. only the <code>portal:fragment</code> content type).</p>
-</li>
-<li>
-<p>Bind a filter to part or all of the site structure.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">cms/site.yaml mapping examples</div>
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
-mappings:
-- controller: "/cms/foobar/api.ts" <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
-  pattern: '/api/v\d+/.*'          <i class="conum" data-value="3"></i><b>(3)</b>
-  order: 10
-- controller: "/cms/pages/default/default.ts"
-  match: "type:'portal:fragment'"  <i class="conum" data-value="4"></i><b>(4)</b>
-- filter: "/cms/foobar/filter.ts"  <i class="conum" data-value="5"></i><b>(5)</b>
-  pattern: '/dont-match-me/.*'
-  invertPattern: true
-  order: 10
-- filter: "/cms/services/image.ts" <i class="conum" data-value="6"></i><b>(6)</b>
-  service: "image"</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><strong>controller</strong> — path to an <a href="../request-response.ahtml">HTTP function</a> implementation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><strong>order</strong> — execution order across apps. Default <code>50</code>. Lower means higher priority. See <a href="#execution_order">Execution order</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><strong>pattern</strong> — regular expression matched against the site-relative URL. Default <code>/.*</code>. See <a href="#pattern_mappings">Pattern mappings</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><strong>match</strong> — property condition evaluated against the contextual content. See <a href="#match_mappings">Match mappings</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><strong>filter</strong> — path to an <a href="../filters.ahtml">HTTP filter</a> implementation.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><strong>service</strong> — system service handled by this mapping (e.g. the <code>.../_/image/...</code> endpoint). See <a href="#service_mappings">Service mappings</a>.</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Each mapping must specify either <code>filter:</code> or <code>controller:</code> — never both — and at least one of <code>pattern:</code> or <code>match:</code>.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="execution_order"><a class="link" href="#execution_order">Execution order</a></h3>
-<div class="paragraph">
-<p>An application may contain multiple mappings, and multiple applications can be added to a site.</p>
+<p>Unlike <a href="webapps.ahtml">XP webapps</a>, XP sites do not have a default implementation — they resolve a component implementation based on the content being requested.</p>
 </div>
 <div class="paragraph">
-<p>If two apps within a site share the same mapping path or match expression, the mapping with the <strong>lower</strong> <code>order</code> value wins.</p>
+<p>To implement a site, start by placing the site descriptors under <code>src/main/resources/cms/</code> of your project. The site descriptor is split into two files: <code>cms/site.yaml</code> (processors, mappings, and API mounts) and <code>cms/cms.yaml</code> (site form and mixin references).</p>
 </div>
 <div class="paragraph">
-<p>If several mappings have the same <code>order</code> value, the sort order of the applications on the site determines which mapping is used.</p>
-</div>
+<p>Implement at least TODO: Add descriptor example and explain the main elements of it.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="pattern_mappings"><a class="link" href="#pattern_mappings">Pattern mappings</a></h2>
+<h2 id="multiple_apps_per_site"><a class="link" href="#multiple_apps_per_site">Multiple apps per site</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Pattern-based mappings can be used to take over the request for a specific URL before content rendering. Common cases include exposing an API endpoint on a contextual URL like <code>/api</code>, or triggering a filter for every request within the site.</p>
-</div>
-<div class="paragraph">
-<p>The <code>pattern</code> property specifies a regular expression matched against the request URL.</p>
-</div>
-<div class="paragraph">
-<p>The part of the URL involved is the path relative to the site where the application is configured. For example, if a site is deployed via the virtual host <code>example.com/mysite/</code>, then <code>pattern: '/api/.*'</code> matches requests with URL ending in <code>example.com/mysite/api/.*</code>. Protocol, host, and port are not involved in the pattern matching.</p>
-</div>
-<div class="paragraph">
-<p>If the pattern contains the question mark <code>?</code> character, the URL to match also includes query parameters. The query parameters are normalized, so they are always in alphabetical order.</p>
-</div>
-<div class="paragraph">
-<p>For example, the pattern <code>pattern: '/api\?category=foo&amp;key=\d'+</code> matches both:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>/api?category=foo&amp;key=123</code></p>
-</li>
-<li>
-<p>and <code>/api?key=123&amp;category=foo</code></p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The question mark <code>?</code> is escaped with a backslash in the pattern because it is a quantifier in regular expressions. Use <strong>single-quoted</strong> YAML strings for any pattern containing backslashes — YAML&#8217;s double-quoted form interprets backslash escapes and would corrupt regex tokens like <code>\d</code>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Set <code>invertPattern: true</code> on a mapping to negate the result of evaluating the regular expression.</p>
-</div>
-<div class="paragraph">
-<p>The pattern string must be a valid <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/regex/Pattern.html">regular expression</a>.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Anything ending with <code>.json</code> within the <code>/api/*</code> path: <code>pattern: '/api/.*\.json'</code></p>
-</li>
-<li>
-<p>All items within the site, including the site itself: <code>pattern: '/.*'</code></p>
-</li>
-<li>
-<p>Regex with query string: <code>pattern: '/endpoint\?bar=\d&amp;foo=.*'+</code></p>
-</li>
-<li>
-<p>Inverted via <code>invertPattern: true</code> together with <code>pattern: '/section/.*'</code></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="match_mappings"><a class="link" href="#match_mappings">Match mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Match-based mappings can be used to automatically render content types without using page templates or associating content with an implementation directly. A common case is automatic handling of the content type <code>portal:fragment</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>match</code> property specifies a condition related to the content corresponding with the requested URL path.</p>
-</div>
-<div class="paragraph">
-<p>The condition takes the form of a property path followed by a <code>:</code>, and a value.</p>
-</div>
-<div class="paragraph">
-<p>The property path can be one of the content properties (<code>_id</code>, <code>_name</code>, <code>_path</code>, <code>type</code>, <code>displayName</code>, <code>hasChildren</code>, <code>language</code>, <code>valid</code>) or any other custom property within the content.</p>
-</div>
-<div class="paragraph">
-<p>Examples:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Match fragment content type: <code>match: "type:'portal:fragment'"</code></p>
-</li>
-<li>
-<p>Match content within the <code>/features/</code> path: <code>match: "_path:'/features/.*'"</code></p>
-</li>
-<li>
-<p>Match custom property with string value: <code>match: "data.employee.type:'developer'"</code></p>
-</li>
-<li>
-<p>Match custom property with a number: <code>match: "data.product.category:42"</code></p>
-</li>
-<li>
-<p>Match custom property with a boolean: <code>match: "x.com-enonic-myapp.menuItem.show:true"</code></p>
-</li>
-<li>
-<p>Match any content: <code>match: "type:'.+'"</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The expected value can be either a regular expression matched against the property value, or simply a string, number, or boolean (<code>true</code> | <code>false</code>).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Missing/unavailable content does not match any condition. Omit <code>match</code> if you need to map an HTTP function or filter to a URL that does not correspond to any content.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="service_mappings"><a class="link" href="#service_mappings">Service mappings</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Service-based mappings bind service requests directly to HTTP functions or filters.</p>
-</div>
-<div class="paragraph">
-<p>Supported services:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>image</code> (deprecated)</dt>
-<dd>
-<p>Maps requests to the legacy image service at <code>/_/image/&lt;id&gt;[:&lt;fingerprint&gt;]/&lt;scale&gt;/&lt;name&gt;</code> (e.g. <code>/_/image/123456/scale-100-100/photo.jpg</code>). Replaced by the <code>media:image</code> Universal API.</p>
-</dd>
-<dt class="hdlist1"><code>attachment</code> (deprecated)</dt>
-<dd>
-<p>Maps requests to the legacy attachment service at <code>/_/attachment/&lt;mode&gt;/&lt;id&gt;[:&lt;fingerprint&gt;]/&lt;name&gt;</code> (e.g. <code>/_/attachment/inline/123456/logo.png</code>). Replaced by the <code>media:attachment</code> Universal API.</p>
-</dd>
-<dt class="hdlist1"><code>component</code></dt>
-<dd>
-<p>Maps requests to contextual page components at <code>/_/component/&lt;component-path&gt;</code>.</p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<a href="../universal-api.ahtml">Universal APIs</a> mounted as service points (<code>/_/&lt;app&gt;:&lt;api&gt;/</code>) cannot be remapped through site mappings — they are routed before the site engine processes mappings. If you need custom behavior on a service-point URL, implement a custom Universal API instead.
-</td>
-</tr>
-</table>
+<p>Sites may be powered by multiple apps. The apps may even collaborate on processing and responding to a single request. Similar to webapps, developers can use filters and mappings to take control over URL patterns when needed.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

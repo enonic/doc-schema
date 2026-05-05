@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>HTTP request pipeline</title>
+<title>Apps</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,11 +437,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>HTTP request pipeline</h1>
+<h1>Apps</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#common_request_pipeline">Request flow</a></li>
+<li><a href="#what_is_an_app">What is an app</a></li>
+<li><a href="#bundles_and_module_isolation">Bundles and module isolation</a></li>
+<li><a href="#lifecycle">Lifecycle</a></li>
+<li><a href="#redeploy_and_module_cache">Redeploy and module cache</a></li>
+<li><a href="#installation_methods">Installation methods</a></li>
+<li><a href="#configuration">Configuration</a></li>
 </ul>
 </div>
 </div>
@@ -449,82 +454,139 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The XP runtime serves HTTP requests on <code>port 8080</code> (customizable) via four purpose-specific endpoints (aka engines)</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="universal-api.ahtml">API</a> <code>/api</code> - for APIs, microservices and similar</p>
-</li>
-<li>
-<p><a href="admin-tools.ahtml">Admin</a> <code>/admin</code> - for platform administration</p>
-</li>
-<li>
-<p><a href="webapps.ahtml">Webapp</a> <code>/webapp</code> - for web applications</p>
-</li>
-<li>
-<p><a href="sites.ahtml">Site</a> <code>/site</code> - for CMS driven websites</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Before HTTP requests hit the Enonic Framework, they pass through a common request pipeline:</p>
+<p>An <strong>Enonic app</strong> is the unit of code you deploy to XP. It is a self-contained bundle that the platform installs, starts, configures, and tears down — and many apps coexist inside a single XP instance. This page covers what an app actually is at runtime, how XP runs several of them at once, and the lifecycle and configuration model around them.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="common_request_pipeline"><a class="link" href="#common_request_pipeline">Request flow</a></h2>
+<h2 id="what_is_an_app"><a class="link" href="#what_is_an_app">What is an app</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All web engines share a common request pipeline:</p>
+<p>An app is a software package — JavaScript/TypeScript modules, descriptors, schemas, assets — bundled and deployed together. Content Studio, the Headless API, and every webapp or site extension you write are all apps built with the Enonic Development Kit. XP itself is just the runtime that hosts them.</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="images/common-pipeline.svg" alt="Common HTTP request pipeline" width="768px">
+<div class="paragraph">
+<p>Each app is identified by an <strong>app key</strong> (e.g. <code>com.example.myapp</code>). The key is the namespace under which the app&#8217;s services, components, schemas, and configuration are reached.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="bundles_and_module_isolation"><a class="link" href="#bundles_and_module_isolation">Bundles and module isolation</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every app deploys as its own bundle. The CommonJS module cache is scoped to the app: when code in app A calls <code>require('/lib/greet')</code>, it loads the <code>greet</code> module <strong>from app A&#8217;s bundle</strong>, never from app B. There is no shared global namespace and no implicit module sharing between apps.</p>
+</div>
+<div class="paragraph">
+<p>The exception is <strong>platform libraries</strong> — modules whose path begins with <code>/lib/xp/</code> (e.g. <code>/lib/xp/content</code>, <code>/lib/xp/portal</code>). These are provided by XP itself and resolve identically from any app.</p>
+</div>
+<div class="paragraph">
+<p>Composition between apps therefore happens at the <strong>platform level</strong>, not in JavaScript:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A site can list multiple apps in its descriptor; each contributes components, mappings, processors, and contributions that the site engine merges at request time.</p>
+</li>
+<li>
+<p>Admin tools and admin extensions from any installed app are listed in the admin Launcher and may mount each other through declared interface points.</p>
+</li>
+<li>
+<p>Universal APIs from any app are reachable under <code>/api/&lt;app&gt;:&lt;api&gt;/</code>, and can be mounted as service points beneath sites, webapps, and admin tools belonging to other apps.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>What apps cannot do is reach into another app&#8217;s private modules. Cross-app integration goes through the platform&#8217;s contracts (descriptors, mappings, events, APIs) — never through <code>require()</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lifecycle"><a class="link" href="#lifecycle">Lifecycle</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An app&#8217;s life inside XP follows a fixed sequence:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Vhost filters</dt>
+<dt class="hdlist1">Install</dt>
 <dd>
-<p>Request routing based on <a href="../deployment/vhosts.ahtml">virtual hosts</a></p>
+<p>The app bundle is uploaded to the cluster and registered. Installation alone does not run any of your code.</p>
 </dd>
-<dt class="hdlist1">Java request filters</dt>
+<dt class="hdlist1">Start</dt>
 <dd>
-<p>Optional system level request filters</p>
+<p>XP starts the app on every cluster node. If the bundle contains <a href="main.ahtml"><code>main.ts</code></a> at <code>src/main/resources/main.ts</code>, it is loaded and its top-level code runs once per node. Any <code>__.disposer()</code> registrations made during start are remembered for the stop phase.</p>
 </dd>
-<dt class="hdlist1">Autologin filter</dt>
+<dt class="hdlist1">Running</dt>
 <dd>
-<p>The <a href="../deployment/vhosts.ahtml">virtual host contextual ID provider</a> will be invoked, unless a user already exists in the context</p>
+<p>The app is reachable. HTTP functions, event listeners, scheduled tasks, components, and admin tools all become live. Modules are loaded lazily on first <code>require()</code> and cached for the lifetime of the deploy.</p>
 </dd>
-<dt class="hdlist1">Engine specific pipeline</dt>
+<dt class="hdlist1">Stop</dt>
 <dd>
-<p>Pipeline of the matching web engine will be executed</p>
+<p>Before uninstall (or before a redeploy of a new version), XP stops the app on every node. Registered disposers are invoked. After stop, no further requests reach the app&#8217;s code.</p>
 </dd>
-<dt class="hdlist1">Auth handler</dt>
+<dt class="hdlist1">Uninstall</dt>
 <dd>
-<p>Triggered if the pipeline returns a "401: Unauthorized" error code, the contextual ID Provider will be invoked, optionally handling the request</p>
-</dd>
-<dt class="hdlist1">Error handler</dt>
-<dd>
-<p>If the pipeline returns an unhandled error (everything but "200: OK") that was not handled by an ID Provider, the contextual error handler will kick in.</p>
-</dd>
-<dt class="hdlist1">Java response filters</dt>
-<dd>
-<p>Optional system level response filters</p>
-</dd>
-<dt class="hdlist1">Standard error handler</dt>
-<dd>
-<p>Finally, if the request fails with an error that is still unhandled, XP&#8217;s standard error handler will kick in.</p>
+<p>The bundle is removed from the cluster.</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>The platform calls <code>main.ts</code> exactly once per app start, per node. Top-level code in any other module runs once on first <code>require()</code> and is then cached — see <a href="runtime.ahtml#loading_and_caching">Runtime: Loading and caching</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="redeploy_and_module_cache"><a class="link" href="#redeploy_and_module_cache">Redeploy and module cache</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Redeploying an app is conceptually a stop followed by a start with the new bundle. The module cache is invalidated, every module is re-loaded on first use, and <code>main.ts</code> runs again. Top-level state held in module variables does not survive a redeploy — treat it as ephemeral.</p>
+</div>
+<div class="paragraph">
+<p>This makes hot iteration cheap during development (drop a new bundle on the file system; XP picks it up) and keeps the running model simple in production (no partial-update edge cases).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation_methods"><a class="link" href="#installation_methods">Installation methods</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apps reach an XP instance through one of three channels:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Via CLI</dt>
+<dd>
+<p>Push the app via the management API using the Enonic CLI. The standard path for CI/CD pipelines and remote deploys.</p>
+</dd>
+<dt class="hdlist1">Via Admin Console</dt>
+<dd>
+<p>Install manually through the <strong>Applications</strong> admin tool. Useful for installing from Enonic Market or uploading a JAR by hand.</p>
+</dd>
+<dt class="hdlist1">Via the file system</dt>
+<dd>
+<p>Drop the JAR into the XP <code>deploy/</code> folder. Used during development and for specialized deployment scenarios. File-system deploys are local to a single node and override apps installed via the other channels.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For deployment, scaling, and isolation details that are platform-level rather than developer-level, see the <a href="https://developer.enonic.com/docs/xp">XP platform documentation</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each app may read configuration from a <code>&lt;app-name&gt;.cfg</code> file (e.g. <code>com.example.myapp.cfg</code>) placed in the XP configuration directory. Configuration is a simple key/value text format and is exposed to the app at runtime through the platform&#8217;s configuration APIs.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="deployment/config.ahtml">App configuration</a> for the file format, location, and reload behavior.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

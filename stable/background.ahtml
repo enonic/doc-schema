@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#when_to_reach_for_which">When to reach for which</a></li>
+<li><a href="#tasks_vs_scheduled_jobs">Tasks vs scheduled jobs</a></li>
 <li><a href="#cluster_behavior">Cluster behavior</a></li>
 <li><a href="#pages_in_this_section">Pages in this section</a></li>
 </ul>
@@ -451,15 +451,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Server-side work that doesn&#8217;t run in response to an incoming HTTP request — fire-and-forget jobs, scheduled cron-like execution, and the cluster-wide event bus.</p>
+<p>Server-side work that doesn&#8217;t run in response to an incoming HTTP request — fire-and-forget jobs and scheduled cron-like execution.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="when_to_reach_for_which"><a class="link" href="#when_to_reach_for_which">When to reach for which</a></h2>
+<h2 id="tasks_vs_scheduled_jobs"><a class="link" href="#tasks_vs_scheduled_jobs">Tasks vs scheduled jobs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>XP offers three primitives for non-request work. Pick by trigger and timing:</p>
+<p>XP offers two primitives for background execution. Pick by trigger and timing:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -476,11 +476,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="background/events.ahtml">Events</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Something happens (publish/subscribe)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">You need to react to changes — content updates, repo writes, custom domain events — across the cluster. Listeners are async and best-effort.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="background/tasks.ahtml">Tasks</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">An explicit <code>submit()</code> call</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">You need to run work asynchronously from a request — long imports, image processing, batch jobs — without blocking the caller. Each task runs once.</p></td>
@@ -493,7 +488,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tbody>
 </table>
 <div class="paragraph">
-<p>Tasks and scheduled jobs share the same execution shape — both invoke a <strong>named task</strong> implementation. The scheduler is the trigger; tasks are the unit of work. Events are the only primitive of the three that&#8217;s pub/sub rather than request/response.</p>
+<p>Tasks and scheduled jobs share the same execution shape — both invoke a <strong>named task</strong> implementation. The scheduler is the trigger; tasks are the unit of work.</p>
+</div>
+<div class="paragraph">
+<p>For pub/sub on the cluster-wide bus, see <a href="fundamentals/events.ahtml">Events</a>.</p>
 </div>
 </div>
 </div>
@@ -501,18 +499,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="cluster_behavior"><a class="link" href="#cluster_behavior">Cluster behavior</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All three primitives are cluster-aware:</p>
+<p>Both primitives are cluster-aware:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Events</strong> fan out across the cluster — a listener registered on any node receives events published from any other node.</p>
+<p><strong>Tasks</strong> run on the node that called <code>submit()</code>, unless explicitly distributed.</p>
 </li>
 <li>
 <p><strong>Scheduled jobs</strong> execute on exactly one node per fire. The scheduler coordinates so the same job doesn&#8217;t run twice.</p>
-</li>
-<li>
-<p><strong>Tasks</strong> run on the node that called <code>submit()</code>, unless explicitly distributed.</p>
 </li>
 </ul>
 </div>
@@ -526,10 +521,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="background/events.ahtml">Events</a></dt>
-<dd>
-<p>Local and cluster-wide event listeners. How to publish, how to subscribe, and the standard event types XP itself emits.</p>
-</dd>
 <dt class="hdlist1"><a href="background/tasks.ahtml">Tasks</a></dt>
 <dd>
 <p>Inline and named tasks, the task descriptor, progress reporting, and the task lifecycle.</p>
@@ -545,7 +536,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

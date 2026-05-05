@@ -479,7 +479,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Can mount <a href="universal-api.ahtml">Universal APIs</a> as service points beneath itself.</p>
 </li>
 <li>
-<p>Can host <a href="admin-extensions.ahtml">Admin extensions</a> by declaring named interface points that extensions plug into.</p>
+<p>Can host <a href="extensions.ahtml">Admin extensions</a> by declaring named interface points that extensions plug into.</p>
 </li>
 </ul>
 </div>
@@ -590,7 +590,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 <h2 id="implementation"><a class="link" href="#implementation">Implementation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The implementation lives at <code>src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.ts</code> and exports an <a href="request-response.ahtml">HTTP function</a> for each method the tool should respond to.</p>
+<p>The implementation lives at <code>src/main/resources/admin/tools/&lt;tool-name&gt;/&lt;tool-name&gt;.ts</code> and exports an <a href="../http/request-response.ahtml">HTTP function</a> for each method the tool should respond to.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample my-tool.ts</div>
@@ -663,7 +663,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 <h2 id="hosting_admin_extensions"><a class="link" href="#hosting_admin_extensions">Hosting admin extensions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A tool publishes the interface names it exposes in <code>interfaces:</code>. Any deployed admin extension whose own <code>interfaces:</code> list intersects with this set becomes eligible to be mounted into the tool, subject to the extension&#8217;s own <code>allow:</code> list. The reserved interface name <code>"generic"</code> matches any tool. See <a href="admin-extensions.ahtml">Admin extensions</a> for the consumer side.</p>
+<p>A tool publishes the interface names it exposes in <code>interfaces:</code>. Any deployed admin extension whose own <code>interfaces:</code> list intersects with this set becomes eligible to be mounted into the tool, subject to the extension&#8217;s own <code>allow:</code> list. The reserved interface name <code>"generic"</code> matches any tool. See <a href="extensions.ahtml">Admin extensions</a> for the consumer side.</p>
 </div>
 </div>
 </div>
@@ -678,7 +678,7 @@ config:                          <i class="conum" data-value="6"></i><b>(6)</b>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

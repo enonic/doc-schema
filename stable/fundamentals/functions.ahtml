@@ -569,7 +569,7 @@ exports.GET = () =&gt; ({
 <dd>
 <p>Invoked when an exception bubbles out of an HTTP function. Receive the error plus the original request, return a Response.</p>
 </dd>
-<dt class="hdlist1"><a href="../background/events.ahtml">Event listeners</a></dt>
+<dt class="hdlist1"><a href="events.ahtml">Event listeners</a></dt>
 <dd>
 <p>Subscribe to the cluster-wide event bus. Receive the event payload; return value is ignored.</p>
 </dd>
@@ -592,14 +592,14 @@ exports.GET = () =&gt; ({
 </dl>
 </div>
 <div class="paragraph">
-<p>Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <a href="../http/sites/components.ahtml">components</a>.</p>
+<p>Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <a href="../portal/sites/components.ahtml">components</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

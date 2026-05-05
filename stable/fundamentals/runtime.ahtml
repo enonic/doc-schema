@@ -462,7 +462,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="execution_model"><a class="link" href="#execution_model">Execution model</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic XP runs on the Java Virtual Machine. Your app&#8217;s TypeScript and JavaScript files are executed by an embedded JavaScript engine, with full access to the JVM through the <a href="java-bridge.ahtml">Java bridge</a>. There is no Node.js, no separate JS process, and no inter-process bridge — server-side JS runs inside the same JVM as the platform itself.</p>
+<p>Enonic XP runs on top of the Java Virtual Machine. Your app&#8217;s TypeScript and JavaScript files are executed by an embedded JavaScript engine, with full access to the JVM through the <a href="java-bridge.ahtml">Java bridge</a>. There is no Node.js, no separate JS process, and no inter-process bridge — server-side JS runs inside the same JVM as the platform itself.</p>
 </div>
 <div class="paragraph">
 <p>Two engines are available:</p>
@@ -551,7 +551,7 @@ XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScrip
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Events</strong> fire across the cluster. A listener registered on any node receives events published from any other node. See <a href="../background/events.ahtml">Events</a>.</p>
+<p><strong>Events</strong> fire across the cluster. A listener registered on any node receives events published from any other node. See <a href="events.ahtml">Events</a>.</p>
 </li>
 <li>
 <p><strong>Scheduled jobs</strong> are distributed. A scheduled job runs on one cluster node per fire — XP coordinates so the same job doesn&#8217;t execute twice. See <a href="../background/scheduler.ahtml">Scheduler</a>.</p>
@@ -578,13 +578,16 @@ XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScrip
 <p><strong>Persistence</strong> — content, nodes, repositories, blobs, all queryable and clusterable.</p>
 </li>
 <li>
-<p><strong>HTTP routing</strong> — four <a href="../http.ahtml">services</a> (<code>/api</code>, <code>/admin</code>, <code>/site</code>, <code>/webapp</code>) handle incoming requests; you provide the implementations.</p>
+<p><strong>HTTP routing</strong> — the <a href="../portal.ahtml">Portal</a> dispatches incoming requests to four services (<code>/api</code>, <code>/admin</code>, <code>/site</code>, <code>/webapp</code>); you provide the implementations.</p>
 </li>
 <li>
 <p><strong>Identity &amp; access management</strong> — pluggable <a href="id-providers.ahtml">ID providers</a>, role-based permissions, audit logging.</p>
 </li>
 <li>
-<p><strong>Background work</strong> — <a href="../background/tasks.ahtml">tasks</a>, <a href="../background/scheduler.ahtml">scheduled jobs</a>, and <a href="../background/events.ahtml">cluster-wide events</a>.</p>
+<p><strong>Cluster-wide events</strong> — see <a href="events.ahtml">Events</a>.</p>
+</li>
+<li>
+<p><strong>Background work</strong> — <a href="../background/tasks.ahtml">tasks</a> and <a href="../background/scheduler.ahtml">scheduled jobs</a>.</p>
 </li>
 <li>
 <p><strong>Localization</strong> — see <a href="i18n.ahtml">Localization</a>.</p>
@@ -607,7 +610,7 @@ XP ships Nashorn as the default server-side JavaScript engine. GraalVM JavaScrip
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>

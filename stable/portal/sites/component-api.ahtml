@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Building Sites</title>
+<title>Component API</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,13 +437,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Building Sites</h1>
+<h1>Component API</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#multiple_apps_per_site">Multiple apps per site</a></li>
+<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
 </ul>
 </div>
 </div>
@@ -451,15 +449,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use Enonic XP to deliver websites natively, without introducing a 3rd party front-end framework.</p>
+<p>The component API enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As an alternative to using 3rd party front-end frameworks like Next.js, you may use Enonic XP and Enonic Apps natively to deploy Content Schemas, and deliver advanced websites.</p>
+<p>Page components may also be directly accessed.
+For instance, one may render only the first part within in a page&#8217;s main region.</p>
+</div>
+<div class="paragraph">
+<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Component rendering</dt>
+<dd>
+<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
+</dd>
+</dl>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -468,39 +478,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-TUTORIALS HERE!
+<div class="paragraph">
+<p>By exporting <code>POST</code> or any other HTTP method from the component implementation, it may also serve as the backend for the component.</p>
+</div>
+<div class="paragraph">
+<p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Unlike <a href="webapps.ahtml">XP webapps</a>, XP sites do not have a default implementation — they resolve a component implementation based on the content being requested.</p>
-</div>
-<div class="paragraph">
-<p>To implement a site, start by placing the site descriptors under <code>src/main/resources/cms/</code> of your project. The site descriptor is split into two files: <code>cms/site.yaml</code> (processors, mappings, and API mounts) and <code>cms/cms.yaml</code> (site form and mixin references).</p>
-</div>
-<div class="paragraph">
-<p>Implement at least TODO: Add descriptor example and explain the main elements of it.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="multiple_apps_per_site"><a class="link" href="#multiple_apps_per_site">Multiple apps per site</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Sites may be powered by multiple apps. The apps may even collaborate on processing and responding to a single request. Similar to webapps, developers can use filters and mappings to take control over URL patterns when needed.</p>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 14:24:28 UTC
+Last updated 2026-05-05 15:16:05 UTC
 </div>
 </div>
 </body>
