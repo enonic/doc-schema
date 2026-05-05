@@ -92,7 +92,7 @@ main.ts:: The application's <<../fundamentals/main#, main lifecycle>>. Runs when
 
 i18n/:: Short for internationalization, this folder contains <<../libraries/lib-i18n#,app localization files>>.
 
-idprovider/:: The application may implement an <<../fundamentals/id-providers#,ID Provider>> here.
+idprovider/:: The application may implement an <<../http/id-providers#,ID Provider>> here.
 
 tasks/:: May contain <<../background/tasks#, task implementations>> for asynchronous and background processing.
 

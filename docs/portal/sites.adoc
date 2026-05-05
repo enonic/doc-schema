@@ -1,23 +1,81 @@
-= Building Sites
+= Site service
 :toc: right
 :imagesdir: images
 
-Use Enonic XP to deliver websites natively, without introducing a 3rd party front-end framework.
+Serving CMS driven sites at  `:8080/site/<project>/<branch>/<path-to-content>`. Combine with Vhosts for custom domains and paths.
+
+NOTE: For hands on tutorials on building native Enonic XP sites, visit https://developer.enonic.com/learn/react4xp/stable[React4XP tutorial] or the https://developer.enonic.com/docs/my-first-site[My first site tutorial].
+
 
 == Introduction
 
-As an alternative to using 3rd party front-end frameworks like Next.js, you may use Enonic XP and Enonic Apps natively to deploy Content Schemas, and deliver advanced websites.
+As an alternative to using 3rd party front-end frameworks like Next.js, the site service is a purpose-built web engine for delivering content-driven websites, and is closesly linked to the CMS features of the platform.
+
+TIP: Visit the https://developer.enonic.com/docs/cms/stable[CMS documentation] for details on Content Modelling and schemas. This section focuses on the site service itself, and how to implement sites via Enonic apps.
 
 
-NOTE: TUTORIALS HERE!
+=== Descriptor
 
-== Usage
+To activate the site service, you will need a site descriptor in your app.
 
-Unlike <<webapps#, XP webapps>>, XP sites do not have a default implementation — they resolve a component implementation based on the content being requested.
+.src/main/resources/cms/site.yaml
+[source,yaml]
+----
+kind: "Site"
+mappings:
+  - controller: "/lib/preview.js" # <1>
+    order: 50
+    match: "type:'(?!media:).*'"  # <2>
+apis:
+  - "ws"  # <3>
+  - "app:graphql" # <4>
+----
 
-To implement a site, start by placing the site descriptors under `src/main/resources/cms/` of your project. The site descriptor is split into two files: `cms/site.yaml` (processors, mappings, and API mounts) and `cms/cms.yaml` (site form and mixin references).
+<1> A mapping to take over the request for all non-media content items, and render a preview.
+<2> The match expression uses a negative lookahead to exclude media content types.
+<3> Contextually mounts an API in the same application on the site's underscore endpoint.
+<4> Contextually mounts another apps's graphql API on this site.
 
-Implement at least TODO: Add descriptor example and explain the main elements of it.
+NOTE: You will also need implementations of <<mappings#, Mapping function>> or <<components#, component functions>> to start rendering.
+
+
+== Request pipeline
+
+The site pipeline is executed as a subset of the <<../../http#common_request_pipeline,common pipeline>>:
+
+image::site-pipeline.svg[Site rendering pipeline, 768px]
+
+This section describes the standard pipeline involved in processing a page request, e.g. `:8080/site/<project>/<branch>/<path-to-page>`.
+
+Mappings:: Uses path or content-based mappings from the site descriptor to trigger filters and HTTP functions.
+
+Page resolver:: Looks up the content at the path and resolves its implementation and config (optionally via a page template).
++
+For two content types the page resolver does not resolve any implementation:
++
+* For `base:shortcut`, the referenced content path is returned with status `307 Temporary Redirect`.
+* For `portal:fragment`, no implementation is needed — a fragment is rendered directly.
++
+For other content types, implementations are considered in the following order:
++
+. Implementation set directly on the content.
+. Implementation set on a page template for the content. If the page template is unavailable (e.g. deleted), the page resolver treats it as if no page template was set.
+. Implementation set on the first page template found in `\{site}/_templates` that supports the content's type.
++
+If no implementation is found, the response status is `404 Not Found`.
++
+NOTE: In `inline` rendering mode the status is `418` instead of `404`, so Content Studio can switch to alternative rendering. In `edit` rendering mode the status is `200` instead of `404`, to allow Content Studio to render the in-place component selector.
+
+Page renderer:: Resolves the implementation and optional configuration (which may also come from a page template).
++
+* If no implementation is found, returns `404 Not Found`.
+* Otherwise invokes the implementation and returns `200 OK` by default. The output may include component placeholders.
+
+Response processors:: For `text/html` responses, any response processors defined in the site descriptor are executed. Processors may manipulate the result, for instance by adding page contributions.
+
+Contributions filter:: For `text/html` responses, any `pageContributions` in the response object are merged into the response body.
+
+Response filters:: Any filters registered through a mapping execute their final processing before the response is returned from the pipeline.
 
 
 == Multiple apps per site

@@ -8,10 +8,12 @@ The XP framework offers a solution for pluggable authentication called ID provid
 As part of the XP <<../iam#,IAM>> (Identity and Access management), apps and sites may be loosely associated with an ID provider.
 The ID provider is responsible for providing  user authentication, independent of the source identity system.
 
-ID providers are wired tightly into the <<../runtime/engines#_common_request_pipeline, common HTTP execution pipeline>>. 
-They participate both in pipeline execution steps, and through the <<../runtime/engines/idprovider-service#, ID provider service endpoint>>
+ID providers are wired tightly into the <<../http#common_request_pipeline, common HTTP request pipeline>>.
+They participate both in pipeline execution steps, and through the <<../runtime/engines/idprovider-service#, ID provider service endpoint>>.
 
 This section describes how to implement an ID provider application.
+
+TIP: Two ready-made ID providers are published on https://market.enonic.com[Enonic Market] and cover most common needs without writing code: *OIDC ID Provider* — for any OpenID Connect-compliant identity system (Auth0, Okta, Microsoft Entra, Keycloak, etc.) — and *Simple ID Provider* — a turn-key local identity store with a built-in login form. Reach for those first; implement a custom ID provider only when neither fits.
 
 == Descriptor
 An IDprovider application requires a descriptor file.

@@ -1,12 +1,12 @@
-= WebApps
+= WebApp service
 :toc: right
 :imagesdir: images
 
-The webapp engine handles requests on the endpoint `+<server>:<port>/webapp/<app-name>/*+`.
+The webapp service handles requests on the endpoint `+<server>:<port>/webapp/<app-name>/*+`.
 
 == Introduction
 
-Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.
+Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp service provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.
 
 == Request pipeline
 
@@ -26,7 +26,7 @@ NOTE: For anything beyond a couple of static endpoints, use the https://market.e
 
 == WebSocket and SSE
 
-A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a `webSocket` or `sse` object from the request handler. See <<../http/websocket#,WebSocket>> and <<../http/sse#,SSE>> for the details.
+A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. But we generally recommend contextually mounting WebSocket and SSE APIs via the <<universal-api#, API service>> instead of using the webapp service directly.
 
 == Descriptor
 

@@ -55,24 +55,20 @@
           "document": "fundamentals/globals"
         },
         {
-          "title": "TypeScript",
-          "document": "fundamentals/typescript"
+          "title": "Events",
+          "document": "fundamentals/events"
         },
         {
-          "title": "Java bridge",
-          "document": "fundamentals/java-bridge"
+          "title": "TypeScript",
+          "document": "fundamentals/typescript"
         },
         {
           "title": "Localization",
           "document": "fundamentals/i18n"
         },
         {
-          "title": "ID providers",
-          "document": "fundamentals/id-providers"
-        },
-        {
-          "title": "Events",
-          "document": "fundamentals/events"
+          "title": "Java bridge",
+          "document": "fundamentals/java-bridge"
         }
       ]
     },
@@ -99,6 +95,10 @@
         {
           "title": "SSE",
           "document": "http/sse"
+        },
+        {
+          "title": "ID providers",
+          "document": "http/id-providers"
         }
       ]
     },
@@ -107,12 +107,16 @@
       "document": "portal",
       "menuItems": [
         {
-          "title": "Webapps",
-          "document": "portal/webapps"
-        },
-        {
           "title": "APIs",
           "document": "portal/universal-api"
+        },
+        {
+          "title": "Tools",
+          "document": "portal/tools"
+        },
+        {
+          "title": "Extensions",
+          "document": "portal/extensions"
         },
         {
           "title": "Sites",
@@ -123,26 +127,22 @@
               "document": "portal/sites/mappings"
             },
             {
-              "title": "Processors",
-              "document": "portal/sites/processors"
+              "title": "Components",
+              "document": "portal/sites/components"
             },
             {
               "title": "Contributions",
               "document": "portal/sites/contributions"
             },
             {
-              "title": "Components",
-              "document": "portal/sites/components"
+              "title": "Processors",
+              "document": "portal/sites/processors"
             }
           ]
         },
         {
-          "title": "Admin tools",
-          "document": "portal/tools"
-        },
-        {
-          "title": "Admin extensions",
-          "document": "portal/extensions"
+          "title": "Webapps",
+          "document": "portal/webapps"
         }
       ]
     },

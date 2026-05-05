@@ -2,13 +2,11 @@
 :toc: right
 :imagesdir: images
 
-Bind HTTP functions and filters to specific content types, site-relative URLs, or system services.
-
-NOTE: Mappings are only available when using the <<site-engine#, Site Engine>>.
+Bind HTTP functions and filters to specific content types or site-relative URLs
 
 == Introduction
 
-Mappings are the first processing step in the <<site-engine#, site engine>> — they run before page rendering starts. You may define mappings for both <<../../http/request-response#, HTTP functions>> and <<../../http/filters#, filters>>. The use cases are vast.
+Mappings are the first custom processing step in the <<site#, site service>>. Mappings execute before the component rendering. You may define mappings for both <<../../http/request-response#, HTTP functions>> and <<../../http/filters#, filters>>. The use cases are vast.
 
 == Usage
 
@@ -38,7 +36,7 @@ mappings:
 
 <1> *controller* — path to an <<../../http/request-response#, HTTP function>> implementation.
 
-<2> *order* — execution order across apps. Default `50`. Lower means higher priority. See <<Execution order>>.
+<2> *order* — execution order across apps. Default `50`. Lower number means higher priority, with `1` being the pole position. See <<Execution order>>.
 
 <3> *pattern* — regular expression matched against the site-relative URL. Default `/.*`. See <<Pattern mappings>>.
 
@@ -52,9 +50,7 @@ NOTE: Each mapping must specify either `filter:` or `controller:` — never both
 
 === Execution order
 
-An application may contain multiple mappings, and multiple applications can be added to a site.
-
-If two apps within a site share the same mapping path or match expression, the mapping with the *lower* `order` value wins.
+An application may contain multiple mappings, and multiple applications can be added to a site. If two apps within a site share the same mapping path or match expression, the mapping with the *lower* `order` value wins.
 
 If several mappings have the same `order` value, the sort order of the applications on the site determines which mapping is used.
 

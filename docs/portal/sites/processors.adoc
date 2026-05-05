@@ -4,7 +4,7 @@
 
 A special filter, mainly used to inject page contributions.
 
-NOTE: Response processors are only available in the <<../runtime/engines/site-engine#, Site Engine>>
+NOTE: Response processors are only available in <<components#, component rendering>>, not via mappings.
 
 == Introduction
 

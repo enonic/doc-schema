@@ -2,9 +2,7 @@
 :toc: right
 :imagesdir: images
 
-Lets components, macros, and processors contribute content to the response HTML header and/or footer.
-
-NOTE: Only available in the <<../runtime/engines/site-engine#, Site Engine>>
+Enables components, macros, and processors to contribute content to the response HTML header and/or footer.
 
 == Introduction
 
@@ -13,7 +11,7 @@ Some pages and applications require specific scripts to be available within the 
 Example use cases are:
 
 * Let a part contribute JavaScript to the page's ``<head>`` section.
-* Let a part contribute custom CSS to the ``<head>`` of that page.
+* Let a part contribute custom elements to the beginning of the ``<body>``.
 * A layout might add a JavaScript tracker to the end of the ``<body>`` of the page.
 
 NOTE: Page contributions will only be triggered if the response type is `text/html` (which is the default)
@@ -71,4 +69,4 @@ return {
 Page contributions are merged into the response markup during a specific step in the <<../runtime/engines/site-engine#, site engine>>, called `Contributions filter`. It occurs after <<processors#, page processors>> and before <<mappings#, the site filters>>.
 
 
-NOTE: Duplicate page contributions will automatically be removed, so developers do not have to worry about this.
+NOTE: Duplicate page contributions are automatically removed, so if multiple components contribute the same script, it will only be included once in the final response.

@@ -41,4 +41,6 @@ Standard error handler:: Finally, if the request fails with an error that is sti
 
 <<http/sse#, SSE>>:: Server-Sent Events streams. One-way streaming from server to client over a long-lived HTTP response.
 
+<<http/id-providers#, ID providers>>:: Pluggable authentication that hooks the request pipeline — `handle401`, `autoLogin`, `login`/`logout` endpoints, and ID-provider-as-HTTP-function.
+
 For the gateway routing model and per-service pipelines, see <<portal#, Portal>>.

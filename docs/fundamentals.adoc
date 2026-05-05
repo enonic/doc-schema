@@ -25,11 +25,9 @@ This section documents the parts of an app that are not tied to a specific HTTP 
 
 <<fundamentals/events#, Events>>:: The cluster-wide pub/sub bus. Publish from anywhere — request handlers, tasks, `main.ts` — and subscribe to platform events (content writes, repo updates) or your own custom domain events.
 
-<<fundamentals/id-providers#, ID providers>>:: Implementing pluggable authentication. ID providers participate in the request pipeline and may also be invoked directly via their own service endpoint.
-
 
 == How the parts relate
 
-The runtime is the foundation: a JVM-based execution environment with a CommonJS module system, multithreading, clustering, and a platform's worth of services attached. Functions are the units of code the runtime invokes — most of what you write is regular module code, with a smaller subset bound to framework contracts. `main.ts` is the lifecycle contract; ID providers are the authentication contract. Events are the cluster-wide pub/sub primitive, available from any function. Globals, TypeScript, the Java bridge, and localization are tools you reach for inside any function, regardless of which contract called it.
+The runtime is the foundation: a JVM-based execution environment with a CommonJS module system, multithreading, clustering, and a platform's worth of services attached. Functions are the units of code the runtime invokes — most of what you write is regular module code, with a smaller subset bound to framework contracts. `main.ts` is the lifecycle contract. Events are the cluster-wide pub/sub primitive, available from any function. Globals, TypeScript, the Java bridge, and localization are tools you reach for inside any function, regardless of which contract called it.
 
-For HTTP-bound contracts (request handlers, filters, error handlers, websockets, SSE), see <<http#, HTTP>>. For asynchronous background execution (tasks, scheduled jobs), see <<background#, Background>>.
+For HTTP-bound contracts (request handlers, filters, error handlers, websockets, SSE, ID providers), see <<http#, HTTP>>. For asynchronous background execution (tasks, scheduled jobs), see <<background#, Background>>.
