@@ -1,0 +1,133 @@
+= Content schemas
+:toc: right
+
+How to ship CMS *content schemas* — content types, form fragments, mixins, page/part/layout schemas, macros, and styles — inside an Enonic app. The schema language and field types themselves are reference documentation in the https://developer.enonic.com/docs/cms/stable/schemas[CMS docs]; this page is the app-side packaging recipe.
+
+== What schemas an app can ship
+
+A single app may contribute any combination of:
+
+Content types:: Define the structure of editorial content (articles, products, media types, …).
+Form fragments:: Reusable pieces of a content form, includable from other schemas.
+Mixins:: Extra metadata attached to existing content types (formerly known as `x-data`).
+Pages, parts, layouts:: Schemas paired with rendering implementations to compose pages.
+Macros:: Custom rich-text macros invocable inside HtmlArea fields.
+Styles:: Rich-text styling extensions.
+
+Schemas are registered when the app is installed and become available immediately in Content Studio and the content APIs. They are namespaced by app key — every schema is referenced as `<app-key>:<schema-name>` (for example, `com.example.myapp:article`).
+
+== Folder layout
+
+Schemas live under `src/main/resources/cms/`, with one folder per kind:
+
+[source,text]
+----
+src/main/resources/
+  cms/
+    cms.yaml                       # <1>
+    site.yaml                      # <2>
+    content-types/
+      article/
+        article.yaml
+        article.svg                # <3>
+    form-fragments/
+      address/
+        address.yaml
+    mixins/
+      seo/
+        seo.yaml
+    pages/
+      default/
+        default.yaml
+        default.ts                 # <4>
+    parts/
+      hero/
+        hero.yaml
+        hero.ts
+    layouts/
+      two-col/
+        two-col.yaml
+        two-col.ts
+    macros/
+      embed/
+        embed.yaml
+        embed.ts
+----
+
+<1> `cms.yaml` — the *app's CMS descriptor*. Used to activate mixins on existing content types and to declare app-level form references. See <<#cms-yaml>>.
+<2> `site.yaml` — the <<../sites#, site descriptor>>, present only when the app contributes a site. Lists mounted APIs, mappings, and processors.
+<3> Optional sibling icon, displayed in Content Studio.
+<4> Page, part, layout, and macro schemas pair with an implementation file (`<name>.ts`) — see <<../sites/components#, components>> for the rendering side.
+
+The folder name, file name, and the schema's referenceable name must match: `cms/parts/hero/hero.yaml` is referenced as `<app>:hero`. Choose names carefully — they end up in stored content data and are awkward to change later.
+
+== A content type, end to end
+
+The descriptor is YAML. Here is a minimal content type, using the canonical shape from the https://developer.enonic.com/docs/cms/stable/content/content-types[CMS content-types reference]:
+
+.src/main/resources/cms/content-types/person/person.yaml
+[source,yaml]
+----
+kind: "ContentType"
+title: "Person"
+displayNameLabel: "Full Name"
+description: "Create a new person"
+superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+allowChildContentType:
+  - "base:folder"
+  - "${app}:article-*"
+form:
+  - name: "fullName"
+    type: "TextLine"
+    label: "Full name"
+    occurrences:
+      minimum: 1
+      maximum: 1
+  - name: "bio"
+    type: "TextArea"
+    label: "Biography"
+----
+
+Notes:
+
+* `${app}` resolves to the current app's key at registration time. Use it instead of hard-coding your own app key, so the same schema works in forks and renamed deployments.
+* `form:` is where input field definitions go. The full set of input types (`TextLine`, `HtmlArea`, `ContentSelector`, `ImageSelector`, `Radio`, etc.) is documented in the https://developer.enonic.com/docs/cms/stable/schemas/forms[CMS forms reference].
+* `superType` defaults to `base:structured`. Other options like `base:media` or `base:folder` are documented under https://developer.enonic.com/docs/cms/stable/content/content-types[content types].
+
+[#cms-yaml]
+== The `cms.yaml` app descriptor
+
+`cms/cms.yaml` is the app-level CMS descriptor. Two roles:
+
+. *Activate mixins.* A mixin you ship in `cms/mixins/<name>/` is dormant until you opt in here. List it under `mixins:` to make it active for content types in this app.
+. *Declare an app-level form.* Lets your app's site configuration form be edited in Content Studio.
+
+.src/main/resources/cms/cms.yaml
+[source,yaml]
+----
+kind: "CMS"
+mixins:
+  - name: "seo"
+form:
+  - name: "tracking-id"
+    type: "TextLine"
+    label: "Analytics tracking ID"
+----
+
+Without the `mixins:` entry, the `seo` mixin is bundled but not attached to anything.
+
+== Deployment
+
+Nothing extra is required. When the app is installed (or hot-deployed during development by dropping the JAR into XP's `deploy/` folder), XP scans the bundle, registers every schema under the app's key, and Content Studio refreshes immediately. Removing the app removes the schemas; redeploying a new bundle replaces the previous registration.
+
+There is no separate "publish schemas" step. The bundle *is* the source of truth.
+
+== References
+
+* https://developer.enonic.com/docs/cms/stable/schemas[CMS schemas reference] — the schema language, field types, and per-kind documentation.
+* https://developer.enonic.com/docs/cms/stable[CMS documentation] — content modelling, queries, and runtime APIs.
+* <<../tooling/starters#, Starters>> — folder layout for the rest of an Enonic app.
+* <<../sites#, Sites>> — wiring page/part/layout schemas to rendering implementations.

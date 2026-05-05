@@ -2,15 +2,23 @@
 :imagesdir: schemas/images
 :toc: right
 
-Customize and extend Enonic XP with your own code and features.
+The Enonic Development Kit (EDK) is the server-side TypeScript/JavaScript framework Enonic XP exposes to app developers. 
+
+Write your code in TypeScript, deploy it as an <<fundamentals/apps#, Enonic app>>, and get full access to XP's persistence, clustering, identity, scheduling, and HTTP machinery — powered by the <<fundamentals/runtime#, XP runtime>>, without Node.js, without a separate JS process, and with cluster-aware semantics out of the box.
+
+This documentation covers the app-development surface only, other relevant documentation includes:
+
+* https://developer.enonic.com/docs/cms[CMS docs] for content modelling and content APIs
+* https://developer.enonic.com/docs/content-studio[Content Studio docs] for the content authoring interface
+* https://developer.enonic.com/docs/xp[XP platform docs] for platform features and architecture
 
 == Introduction
 
-Enonic XP is a highly modular and customizable platform. Build and deploy <<schemas#, content schemas>>, custom APIs, functions, admin extensions, ID providers, webapps, and even full websites — all packaged as <<fundamentals/apps#, Enonic apps>> that run inside a single XP instance.
+XP is highly modular: a single instance hosts many apps side by side. Each app is a self-contained bundle that can contribute <<examples/schemas#, content schemas>>, custom <<apis#, APIs>>, <<admin#, admin tools and extensions>>, <<http/id-providers#, ID providers>>, <<webapps#, webapps>>, or full <<sites#, websites>> — all powered by the same JS/TS runtime and the same standard <<libraries#, libraries>>.
 
 == Tutorials
 
-IMPORTANT: For a hands-on introduction to development and the SDK, visit the https://developer.enonic.com/start[quickstart], https://developer.enonic.com/docs/developer-101[Developer 101], or https://developer.enonic.com/docs/my-first-site[My first site] tutorials.
+IMPORTANT: For a hands-on introduction to development with Enonic XP, visit the https://developer.enonic.com/learn[Learning section].
 
 == Where to start
 

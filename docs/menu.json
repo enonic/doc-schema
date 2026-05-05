@@ -272,7 +272,7 @@
       "menuItems": [
         {
           "title": "Content schemas",
-          "document": "schemas"
+          "document": "examples/schemas"
         },
         {
           "title": "Asset serving",
