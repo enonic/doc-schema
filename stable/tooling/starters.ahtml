@@ -580,7 +580,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">apis/</dt>
 <dd>
-<p><a href="../portal/universal-api.ahtml">Universal API</a> implementations and descriptors.</p>
+<p><a href="../apis.ahtml">Universal API</a> implementations and descriptors.</p>
 </dd>
 <dt class="hdlist1">application.svg</dt>
 <dd>
@@ -616,7 +616,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">webapp/</dt>
 <dd>
-<p>Optional <a href="../portal/webapps.ahtml">webapp</a> entry point. Contains <code>webapp.ts</code> (implementation) and an optional <code>webapp.yaml</code> (descriptor).</p>
+<p>Optional <a href="../webapps.ahtml">webapp</a> entry point. Contains <code>webapp.ts</code> (implementation) and an optional <code>webapp.yaml</code> (descriptor).</p>
 </dd>
 <dt class="hdlist1">cms/site.yaml</dt>
 <dd>
@@ -632,7 +632,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">cms/processors/</dt>
 <dd>
-<p><a href="../portal/sites/processors.ahtml">Response processors</a> for post-processing the HTML response from sites.</p>
+<p><a href="../sites/processors.ahtml">Response processors</a> for post-processing the HTML response from sites.</p>
 </dd>
 <dt class="hdlist1">cms/layouts/</dt>
 <dd>
@@ -710,7 +710,7 @@ Check out <a href="https://market.enonic.com/starters/library-starter">the libra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 19:01:28 UTC
+Last updated 2026-05-05 19:40:05 UTC
 </div>
 </div>
 </body>

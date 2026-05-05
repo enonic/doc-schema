@@ -441,6 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#services">Services</a></li>
 <li><a href="#common_request_pipeline">Request flow</a></li>
 <li><a href="#pages_in_this_section">Pages in this section</a></li>
 </ul>
@@ -450,7 +451,54 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The shared infrastructure used by every HTTP function in Enonic XP</p>
+<p>Every client interaction with Enonic XP — browser request, API call, admin tool, websocket upgrade — flows through the same HTTP gateway. This page covers the common request pipeline that every request passes through, the four services XP dispatches to, and the primitives (request/response shapes, filters, error handlers, websockets, SSE, ID providers) that make up the HTTP layer.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="services"><a class="link" href="#services">Services</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>XP listens on <code>port 8080</code> (configurable) and dispatches requests to one of four <strong>services</strong>, each with a fixed URL prefix and a distinct role:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">Prefix</th>
+<th class="tableblock halign-left valign-top">Use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="apis.ahtml">API</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/api</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom HTTP APIs, microservices, headless integrations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="admin.ahtml">Admin</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/admin</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XP administration UIs (Content Studio is itself an admin tool) and extensions that mount inside them.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="sites.ahtml">Site</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/site</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CMS-driven websites: pages, parts, layouts, content rendering.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="webapps.ahtml">Webapp</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/webapp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Standalone web applications — served by your app, no CMS context.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.</p>
 </div>
 </div>
 </div>
@@ -458,11 +506,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="common_request_pipeline"><a class="link" href="#common_request_pipeline">Request flow</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The XP runtime serves HTTP requests on <code>port 8080</code> (customizable). Every request — regardless of which service ultimately handles it — passes through a common pre-processing pipeline before reaching your code:</p>
+<p>Every request, regardless of which service ultimately handles it, passes through a common pre-processing pipeline before reaching your code:</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/common-pipeline.svg" alt="Common HTTP request pipeline" width="768px">
+<img src="http/images/common-pipeline.svg" alt="Common HTTP request pipeline" width="768px">
 </div>
 </div>
 <div class="dlist">
@@ -479,17 +527,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dd>
 <p>The <a href="deployment/vhosts.ahtml">virtual host contextual ID provider</a> is invoked, unless a user already exists in the context.</p>
 </dd>
-<dt class="hdlist1">Portal service</dt>
+<dt class="hdlist1">Service pipeline</dt>
 <dd>
-<p>The pipeline of the matching <a href="portal.ahtml">Portal service</a> is executed (api invocation, webapp dispatch, site rendering, or admin tooling).</p>
+<p>The pipeline of the matching service is executed (API invocation, admin tool routing, site rendering, or webapp dispatch).</p>
 </dd>
 <dt class="hdlist1">Auth handler</dt>
 <dd>
-<p>Triggered if the pipeline returns a <code>401 Unauthorized</code>. The contextual ID Provider is invoked and may handle the request.</p>
+<p>Triggered if the pipeline returns a <code>401 Unauthorized</code>. The contextual <a href="http/id-providers.ahtml">ID provider</a> is invoked and may handle the request.</p>
 </dd>
 <dt class="hdlist1">Error handler</dt>
 <dd>
-<p>If the pipeline returns an unhandled error (everything but <code>200 OK</code>) that was not handled by an ID Provider, the contextual <a href="http/error.ahtml">error handler</a> kicks in.</p>
+<p>If the pipeline returns an unhandled error (everything but <code>200 OK</code>) that was not handled by an ID provider, the contextual <a href="http/error.ahtml">error handler</a> kicks in.</p>
 </dd>
 <dt class="hdlist1">Platform response filters</dt>
 <dd>
@@ -534,15 +582,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dd>
 </dl>
 </div>
-<div class="paragraph">
-<p>For the gateway routing model and per-service pipelines, see <a href="portal.ahtml">Portal</a>.</p>
-</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 19:01:28 UTC
+Last updated 2026-05-05 19:40:05 UTC
 </div>
 </div>
 </body>

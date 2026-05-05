@@ -592,14 +592,14 @@ exports.GET = () =&gt; ({
 </dl>
 </div>
 <div class="paragraph">
-<p>Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <a href="../portal/sites/components.ahtml">components</a>.</p>
+<p>Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <a href="../sites/components.ahtml">components</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 19:01:28 UTC
+Last updated 2026-05-05 19:40:05 UTC
 </div>
 </div>
 </body>

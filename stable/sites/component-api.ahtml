@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Page Contributions</title>
+<title>Component API</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,13 +437,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Page Contributions</h1>
+<h1>Component API</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#contribution_merging">Contribution merging</a></li>
+<li><a href="#component_rendering_pipeline">Component rendering pipeline</a></li>
 </ul>
 </div>
 </div>
@@ -451,133 +449,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enables components, macros, and processors to contribute content to the response HTML header and/or footer.</p>
+<p>The component API enables rendering of contextual page components directly <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;component-path&gt;</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
+<h2 id="component_rendering_pipeline"><a class="link" href="#component_rendering_pipeline">Component rendering pipeline</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some pages and applications require specific scripts to be available within the HTML response of a page, typically placed within a specific location of the markup such as in the &lt;head&gt; section, or close to the body end tag.</p>
+<p>Page components may also be directly accessed.
+For instance, one may render only the first part within in a page&#8217;s main region.</p>
 </div>
 <div class="paragraph">
-<p>Example use cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Let a part contribute JavaScript to the page&#8217;s <code>&lt;head&gt;</code> section.</p>
-</li>
-<li>
-<p>Let a part contribute custom elements to the beginning of the <code>&lt;body&gt;</code>.</p>
-</li>
-<li>
-<p>A layout might add a JavaScript tracker to the end of the <code>&lt;body&gt;</code> of the page.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Page contributions will only be triggered if the response type is <code>text/html</code> (which is the default)
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>There are four positions in the result HTML where contributed content can be inserted:</p>
+<p>The url pattern for direct rendering is: <code>:8080/site/&lt;repo&gt;/&lt;branch&gt;/&lt;path-to-page&gt;/_/component/&lt;region&gt;/#</code>. i.e. <code>:8080/site/default/master/mysite/_/component/main/0</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">headBegin</dt>
+<dt class="hdlist1">Component rendering</dt>
 <dd>
-<p>After the <code>&lt;head&gt;</code> opening tag.</p>
-</dd>
-<dt class="hdlist1">headEnd</dt>
-<dd>
-<p>Before the <code>&lt;/head&gt;</code> closing tag.</p>
-</dd>
-<dt class="hdlist1">bodyBegin</dt>
-<dd>
-<p>After the <code>&lt;body&gt;</code> opening tag.</p>
-</dd>
-<dt class="hdlist1">bodyEnd</dt>
-<dd>
-<p>Before the <code>&lt;/body&gt;</code> closing tag.</p>
+<p>In this mode, only the <strong>component rendering</strong> step (as described above) will be executed.</p>
 </dd>
 </dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The component or HTTP function must add a <code>pageContributions</code> property to the <a href="../../http/request-response.ahtml#response">HTTP response object</a>.</p>
-</div>
-<div class="paragraph">
-<p>Example response adding a script element to <code>headEnd</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">return {
-  body: '&lt;p&gt;Some markup&lt;/p&gt;',
-  pageContributions: {
-    headEnd: [
-      "&lt;script&gt;My script&lt;/script&gt;"
-    ]
-  }
-};</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Changing the <code>headEnd</code> to one of the other possible positions will affect where the code you contributed is merged in the response markup.</p>
-</div>
-<div class="listingblock">
-<div class="title">Sample with multiple contributions</div>
-<div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">return {
-  "body": "&lt;div&gt;...&lt;/div&gt;",
-  "pageContributions": {
-    "headEnd": "value",
-    "bodyEnd": [
-      "value1", "value2"
-    ]
-  }
-};</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Page Contributions are optional.</p>
-</li>
-<li>
-<p>Contribution values are treated as plain text.</p>
-</li>
-<li>
-<p>Values must be unique within each injection point, duplicates will be truncated.</p>
-</li>
-<li>
-<p>If the target tag does not exist in the response body, the contribution will be ignored. I.e. if there is no <code>&lt;head&gt;</code> tag, the contributions to <code>headBegin</code> and  <code>headEnd</code> will be ignored.</p>
-</li>
-<li>
-<p>For consistency, all positions are automatically treated arrays in the aggregated response object, even if there is only a single value.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="contribution_merging"><a class="link" href="#contribution_merging">Contribution merging</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Page contributions are merged into the response markup during a specific step in the <a href="../runtime/engines/site-engine.ahtml">site engine</a>, called <code>Contributions filter</code>. It occurs after <a href="processors.ahtml">page processors</a> and before <a href="mappings.ahtml">the site filters</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -586,7 +478,12 @@ Page contributions will only be triggered if the response type is <code>text/htm
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Duplicate page contributions are automatically removed, so if multiple components contribute the same script, it will only be included once in the final response.
+<div class="paragraph">
+<p>By exporting <code>POST</code> or any other HTTP method from the component implementation, it may also serve as the backend for the component.</p>
+</div>
+<div class="paragraph">
+<p>Developers may also check if a component is rendered inline, or directly by using the request context. This may for instance be used to produce JSON in direct rendering mode rather than HTML, which is mandatory for inline mode.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -596,7 +493,7 @@ Duplicate page contributions are automatically removed, so if multiple component
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 19:01:28 UTC
+Last updated 2026-05-05 19:40:05 UTC
 </div>
 </div>
 </body>
