@@ -535,7 +535,7 @@ This is referred to as the life cycle of the application. During the stop and st
 <dl>
 <dt class="hdlist1">Starting</dt>
 <dd>
-<p>Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application&#8217;s <a href="framework/main.ahtml">main function</a> will be executed.</p>
+<p>Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application&#8217;s <a href="fundamentals/main.ahtml">main function</a> will be executed.</p>
 </dd>
 <dt class="hdlist1">Stopping</dt>
 <dd>
@@ -557,7 +557,7 @@ During the stopping, if it exists, the disposer function of the application&#821
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 13:15:32 UTC
+Last updated 2026-05-05 14:24:28 UTC
 </div>
 </div>
 </body>

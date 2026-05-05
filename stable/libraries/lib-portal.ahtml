@@ -2238,7 +2238,7 @@ const sanitizedHtml = sanitizeHtml(unsafeHtml);</code></pre>
 <div class="sect2">
 <h3 id="apiurl"><a class="link" href="#apiurl">apiUrl</a></h3>
 <div class="paragraph">
-<p>Generates a URL pointing to a <a href="../framework/universal-api.ahtml">Universal API</a>. Picks the right URL form based on the calling context — a service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
+<p>Generates a URL pointing to a <a href="../http/universal-api.ahtml">Universal API</a>. Picks the right URL form based on the calling context — a service-point under the active engine when called from a site, webapp, or admin tool, and <code>/api/</code> otherwise.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -2483,7 +2483,7 @@ const url = baseUrl({
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-HTTP services are deprecated in XP 8 in favor of <a href="../framework/universal-api.ahtml">Universal APIs</a>. Use <a href="#apiurl">apiUrl</a> for new code; <code>serviceUrl()</code> is retained for backward compatibility with legacy services in <code>src/main/resources/services/</code>.
+HTTP services are deprecated in XP 8 in favor of <a href="../http/universal-api.ahtml">Universal APIs</a>. Use <a href="#apiurl">apiUrl</a> for new code; <code>serviceUrl()</code> is retained for backward compatibility with legacy services in <code>src/main/resources/services/</code>.
 </td>
 </tr>
 </table>
@@ -2704,7 +2704,7 @@ const url = buildUrl({
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 13:15:32 UTC
+Last updated 2026-05-05 14:24:28 UTC
 </div>
 </div>
 </body>

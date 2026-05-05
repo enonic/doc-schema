@@ -31,140 +31,131 @@
       ]
     },
     {
-      "title": "Framework",
-      "document": "framework",
+      "title": "Fundamentals",
+      "document": "fundamentals",
       "menuItems": [
         {
-          "title": "Fundamentals",
-          "menuItems": [
-            {
-              "title": "Functions",
-              "document": "framework/functions"
-            },
-            {
-              "title": "Main",
-              "document": "framework/main"
-            },
-            {
-              "title": "Globals",
-              "document": "framework/globals"
-            },
-            {
-              "title": "TypeScript",
-              "document": "framework/typescript"
-            },
-            {
-              "title": "Java bridge",
-              "document": "framework/java-bridge"
-            },
-            {
-              "title": "Localization",
-              "document": "framework/i18n"
-            }
-          ]
+          "title": "Runtime",
+          "document": "fundamentals/runtime"
         },
         {
-          "title": "HTTP",
-          "menuItems": [
-            {
-              "title": "Request pipeline",
-              "document": "framework/pipeline"
-            },
-            {
-              "title": "HTTP",
-              "document": "framework/http"
-            },
-            {
-              "title": "Filters",
-              "document": "framework/filters"
-            },
-            {
-              "title": "Error handler",
-              "document": "framework/error"
-            },
-            {
-              "title": "Websocket",
-              "document": "framework/websocket"
-            },
-            {
-              "title": "SSE",
-              "document": "framework/sse"
-            }
-          ]
+          "title": "Functions",
+          "document": "fundamentals/functions"
         },
         {
-          "title": "Portal services",
-          "menuItems": [
-            {
-              "title": "Webapps",
-              "document": "framework/webapps"
-            },
-            {
-              "title": "APIs",
-              "document": "framework/universal-api"
-            },
-            {
-              "title": "Sites",
-              "document": "framework/sites",
-              "menuItems": [
-                {
-                  "title": "Mappings",
-                  "document": "framework/sites/mappings"
-                },
-                {
-                  "title": "Processors",
-                  "document": "framework/sites/processors"
-                },
-                {
-                  "title": "Contributions",
-                  "document": "framework/sites/contributions"
-                },
-                {
-                  "title": "Components",
-                  "document": "framework/sites/components"
-                }
-              ]
-            },
-            {
-              "title": "Admin tools",
-              "document": "framework/admin-tools"
-            },
-            {
-              "title": "Admin extensions",
-              "document": "framework/admin-extensions"
-            }
-          ]
+          "title": "Main",
+          "document": "fundamentals/main"
         },
         {
-          "title": "Background",
-          "menuItems": [
-            {
-              "title": "Events",
-              "document": "framework/events"
-            },
-            {
-              "title": "Tasks",
-              "document": "framework/tasks"
-            },
-            {
-              "title": "Scheduler",
-              "document": "framework/scheduler"
-            }
-          ]
+          "title": "Globals",
+          "document": "fundamentals/globals"
         },
         {
-          "title": "Identity",
-          "menuItems": [
-            {
-              "title": "ID providers",
-              "document": "framework/id-providers"
-            }
-          ]
+          "title": "TypeScript",
+          "document": "fundamentals/typescript"
+        },
+        {
+          "title": "Java bridge",
+          "document": "fundamentals/java-bridge"
+        },
+        {
+          "title": "Localization",
+          "document": "fundamentals/i18n"
+        },
+        {
+          "title": "ID providers",
+          "document": "fundamentals/id-providers"
         }
       ]
     },
     {
-      "title": "Platform Libraries",
+      "title": "HTTP",
+      "document": "http",
+      "menuItems": [
+        {
+          "title": "Request pipeline",
+          "document": "http/pipeline"
+        },
+        {
+          "title": "Request & Response",
+          "document": "http/request-response"
+        },
+        {
+          "title": "Filters",
+          "document": "http/filters"
+        },
+        {
+          "title": "Error handler",
+          "document": "http/error"
+        },
+        {
+          "title": "Websocket",
+          "document": "http/websocket"
+        },
+        {
+          "title": "SSE",
+          "document": "http/sse"
+        },
+        {
+          "title": "Webapps",
+          "document": "http/webapps"
+        },
+        {
+          "title": "APIs",
+          "document": "http/universal-api"
+        },
+        {
+          "title": "Sites",
+          "document": "http/sites",
+          "menuItems": [
+            {
+              "title": "Mappings",
+              "document": "http/sites/mappings"
+            },
+            {
+              "title": "Processors",
+              "document": "http/sites/processors"
+            },
+            {
+              "title": "Contributions",
+              "document": "http/sites/contributions"
+            },
+            {
+              "title": "Components",
+              "document": "http/sites/components"
+            }
+          ]
+        },
+        {
+          "title": "Admin tools",
+          "document": "http/admin-tools"
+        },
+        {
+          "title": "Admin extensions",
+          "document": "http/admin-extensions"
+        }
+      ]
+    },
+    {
+      "title": "Background",
+      "document": "background",
+      "menuItems": [
+        {
+          "title": "Events",
+          "document": "background/events"
+        },
+        {
+          "title": "Tasks",
+          "document": "background/tasks"
+        },
+        {
+          "title": "Scheduler",
+          "document": "background/scheduler"
+        }
+      ]
+    },
+    {
+      "title": "Libraries",
       "document": "libraries",
       "menuItems": [
         {
@@ -270,13 +261,13 @@
       ]
     },
     {
-      "title": "Deploying CMS schemas",
-      "document": "schemas"
-    },
-    {
       "title": "Examples",
       "document": "examples",
       "menuItems": [
+        {
+          "title": "Content schemas",
+          "document": "schemas"
+        },
         {
           "title": "Asset serving",
           "document": "static-assets"
