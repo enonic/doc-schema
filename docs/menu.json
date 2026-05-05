@@ -35,104 +35,129 @@
       "document": "framework",
       "menuItems": [
         {
-          "title": "Functions",
-          "document": "framework/functions"
-        },
-        {
-          "title": "Globals",
-          "document": "framework/globals"
-        },
-        {
-          "title": "Main",
-          "document": "framework/main"
-        },
-        {
-          "title": "Request pipeline",
-          "document": "framework/pipeline"
+          "title": "Fundamentals",
+          "menuItems": [
+            {
+              "title": "Functions",
+              "document": "framework/functions"
+            },
+            {
+              "title": "Main",
+              "document": "framework/main"
+            },
+            {
+              "title": "Globals",
+              "document": "framework/globals"
+            },
+            {
+              "title": "TypeScript",
+              "document": "framework/typescript"
+            },
+            {
+              "title": "Java bridge",
+              "document": "framework/java-bridge"
+            },
+            {
+              "title": "Localization",
+              "document": "framework/i18n"
+            }
+          ]
         },
         {
           "title": "HTTP",
-          "document": "framework/http"
-        },
-        {
-          "title": "Filters",
-          "document": "framework/filters"
-        },
-        {
-          "title": "Error handler",
-          "document": "framework/error"
-        },
-        {
-          "title": "Websocket",
-          "document": "framework/websocket"
-        },
-        {
-          "title": "SSE",
-          "document": "framework/sse"
-        },
-        {
-          "title": "Events",
-          "document": "framework/events"
-        },
-        {
-          "title": "Tasks",
-          "document": "framework/tasks"
-        },
-        {
-          "title": "Scheduler",
-          "document": "framework/scheduler"
-        },
-        {
-          "title": "Localization",
-          "document": "framework/i18n"
-        },
-        {
-          "title": "Java bridge",
-          "document": "framework/java-bridge"
-        },
-        {
-          "title": "TypeScript",
-          "document": "framework/typescript"
-        },
-        {
-          "title": "ID providers",
-          "document": "framework/id-providers"
-        },
-        {
-          "title": "Admin tools",
-          "document": "framework/admin-tools"
-        },
-        {
-          "title": "Admin extensions",
-          "document": "framework/admin-extensions"
-        },
-        {
-          "title": "Webapps",
-          "document": "framework/webapps"
-        },
-        {
-          "title": "APIs",
-          "document": "framework/universal-api"
-        },
-        {
-          "title": "Sites",
-          "document": "framework/sites",
           "menuItems": [
             {
-              "title": "Mappings",
-              "document": "framework/sites/mappings"
+              "title": "Request pipeline",
+              "document": "framework/pipeline"
             },
             {
-              "title": "Processors",
-              "document": "framework/sites/processors"
+              "title": "HTTP",
+              "document": "framework/http"
             },
             {
-              "title": "Contributions",
-              "document": "framework/sites/contributions"
+              "title": "Filters",
+              "document": "framework/filters"
             },
             {
-              "title": "Components",
-              "document": "framework/sites/components"
+              "title": "Error handler",
+              "document": "framework/error"
+            },
+            {
+              "title": "Websocket",
+              "document": "framework/websocket"
+            },
+            {
+              "title": "SSE",
+              "document": "framework/sse"
+            }
+          ]
+        },
+        {
+          "title": "Portal services",
+          "menuItems": [
+            {
+              "title": "Webapps",
+              "document": "framework/webapps"
+            },
+            {
+              "title": "APIs",
+              "document": "framework/universal-api"
+            },
+            {
+              "title": "Sites",
+              "document": "framework/sites",
+              "menuItems": [
+                {
+                  "title": "Mappings",
+                  "document": "framework/sites/mappings"
+                },
+                {
+                  "title": "Processors",
+                  "document": "framework/sites/processors"
+                },
+                {
+                  "title": "Contributions",
+                  "document": "framework/sites/contributions"
+                },
+                {
+                  "title": "Components",
+                  "document": "framework/sites/components"
+                }
+              ]
+            },
+            {
+              "title": "Admin tools",
+              "document": "framework/admin-tools"
+            },
+            {
+              "title": "Admin extensions",
+              "document": "framework/admin-extensions"
+            }
+          ]
+        },
+        {
+          "title": "Background",
+          "menuItems": [
+            {
+              "title": "Events",
+              "document": "framework/events"
+            },
+            {
+              "title": "Tasks",
+              "document": "framework/tasks"
+            },
+            {
+              "title": "Scheduler",
+              "document": "framework/scheduler"
+            }
+          ]
+        },
+        {
+          "title": "Identity",
+          "menuItems": [
+            {
+              "title": "ID providers",
+              "document": "framework/id-providers"
             }
           ]
         }
