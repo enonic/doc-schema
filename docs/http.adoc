@@ -1,32 +1,35 @@
 = HTTP
 :toc: right
+:imagesdir: images
 
-Every client interaction with Enonic XP — browser request, API call, admin tool, websocket upgrade — flows through a single HTTP gateway: the *Portal*. This section covers the Portal pipeline, the HTTP primitives apps build with, and the four services the Portal routes to.
+The shared infrastructure used by every HTTP function in Enonic XP
 
-== Portal and services
+[[common_request_pipeline]]
 
-The Portal is XP's default gateway for all incoming HTTP traffic. It listens on port 8080 (configurable) and dispatches requests to one of four *services*, each with a fixed URL prefix and a distinct role:
+== Request flow
 
-[cols="1,2,3", options="header"]
-|===
-| Service | Prefix | Use it for
-| <<http/webapps#, Webapp>> | `/webapp` | Standalone web applications — served by your app, no CMS context.
-| <<http/sites#, Site>> | `/site` | CMS-driven websites: pages, parts, layouts, content rendering.
-| <<http/universal-api#, API>> | `/api` | Custom HTTP APIs, microservices, headless integrations.
-| <<http/admin-tools#, Admin>> | `/admin` | XP administration UIs (Content Studio is itself an admin tool).
-|===
+The XP runtime serves HTTP requests on `port 8080` (customizable). Every request — regardless of which service ultimately handles it — passes through a common pre-processing pipeline before reaching your code:
 
-A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.
+image::common-pipeline.svg[Common HTTP request pipeline, 768px]
 
-== Request pipeline
+Vhost filters:: Request routing based on <<deployment/vhosts#, virtual hosts>>.
 
-Every request, regardless of which service handles it, passes through a common pre-processing pipeline before reaching your code: virtual host filtering, autologin, authentication, and a small set of platform-level filters. The active service then runs its own service-specific pipeline (mappings, processors, contributions, component rendering, etc. for sites; method dispatch for webapps and APIs).
+Platform filters:: Optional system level request filters.
 
-See <<http/pipeline#, Request pipeline>> for the full execution sequence and the filter ordering.
+Autologin filter:: The <<deployment/vhosts#, virtual host contextual ID provider>> is invoked, unless a user already exists in the context.
 
-== HTTP primitives
+Portal service:: The pipeline of the matching <<portal#, Portal service>> is executed (api invocation, webapp dispatch, site rendering, or admin tooling).
 
-The HTTP primitives below are shared across every service. Whichever service you are implementing for, the request and response objects, filter contracts, and error-handling rules are the same.
+Auth handler:: Triggered if the pipeline returns a `401 Unauthorized`. The contextual ID Provider is invoked and may handle the request.
+
+Error handler:: If the pipeline returns an unhandled error (everything but `200 OK`) that was not handled by an ID Provider, the contextual <<http/error#, error handler>> kicks in.
+
+Platform response filters:: Optional system level response filters.
+
+Standard error handler:: Finally, if the request fails with an error that is still unhandled, XP's standard error handler kicks in.
+
+
+== Pages in this section
 
 <<http/request-response#, Request & Response>>:: The Request and Response object shapes — headers, body, cookies, status codes — and the way XP populates and reads them.
 
@@ -38,16 +41,4 @@ The HTTP primitives below are shared across every service. Whichever service you
 
 <<http/sse#, SSE>>:: Server-Sent Events streams. One-way streaming from server to client over a long-lived HTTP response.
 
-== Services in detail
-
-Each service has its own page covering its routing rules, descriptor format, and conventions:
-
-<<http/webapps#, Webapps>>:: How to mount a webapp at `+/webapp/<app-name>/+`, declare a `webapp.yaml` descriptor, and respond to HTTP methods.
-
-<<http/universal-api#, APIs>>:: The Universal API model — descriptor-driven custom HTTP APIs that can be mounted standalone or as service points beneath sites, webapps, and admin tools.
-
-<<http/sites#, Sites>>:: The site engine — CMS-driven websites built from <<http/sites/components#, components>>, <<http/sites/mappings#, mappings>>, <<http/sites/processors#, processors>>, and <<http/sites/contributions#, contributions>>.
-
-<<http/admin-tools#, Admin tools>>:: First-class admin UIs that mount in the XP admin Launcher.
-
-<<http/admin-extensions#, Admin extensions>>:: Plug-ins that mount into existing admin tools at named interface points (formerly called *widgets*).
+For the gateway routing model and per-service pipelines, see <<portal#, Portal>>.

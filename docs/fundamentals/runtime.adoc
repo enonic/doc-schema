@@ -6,7 +6,7 @@ What powers your Enonic app at execution time — the JVM-hosted JavaScript engi
 
 == Execution model
 
-Enonic XP runs on the Java Virtual Machine. Your app's TypeScript and JavaScript files are executed by an embedded JavaScript engine, with full access to the JVM through the <<java-bridge#, Java bridge>>. There is no Node.js, no separate JS process, and no inter-process bridge — server-side JS runs inside the same JVM as the platform itself.
+Enonic XP runs on top of the Java Virtual Machine. Your app's TypeScript and JavaScript files are executed by an embedded JavaScript engine, with full access to the JVM through the <<java-bridge#, Java bridge>>. There is no Node.js, no separate JS process, and no inter-process bridge — server-side JS runs inside the same JVM as the platform itself.
 
 Two engines are available:
 
@@ -45,7 +45,7 @@ Two consequences for your code:
 
 XP can run as a single node or as a cluster of nodes sharing the same data. The runtime is cluster-aware out of the box:
 
-* *Events* fire across the cluster. A listener registered on any node receives events published from any other node. See <<../background/events#, Events>>.
+* *Events* fire across the cluster. A listener registered on any node receives events published from any other node. See <<events#, Events>>.
 * *Scheduled jobs* are distributed. A scheduled job runs on one cluster node per fire — XP coordinates so the same job doesn't execute twice. See <<../background/scheduler#, Scheduler>>.
 * *Repositories* are replicated. Content writes propagate to all nodes; reads can target any node.
 
@@ -56,9 +56,10 @@ Apps deployed to a cluster are installed and started on every node. The runtime 
 Apps run inside a fully equipped platform. The runtime gives you, without extra setup:
 
 * *Persistence* — content, nodes, repositories, blobs, all queryable and clusterable.
-* *HTTP routing* — four <<../http#, services>> (`/api`, `/admin`, `/site`, `/webapp`) handle incoming requests; you provide the implementations.
+* *HTTP routing* — the <<../portal#, Portal>> dispatches incoming requests to four services (`/api`, `/admin`, `/site`, `/webapp`); you provide the implementations.
 * *Identity & access management* — pluggable <<id-providers#, ID providers>>, role-based permissions, audit logging.
-* *Background work* — <<../background/tasks#, tasks>>, <<../background/scheduler#, scheduled jobs>>, and <<../background/events#, cluster-wide events>>.
+* *Cluster-wide events* — see <<events#, Events>>.
+* *Background work* — <<../background/tasks#, tasks>> and <<../background/scheduler#, scheduled jobs>>.
 * *Localization* — see <<i18n#, Localization>>.
 * *Java interop* — see <<java-bridge#, Java bridge>>.
 

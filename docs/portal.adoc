@@ -1,0 +1,35 @@
+= Portal
+:toc: right
+
+The Portal is XP's HTTP gateway: a single entry point that authenticates incoming requests, runs them through a common filter pipeline, and dispatches them to one of four distinct services.
+
+== Services
+
+[cols="1,2,3", options="header"]
+|===
+| Service | Prefix | Use it for
+| <<portal/webapps#, Webapp>> | `/webapp` | Standalone web applications — served by your app, no CMS context.
+| <<portal/sites#, Site>> | `/site` | CMS-driven websites: pages, parts, layouts, content rendering.
+| <<portal/universal-api#, API>> | `/api` | Custom HTTP APIs, microservices, headless integrations.
+| <<portal/tools#, Admin>> | `/admin` | XP administration UIs (Content Studio is itself an admin tool).
+|===
+
+A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.
+
+== Request pipeline
+
+Every request, regardless of which service handles it, first passes through a  <<http#common_request_pipeline, Common request pipleline>>  — virtual hosts, autologin, platform filters — before reaching your code. The active service then runs its own service-specific pipeline (mappings, processors, contributions, component rendering, etc. for sites; method dispatch for APIs and webapps).
+
+== Pages in this section
+
+<<portal/universal-api#, APIs>>:: The Universal API model — descriptor-driven custom HTTP APIs that can be mounted standalone or as service points beneath sites, webapps, and admin tools.
+
+<<portal/sites#, Sites>>:: The site engine — CMS-driven websites built from <<portal/sites/components#, components>>, <<portal/sites/mappings#, mappings>>, <<portal/sites/processors#, processors>>, and <<portal/sites/contributions#, contributions>>.
+
+<<portal/webapps#, Webapps>>:: How to mount a webapp at `+/webapp/<app-name>/+`, declare a `webapp.yaml` descriptor, and respond to HTTP methods.
+
+<<portal/tools#, Admin tools>>:: First-class admin UIs that mount in the XP admin Launcher.
+
+<<portal/extensions#, Admin extensions>>:: Plug-ins that mount into existing admin tools at named interface points (formerly called *widgets*).
+
+For the underlying HTTP primitives — request and response shapes, filters, error handlers, websocket and SSE upgrades — see <<http#, HTTP section>>.

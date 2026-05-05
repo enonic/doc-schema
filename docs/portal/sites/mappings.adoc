@@ -8,7 +8,7 @@ NOTE: Mappings are only available when using the <<site-engine#, Site Engine>>.
 
 == Introduction
 
-Mappings are the first processing step in the <<site-engine#, site engine>> — they run before page rendering starts. You may define mappings for both <<../request-response#, HTTP functions>> and <<../filters#, filters>>. The use cases are vast.
+Mappings are the first processing step in the <<site-engine#, site engine>> — they run before page rendering starts. You may define mappings for both <<../../http/request-response#, HTTP functions>> and <<../../http/filters#, filters>>. The use cases are vast.
 
 == Usage
 
@@ -36,7 +36,7 @@ mappings:
   service: "image"
 ----
 
-<1> *controller* — path to an <<../request-response#, HTTP function>> implementation.
+<1> *controller* — path to an <<../../http/request-response#, HTTP function>> implementation.
 
 <2> *order* — execution order across apps. Default `50`. Lower means higher priority. See <<Execution order>>.
 
@@ -44,7 +44,7 @@ mappings:
 
 <4> *match* — property condition evaluated against the contextual content. See <<Match mappings>>.
 
-<5> *filter* — path to an <<../filters#, HTTP filter>> implementation.
+<5> *filter* — path to an <<../../http/filters#, HTTP filter>> implementation.
 
 <6> *service* — system service handled by this mapping (e.g. the `+.../_/image/...+` endpoint). See <<Service mappings>>.
 

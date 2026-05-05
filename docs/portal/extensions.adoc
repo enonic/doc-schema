@@ -2,7 +2,7 @@
 :toc: right
 :imagesdir: images
 
-Admin extensions are app-provided HTTP endpoints that mount into existing <<admin-tools#,admin tools>> at named interface points. (previously known as *widgets*). 
+Admin extensions are app-provided HTTP endpoints that mount into existing <<tools#,admin tools>> at named interface points. (previously known as *widgets*).
 
 The most common usage is rendering an embedded UI fragment, but an extension is just an HTTP module — it can equally well serve JSON, binary assets, or any other payload the host tool agrees to consume.
 
@@ -64,7 +64,7 @@ config:                               # <5>
 
 == Implementation
 
-The implementation lives at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.ts+` and exports an <<request-response#, HTTP function>> for each method the extension responds to. The response shape is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
+The implementation lives at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.ts+` and exports an <<../http/request-response#, HTTP function>> for each method the extension responds to. The response shape is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
 
 .Sample my-extension.ts
 [source,typescript]

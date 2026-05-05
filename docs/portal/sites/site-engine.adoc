@@ -6,7 +6,7 @@ The site service is responsible for processing requests on the endpoint `:8080/s
 
 == Request pipeline
 
-The site pipeline is executed as a subset of the <<../pipeline#common_request_pipeline,common pipeline>>:
+The site pipeline is executed as a subset of the <<../../http#common_request_pipeline,common pipeline>>:
 
 image::site-pipeline.svg[Site rendering pipeline, 768px]
 

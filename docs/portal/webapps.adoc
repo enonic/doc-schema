@@ -10,7 +10,7 @@ Enonic is capable of delivering web applications natively, without the need for 
 
 == Request pipeline
 
-The webapp pipeline is executed as a subset of the <<pipeline#common_request_pipeline,common pipeline>>:
+The webapp pipeline is executed as a subset of the <<../http#common_request_pipeline,common pipeline>>:
 
 image::webapp-pipeline.svg[Webapp rendering pipeline, 768px]
 
@@ -18,7 +18,7 @@ Webapp:: Invokes the webapp's HTTP function matching the request method.
 
 == Implementation
 
-To turn an application into a webapp, place an implementation at `+/src/main/resources/webapp/webapp.ts+` that exports one function per HTTP method it handles (`GET`, `POST`, etc.) — see <<request-response#, HTTP functions>>.
+To turn an application into a webapp, place an implementation at `+/src/main/resources/webapp/webapp.ts+` that exports one function per HTTP method it handles (`GET`, `POST`, etc.) — see <<../http/request-response#, HTTP functions>>.
 
 Once deployed, the webapp is reachable at `+<server>:<port>/webapp/<app-name>/+` (e.g. `+localhost:8080/webapp/my.webapp/+`).
 
@@ -26,7 +26,7 @@ NOTE: For anything beyond a couple of static endpoints, use the https://market.e
 
 == WebSocket and SSE
 
-A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a `webSocket` or `sse` object from the request handler. See <<websocket#,WebSocket>> and <<sse#,SSE>> for the details.
+A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a `webSocket` or `sse` object from the request handler. See <<../http/websocket#,WebSocket>> and <<../http/sse#,SSE>> for the details.
 
 == Descriptor
 

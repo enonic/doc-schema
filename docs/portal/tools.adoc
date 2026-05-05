@@ -11,7 +11,7 @@ An admin tool is a single-page application (or any HTTP-served UI) that:
 * Mounts at `+/admin/<app-key>/<tool-name>+` — one URL per declared tool, served by the admin service.
 * Appears in the admin Launcher menu, picking up its title, description, and SVG icon from the descriptor.
 * Can mount <<universal-api#,Universal APIs>> as service points beneath itself.
-* Can host <<admin-extensions#,Admin extensions>> by declaring named interface points that extensions plug into.
+* Can host <<extensions#,Admin extensions>> by declaring named interface points that extensions plug into.
 
 Access always requires the caller to hold `role:system.admin.login`. Per-tool access is then granted to anyone in `role:system.admin` or to any principal listed in the tool's `allow:` field.
 
@@ -74,7 +74,7 @@ title:
 
 == Implementation
 
-The implementation lives at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.ts+` and exports an <<request-response#, HTTP function>> for each method the tool should respond to.
+The implementation lives at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.ts+` and exports an <<../http/request-response#, HTTP function>> for each method the tool should respond to.
 
 .Sample my-tool.ts
 [source,typescript]
@@ -113,7 +113,7 @@ Any API listed in `apis:` is mounted as a service point under the tool's URL. Th
 
 == Hosting admin extensions
 
-A tool publishes the interface names it exposes in `interfaces:`. Any deployed admin extension whose own `interfaces:` list intersects with this set becomes eligible to be mounted into the tool, subject to the extension's own `allow:` list. The reserved interface name `"generic"` matches any tool. See <<admin-extensions#,Admin extensions>> for the consumer side.
+A tool publishes the interface names it exposes in `interfaces:`. Any deployed admin extension whose own `interfaces:` list intersects with this set becomes eligible to be mounted into the tool, subject to the extension's own `allow:` list. The reserved interface name `"generic"` matches any tool. See <<extensions#,Admin extensions>> for the consumer side.
 
 == Launcher
 

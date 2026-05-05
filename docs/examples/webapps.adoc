@@ -1,7 +1,7 @@
 = Webapp examples
 :toc: right
 
-End-to-end webapp examples. For the reference documentation, see <<../http/webapps#, Webapps>>.
+End-to-end webapp examples. For the reference documentation, see <<../portal/webapps#, Webapps>>.
 
 == Minimal webapp
 
