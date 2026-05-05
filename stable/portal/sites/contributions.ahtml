@@ -451,19 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lets components, macros, and processors contribute content to the response HTML header and/or footer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine</a>
-</td>
-</tr>
-</table>
+<p>Enables components, macros, and processors to contribute content to the response HTML header and/or footer.</p>
 </div>
 </div>
 </div>
@@ -482,7 +470,7 @@ Only available in the <a href="../runtime/engines/site-engine.ahtml">Site Engine
 <p>Let a part contribute JavaScript to the page&#8217;s <code>&lt;head&gt;</code> section.</p>
 </li>
 <li>
-<p>Let a part contribute custom CSS to the <code>&lt;head&gt;</code> of that page.</p>
+<p>Let a part contribute custom elements to the beginning of the <code>&lt;body&gt;</code>.</p>
 </li>
 <li>
 <p>A layout might add a JavaScript tracker to the end of the <code>&lt;body&gt;</code> of the page.</p>
@@ -598,7 +586,7 @@ Page contributions will only be triggered if the response type is <code>text/htm
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Duplicate page contributions will automatically be removed, so developers do not have to worry about this.
+Duplicate page contributions are automatically removed, so if multiple components contribute the same script, it will only be included once in the final response.
 </td>
 </tr>
 </table>
@@ -608,7 +596,7 @@ Duplicate page contributions will automatically be removed, so developers do not
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 15:16:05 UTC
+Last updated 2026-05-05 19:01:28 UTC
 </div>
 </div>
 </body>

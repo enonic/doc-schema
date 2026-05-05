@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>WebApps</title>
+<title>WebApp service</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -437,7 +437,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>WebApps</h1>
+<h1>WebApp service</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -455,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The webapp engine handles requests on the endpoint <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/*</code>.</p>
+<p>The webapp service handles requests on the endpoint <code>&lt;server&gt;:&lt;port&gt;/webapp/&lt;app-name&gt;/*</code>.</p>
 </div>
 </div>
 </div>
@@ -463,7 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp engine provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.</p>
+<p>Enonic is capable of delivering web applications natively, without the need for a 3rd party infrastructure. The webapp service provides a flexible platform for building applications of all kinds, from simple static sites to dynamic applications with server-side rendering, real-time updates, and more.</p>
 </div>
 </div>
 </div>
@@ -515,7 +515,7 @@ For anything beyond a couple of static endpoints, use the <a href="https://marke
 <h2 id="websocket_and_sse"><a class="link" href="#websocket_and_sse">WebSocket and SSE</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. Return a <code>webSocket</code> or <code>sse</code> object from the request handler. See <a href="../http/websocket.ahtml">WebSocket</a> and <a href="../http/sse.ahtml">SSE</a> for the details.</p>
+<p>A webapp can act as a WebSocket channel or a Server-Sent Events stream, like any other HTTP function in XP. But we generally recommend contextually mounting WebSocket and SSE APIs via the <a href="universal-api.ahtml">API service</a> instead of using the webapp service directly.</p>
 </div>
 </div>
 </div>
@@ -561,7 +561,7 @@ apis:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 15:16:05 UTC
+Last updated 2026-05-05 19:01:28 UTC
 </div>
 </div>
 </body>

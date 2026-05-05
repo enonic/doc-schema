@@ -608,7 +608,7 @@ Enonic apps are primarily written in <strong>JavaScript/TypeScript</strong>. How
 </dd>
 <dt class="hdlist1">idprovider/</dt>
 <dd>
-<p>The application may implement an <a href="../fundamentals/id-providers.ahtml">ID Provider</a> here.</p>
+<p>The application may implement an <a href="../http/id-providers.ahtml">ID Provider</a> here.</p>
 </dd>
 <dt class="hdlist1">tasks/</dt>
 <dd>
@@ -710,7 +710,7 @@ Check out <a href="https://market.enonic.com/starters/library-starter">the libra
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 15:16:05 UTC
+Last updated 2026-05-05 19:01:28 UTC
 </div>
 </div>
 </body>

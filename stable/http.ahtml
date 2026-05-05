@@ -528,6 +528,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dd>
 <p>Server-Sent Events streams. One-way streaming from server to client over a long-lived HTTP response.</p>
 </dd>
+<dt class="hdlist1"><a href="http/id-providers.ahtml">ID providers</a></dt>
+<dd>
+<p>Pluggable authentication that hooks the request pipeline — <code>handle401</code>, <code>autoLogin</code>, <code>login</code>/<code>logout</code> endpoints, and ID-provider-as-HTTP-function.</p>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
@@ -538,7 +542,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-05 15:16:05 UTC
+Last updated 2026-05-05 19:01:28 UTC
 </div>
 </div>
 </body>
