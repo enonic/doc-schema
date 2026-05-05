@@ -1,6 +1,6 @@
-= Site service
+= Sites
 :toc: right
-:imagesdir: images
+:imagesdir: sites/images
 
 Serving CMS driven sites at  `:8080/site/<project>/<branch>/<path-to-content>`. Combine with Vhosts for custom domains and paths.
 
@@ -11,10 +11,10 @@ NOTE: For hands on tutorials on building native Enonic XP sites, visit https://d
 
 As an alternative to using 3rd party front-end frameworks like Next.js, the site service is a purpose-built web engine for delivering content-driven websites, and is closesly linked to the CMS features of the platform.
 
-TIP: Visit the https://developer.enonic.com/docs/cms/stable[CMS documentation] for details on Content Modelling and schemas. This section focuses on the site service itself, and how to implement sites via Enonic apps.
+TIP: Visit the https://developer.enonic.com/docs/cms/stable[CMS documentation] for details on Content Modelling and schemas. This section focuses on implementing site rendering via Enonic apps.
 
 
-=== Descriptor
+=== Usage
 
 To activate the site service, you will need a site descriptor in your app.
 
@@ -22,26 +22,24 @@ To activate the site service, you will need a site descriptor in your app.
 [source,yaml]
 ----
 kind: "Site"
-mappings:
-  - controller: "/lib/preview.js" # <1>
+mappings: # <1>
+  - controller: "/lib/preview.js"
     order: 50
-    match: "type:'(?!media:).*'"  # <2>
+    match: "type:'(?!media:).*'"
 apis:
   - "ws"  # <3>
   - "app:graphql" # <4>
 ----
 
 <1> A mapping to take over the request for all non-media content items, and render a preview.
-<2> The match expression uses a negative lookahead to exclude media content types.
-<3> Contextually mounts an API in the same application on the site's underscore endpoint.
-<4> Contextually mounts another apps's graphql API on this site.
+<2> Contextually mounts an API in the same application on the site's underscore endpoint.
 
 NOTE: You will also need implementations of <<mappings#, Mapping function>> or <<components#, component functions>> to start rendering.
 
 
-== Request pipeline
+== Site Request pipeline
 
-The site pipeline is executed as a subset of the <<../../http#common_request_pipeline,common pipeline>>:
+The site pipeline is executed as a subset of the <<http#common_request_pipeline, common pipeline>>:
 
 image::site-pipeline.svg[Site rendering pipeline, 768px]
 

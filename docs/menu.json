@@ -103,48 +103,48 @@
       ]
     },
     {
-      "title": "Portal",
-      "document": "portal",
+      "title": "APIs",
+      "document": "apis"
+    },
+    {
+      "title": "Admin",
+      "document": "admin",
       "menuItems": [
         {
-          "title": "APIs",
-          "document": "portal/universal-api"
-        },
-        {
           "title": "Tools",
-          "document": "portal/tools"
+          "document": "admin/tools"
         },
         {
           "title": "Extensions",
-          "document": "portal/extensions"
-        },
-        {
-          "title": "Sites",
-          "document": "portal/sites",
-          "menuItems": [
-            {
-              "title": "Mappings",
-              "document": "portal/sites/mappings"
-            },
-            {
-              "title": "Components",
-              "document": "portal/sites/components"
-            },
-            {
-              "title": "Contributions",
-              "document": "portal/sites/contributions"
-            },
-            {
-              "title": "Processors",
-              "document": "portal/sites/processors"
-            }
-          ]
-        },
-        {
-          "title": "Webapps",
-          "document": "portal/webapps"
+          "document": "admin/extensions"
         }
       ]
+    },
+    {
+      "title": "Sites",
+      "document": "sites",
+      "menuItems": [
+        {
+          "title": "Mappings",
+          "document": "sites/mappings"
+        },
+        {
+          "title": "Components",
+          "document": "sites/components"
+        },
+        {
+          "title": "Contributions",
+          "document": "sites/contributions"
+        },
+        {
+          "title": "Processors",
+          "document": "sites/processors"
+        }
+      ]
+    },
+    {
+      "title": "Webapps",
+      "document": "webapps"
     },
     {
       "title": "Background",

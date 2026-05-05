@@ -18,7 +18,9 @@ IMPORTANT: For a hands-on introduction to development and the SDK, visit the htt
 
 <<fundamentals#, Fundamentals>>:: The runtime, the app model, the module system, lifecycle hooks, and the cluster-wide event bus.
 
-<<http#, HTTP>> and <<portal#, Portal>>:: How requests flow through XP and how to expose webapps, sites, custom APIs, and admin tools.
+<<http#, HTTP>>:: The shared request pipeline, primitives (request/response, filters, error handlers, websockets, SSE), ID providers, and the four services XP dispatches to.
+
+<<apis#, APIs>>, <<admin#, Admin>>, <<sites#, Sites>>, <<webapps#, Webapps>>:: The four services exposed by XP — custom APIs, admin UIs and extensions, CMS-driven sites, and standalone web applications.
 
 <<background#, Background>>:: Tasks and scheduled jobs for asynchronous work.
 

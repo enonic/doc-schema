@@ -1,14 +1,28 @@
 = HTTP
 :toc: right
-:imagesdir: images
+:imagesdir: http/images
 
-The shared infrastructure used by every HTTP function in Enonic XP
+Every client interaction with Enonic XP — browser request, API call, admin tool, websocket upgrade — flows through the same HTTP gateway. This page covers the common request pipeline that every request passes through, the four services XP dispatches to, and the primitives (request/response shapes, filters, error handlers, websockets, SSE, ID providers) that make up the HTTP layer.
+
+== Services
+
+XP listens on `port 8080` (configurable) and dispatches requests to one of four *services*, each with a fixed URL prefix and a distinct role:
+
+[cols="1,2,3", options="header"]
+|===
+| Service | Prefix | Use it for
+| <<apis#, API>> | `/api` | Custom HTTP APIs, microservices, headless integrations.
+| <<admin#, Admin>> | `/admin` | XP administration UIs (Content Studio is itself an admin tool) and extensions that mount inside them.
+| <<sites#, Site>> | `/site` | CMS-driven websites: pages, parts, layouts, content rendering.
+| <<webapps#, Webapp>> | `/webapp` | Standalone web applications — served by your app, no CMS context.
+|===
+
+A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.
 
 [[common_request_pipeline]]
-
 == Request flow
 
-The XP runtime serves HTTP requests on `port 8080` (customizable). Every request — regardless of which service ultimately handles it — passes through a common pre-processing pipeline before reaching your code:
+Every request, regardless of which service ultimately handles it, passes through a common pre-processing pipeline before reaching your code:
 
 image::common-pipeline.svg[Common HTTP request pipeline, 768px]
 
@@ -18,16 +32,15 @@ Platform filters:: Optional system level request filters.
 
 Autologin filter:: The <<deployment/vhosts#, virtual host contextual ID provider>> is invoked, unless a user already exists in the context.
 
-Portal service:: The pipeline of the matching <<portal#, Portal service>> is executed (api invocation, webapp dispatch, site rendering, or admin tooling).
+Service pipeline:: The pipeline of the matching service is executed (API invocation, admin tool routing, site rendering, or webapp dispatch).
 
-Auth handler:: Triggered if the pipeline returns a `401 Unauthorized`. The contextual ID Provider is invoked and may handle the request.
+Auth handler:: Triggered if the pipeline returns a `401 Unauthorized`. The contextual <<http/id-providers#, ID provider>> is invoked and may handle the request.
 
-Error handler:: If the pipeline returns an unhandled error (everything but `200 OK`) that was not handled by an ID Provider, the contextual <<http/error#, error handler>> kicks in.
+Error handler:: If the pipeline returns an unhandled error (everything but `200 OK`) that was not handled by an ID provider, the contextual <<http/error#, error handler>> kicks in.
 
 Platform response filters:: Optional system level response filters.
 
 Standard error handler:: Finally, if the request fails with an error that is still unhandled, XP's standard error handler kicks in.
-
 
 == Pages in this section
 
@@ -42,5 +55,3 @@ Standard error handler:: Finally, if the request fails with an error that is sti
 <<http/sse#, SSE>>:: Server-Sent Events streams. One-way streaming from server to client over a long-lived HTTP response.
 
 <<http/id-providers#, ID providers>>:: Pluggable authentication that hooks the request pipeline — `handle401`, `autoLogin`, `login`/`logout` endpoints, and ID-provider-as-HTTP-function.
-
-For the gateway routing model and per-service pipelines, see <<portal#, Portal>>.
