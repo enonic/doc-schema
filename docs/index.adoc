@@ -37,7 +37,7 @@ There are endless ways of configuring, isolating and scaling XP apps. For more d
 In addition to installing and uninstalling, XP applications may be started and stopped.
 This is referred to as the life cycle of the application. During the stop and start phases, applications may execute customized life cycle scripts.
 
-Starting:: Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application's <<framework/main#, main function>> will be executed.
+Starting:: Once installed, applications are automatically started on all nodes. During the startup, if it exists, the application's <<fundamentals/main#, main function>> will be executed.
 
 Stopping:: Before uninstalling, applications are automatically stopped on all nodes.
 During the stopping, if it exists, the disposer function of the application's main.js file will be executed.

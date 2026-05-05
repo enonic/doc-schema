@@ -1,6 +1,6 @@
 = Tasks
 :toc: right
-:imagesdir: media
+:imagesdir: images
 
 The XP framework also supports execution of asynchronous (potentially long running) background tasks.
 

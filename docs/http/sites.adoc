@@ -1,6 +1,6 @@
 = Building Sites
 :toc: right
-:imagesdir: media
+:imagesdir: images
 
 Use Enonic XP to deliver websites natively, without introducing a 3rd party front-end framework.
 

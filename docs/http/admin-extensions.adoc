@@ -64,7 +64,7 @@ config:                               # <5>
 
 == Implementation
 
-The implementation lives at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.ts+` and exports an <<http#, HTTP function>> for each method the extension responds to. The response shape is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
+The implementation lives at `+src/main/resources/admin/extensions/<extension-name>/<extension-name>.ts+` and exports an <<request-response#, HTTP function>> for each method the extension responds to. The response shape is determined by the host tool — UI widgets typically return HTML fragments, but a data-feed extension might return JSON, and an asset-serving extension might return binary content with the appropriate `contentType`.
 
 .Sample my-extension.ts
 [source,typescript]

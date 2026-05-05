@@ -1,6 +1,6 @@
 = WebApps
 :toc: right
-:imagesdir: media
+:imagesdir: images
 
 The webapp engine handles requests on the endpoint `+<server>:<port>/webapp/<app-name>/*+`.
 
@@ -18,7 +18,7 @@ Webapp:: Invokes the webapp's HTTP function matching the request method.
 
 == Implementation
 
-To turn an application into a webapp, place an implementation at `+/src/main/resources/webapp/webapp.ts+` that exports one function per HTTP method it handles (`GET`, `POST`, etc.) — see <<http#, HTTP functions>>.
+To turn an application into a webapp, place an implementation at `+/src/main/resources/webapp/webapp.ts+` that exports one function per HTTP method it handles (`GET`, `POST`, etc.) — see <<request-response#, HTTP functions>>.
 
 Once deployed, the webapp is reachable at `+<server>:<port>/webapp/<app-name>/+` (e.g. `+localhost:8080/webapp/my.webapp/+`).
 

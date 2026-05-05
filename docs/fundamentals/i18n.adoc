@@ -1,6 +1,6 @@
 = Localization
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 Localizing strings in your XP applications.
 

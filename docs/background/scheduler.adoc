@@ -1,6 +1,6 @@
 = Scheduler
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 Named <<tasks#, tasks>> can be scheduled to asynchronously run in the background in a cluster or a one-node environment.
 

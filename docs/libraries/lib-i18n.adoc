@@ -7,7 +7,7 @@ This API provides functionality for localization of text phrases.
 
 == Usage
 
-NOTE: This API uses standard framework functionality. Please read the <<../framework/i18n#, framework localization docs>> before using this API.
+NOTE: This API uses standard framework functionality. Please read the <<../fundamentals/i18n#, framework localization docs>> before using this API.
 
 Add the following to your `build.gradle` file:
 

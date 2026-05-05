@@ -1,6 +1,6 @@
 = HTTP WebSockets
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 HTTP WebSockets enable two-way communication with HTTP clients
 

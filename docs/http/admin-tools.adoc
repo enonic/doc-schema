@@ -74,7 +74,7 @@ title:
 
 == Implementation
 
-The implementation lives at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.ts+` and exports an <<http#, HTTP function>> for each method the tool should respond to.
+The implementation lives at `+src/main/resources/admin/tools/<tool-name>/<tool-name>.ts+` and exports an <<request-response#, HTTP function>> for each method the tool should respond to.
 
 .Sample my-tool.ts
 [source,typescript]

@@ -1,0 +1,36 @@
+= Background
+:toc: right
+
+Server-side work that doesn't run in response to an incoming HTTP request — fire-and-forget jobs, scheduled cron-like execution, and the cluster-wide event bus.
+
+== When to reach for which
+
+XP offers three primitives for non-request work. Pick by trigger and timing:
+
+[cols="1,2,3", options="header"]
+|===
+| Primitive | Triggered by | Use when
+| <<background/events#, Events>> | Something happens (publish/subscribe) | You need to react to changes — content updates, repo writes, custom domain events — across the cluster. Listeners are async and best-effort.
+| <<background/tasks#, Tasks>> | An explicit `submit()` call | You need to run work asynchronously from a request — long imports, image processing, batch jobs — without blocking the caller. Each task runs once.
+| <<background/scheduler#, Scheduler>> | A cron expression or one-shot timestamp | You need recurring jobs (nightly reindex, hourly cache warm) or future-dated execution. The scheduler runs your task on the matching schedule.
+|===
+
+Tasks and scheduled jobs share the same execution shape — both invoke a *named task* implementation. The scheduler is the trigger; tasks are the unit of work. Events are the only primitive of the three that's pub/sub rather than request/response.
+
+== Cluster behavior
+
+All three primitives are cluster-aware:
+
+* *Events* fan out across the cluster — a listener registered on any node receives events published from any other node.
+* *Scheduled jobs* execute on exactly one node per fire. The scheduler coordinates so the same job doesn't run twice.
+* *Tasks* run on the node that called `submit()`, unless explicitly distributed.
+
+See each page for the details.
+
+== Pages in this section
+
+<<background/events#, Events>>:: Local and cluster-wide event listeners. How to publish, how to subscribe, and the standard event types XP itself emits.
+
+<<background/tasks#, Tasks>>:: Inline and named tasks, the task descriptor, progress reporting, and the task lifecycle.
+
+<<background/scheduler#, Scheduler>>:: Cron and one-time scheduled jobs, descriptor format, and how scheduled execution interacts with the task system.

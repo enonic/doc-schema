@@ -1,6 +1,6 @@
 = Mappings
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 Bind HTTP functions and filters to specific content types, site-relative URLs, or system services.
 
@@ -8,7 +8,7 @@ NOTE: Mappings are only available when using the <<site-engine#, Site Engine>>.
 
 == Introduction
 
-Mappings are the first processing step in the <<site-engine#, site engine>> — they run before page rendering starts. You may define mappings for both <<../http#, HTTP functions>> and <<../filters#, filters>>. The use cases are vast.
+Mappings are the first processing step in the <<site-engine#, site engine>> — they run before page rendering starts. You may define mappings for both <<../request-response#, HTTP functions>> and <<../filters#, filters>>. The use cases are vast.
 
 == Usage
 
@@ -36,7 +36,7 @@ mappings:
   service: "image"
 ----
 
-<1> *controller* — path to an <<../http#, HTTP function>> implementation.
+<1> *controller* — path to an <<../request-response#, HTTP function>> implementation.
 
 <2> *order* — execution order across apps. Default `50`. Lower means higher priority. See <<Execution order>>.
 

@@ -1,6 +1,6 @@
 = Global objects and functions
 :toc: right
-:imagesdir: framework/images
+:imagesdir: images
 
 The following global functions and objects are available in the Enonic XP framework.
 

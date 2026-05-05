@@ -1,6 +1,6 @@
 = Events
 :toc: right
-:imagesdir: framework/images
+:imagesdir: images
 
 Send and listen to local or cluster wide events
 

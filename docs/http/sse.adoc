@@ -1,6 +1,6 @@
 = Server-Sent Events
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 Server-Sent Events (SSE) provide one-way streaming from server to client over HTTP.
 

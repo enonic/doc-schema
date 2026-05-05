@@ -1,6 +1,6 @@
 = Components
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 How to implement page, part, and layout components rendered by the site engine.
 

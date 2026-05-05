@@ -1,6 +1,6 @@
 = Main
 :toc: right
-:imagesdir: framework/images
+:imagesdir: images
 
 Handle application lifecycle events via `main.ts`.
 
@@ -12,7 +12,7 @@ Enonic apps may contain a special `main.ts` at `src/main/resources/main.ts`.
 
 The code should complete as quickly as possible to prevent the application from stalling. Never call remote endpoints or wait in loops for events at the top level of `main.ts`.
 
-TIP: If you need to perform time-consuming work during startup, run it from a <<tasks#, task>> instead.
+TIP: If you need to perform time-consuming work during startup, run it from a <<../background/tasks#, task>> instead.
 
 Running code when the application starts:
 

@@ -1,6 +1,6 @@
 = Functions
 :toc: right
-:imagesdir: ../images
+:imagesdir: images
 
 Every `.ts` or `.js` file in an Enonic app is a *module* whose exported functions are callable from anywhere else in the bundle. On top of this module system, the framework defines *contracts* that bind specific files — or specific exports within them — to triggers such as an HTTP request, an event, a scheduled time, or the app's own lifecycle.
 
@@ -58,13 +58,13 @@ The <<globals#, framework globals>> (`app`, `log`, `require`, etc.) are availabl
 
 == Types of contracts
 
-<<http#, HTTP functions>>:: Respond to HTTP requests. Exports match HTTP methods (`GET`, `POST`, `DELETE`, `PATCH`, …) plus an `all` fallback. Receive a Request, return a Response.
-<<filters#, Filters>>:: Wrap downstream HTTP functions with pre- and post-processing in the site or webapp pipeline.
-<<error#, Error handlers>>:: Invoked when an exception bubbles out of an HTTP function. Receive the error plus the original request, return a Response.
-<<events#, Event listeners>>:: Subscribe to the cluster-wide event bus. Receive the event payload; return value is ignored.
-<<tasks#, Tasks>>:: Fire-and-forget background jobs. Receive a `params` object, report progress.
-<<scheduler#, Scheduled jobs>>:: Run on a cron or interval schedule. Same shape as tasks.
-<<websocket#, Websocket handlers>>:: React to websocket lifecycle events (open, message, close, error).
+<<../http/request-response#, HTTP functions>>:: Respond to HTTP requests. Exports match HTTP methods (`GET`, `POST`, `DELETE`, `PATCH`, …) plus an `all` fallback. Receive a Request, return a Response.
+<<../http/filters#, Filters>>:: Wrap downstream HTTP functions with pre- and post-processing in the site or webapp pipeline.
+<<../http/error#, Error handlers>>:: Invoked when an exception bubbles out of an HTTP function. Receive the error plus the original request, return a Response.
+<<../background/events#, Event listeners>>:: Subscribe to the cluster-wide event bus. Receive the event payload; return value is ignored.
+<<../background/tasks#, Tasks>>:: Fire-and-forget background jobs. Receive a `params` object, report progress.
+<<../background/scheduler#, Scheduled jobs>>:: Run on a cron or interval schedule. Same shape as tasks.
+<<../http/websocket#, Websocket handlers>>:: React to websocket lifecycle events (open, message, close, error).
 <<main#, Main lifecycle>>:: `main.js` hooks that run when your app starts and stops.
 
-Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <<sites/components#, components>>.
+Page, part, and layout implementations export HTTP functions invoked by the site engine when rendering content — see <<../http/sites/components#, components>>.

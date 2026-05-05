@@ -1,0 +1,53 @@
+= HTTP
+:toc: right
+
+Every client interaction with Enonic XP — browser request, API call, admin tool, websocket upgrade — flows through a single HTTP gateway: the *Portal*. This section covers the Portal pipeline, the HTTP primitives apps build with, and the four services the Portal routes to.
+
+== Portal and services
+
+The Portal is XP's default gateway for all incoming HTTP traffic. It listens on port 8080 (configurable) and dispatches requests to one of four *services*, each with a fixed URL prefix and a distinct role:
+
+[cols="1,2,3", options="header"]
+|===
+| Service | Prefix | Use it for
+| <<http/webapps#, Webapp>> | `/webapp` | Standalone web applications — served by your app, no CMS context.
+| <<http/sites#, Site>> | `/site` | CMS-driven websites: pages, parts, layouts, content rendering.
+| <<http/universal-api#, API>> | `/api` | Custom HTTP APIs, microservices, headless integrations.
+| <<http/admin-tools#, Admin>> | `/admin` | XP administration UIs (Content Studio is itself an admin tool).
+|===
+
+A single app can contribute to any number of these services simultaneously — a CMS site, a webapp dashboard, a custom API, and an admin tool — all from the same bundle.
+
+== Request pipeline
+
+Every request, regardless of which service handles it, passes through a common pre-processing pipeline before reaching your code: virtual host filtering, autologin, authentication, and a small set of platform-level filters. The active service then runs its own service-specific pipeline (mappings, processors, contributions, component rendering, etc. for sites; method dispatch for webapps and APIs).
+
+See <<http/pipeline#, Request pipeline>> for the full execution sequence and the filter ordering.
+
+== HTTP primitives
+
+The HTTP primitives below are shared across every service. Whichever service you are implementing for, the request and response objects, filter contracts, and error-handling rules are the same.
+
+<<http/request-response#, Request & Response>>:: The Request and Response object shapes — headers, body, cookies, status codes — and the way XP populates and reads them.
+
+<<http/filters#, Filters>>:: Reusable wrappers that run before and after HTTP functions in the pipeline. Used for cross-cutting concerns: auth gates, logging, caching, response rewriting.
+
+<<http/error#, Error handler>>:: Custom error pages and exception-to-response mapping. Replaces the default stack-trace response.
+
+<<http/websocket#, WebSocket>>:: Two-way communication channels. Any HTTP function can upgrade an incoming request into a websocket session by returning a `webSocket` object.
+
+<<http/sse#, SSE>>:: Server-Sent Events streams. One-way streaming from server to client over a long-lived HTTP response.
+
+== Services in detail
+
+Each service has its own page covering its routing rules, descriptor format, and conventions:
+
+<<http/webapps#, Webapps>>:: How to mount a webapp at `+/webapp/<app-name>/+`, declare a `webapp.yaml` descriptor, and respond to HTTP methods.
+
+<<http/universal-api#, APIs>>:: The Universal API model — descriptor-driven custom HTTP APIs that can be mounted standalone or as service points beneath sites, webapps, and admin tools.
+
+<<http/sites#, Sites>>:: The site engine — CMS-driven websites built from <<http/sites/components#, components>>, <<http/sites/mappings#, mappings>>, <<http/sites/processors#, processors>>, and <<http/sites/contributions#, contributions>>.
+
+<<http/admin-tools#, Admin tools>>:: First-class admin UIs that mount in the XP admin Launcher.
+
+<<http/admin-extensions#, Admin extensions>>:: Plug-ins that mount into existing admin tools at named interface points (formerly called *widgets*).
