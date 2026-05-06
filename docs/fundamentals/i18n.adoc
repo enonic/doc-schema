@@ -32,7 +32,7 @@ Imagine an app that supports the following localizations:
 
 Each locale needs a matching localization file, in the format:
 
-  +phrases[_LOCALE].properties+
+  phrases[_LOCALE].properties
 
 NOTE: The API's country codes use `-` as separator but the files use `_`.
 
@@ -59,7 +59,7 @@ For the property files, all codes are case sensitive and separated by an undersc
 
 The string representation of a locale is:
 
-  +la[_CO][_VA]+
+  la[_CO][_VA]
 
 where
 
